@@ -1,0 +1,8 @@
+*.o
+*.rpt
+*.err
+*.out
+traces.*
+output.*
+
+.deps
