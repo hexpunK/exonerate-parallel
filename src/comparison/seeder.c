@@ -474,19 +474,20 @@ static void Seeder_insert_query(Seeder *seeder, Seeder_Context *context,
         seeder->total_query_length += query->len;
         query_expect = Seeder_get_expect(seeder, context->loader,
                                          seeder->total_query_length);
-        }
+    }
     traverse_data.seeder = seeder;
     traverse_data.context = context;
     g_assert(context);
     g_assert(query);
     g_assert(query->len >= 0);
-    for(i = 0; i < query->len; i++){
+    guint len = query->len;
+    for(i = 0; i < len; i++){
         if(seeder->seeder_fsm){
             if(!Alphabet_symbol_is_member(match->comparison_alphabet,
                                          (guchar)seq[i])){
                 valid_count = 0;
                 continue;
-                }
+            }
             valid_count++;
             if(valid_count < context->loader->hsp_param->wordlen)
                 continue;
@@ -660,7 +661,7 @@ static void Seeder_FSM_traverse_func(guint seq_pos,
         Seeder_WordInfo_seed(seed->context->query_info, target_info,
                              seed->query_pos, target_pos,
                              seed->context->loader);
-        }
+    }
     for(neighbour = word_info->neighbour_list; neighbour;
         neighbour = neighbour->next){
         for(seed = neighbour->word_info->seed_list; seed;
@@ -670,8 +671,8 @@ static void Seeder_FSM_traverse_func(guint seq_pos,
             Seeder_WordInfo_seed(seed->context->query_info, target_info,
                                  seed->query_pos, target_pos,
                                  seed->context->loader);
-            }
         }
+    }
     return;
     }
 
@@ -740,7 +741,7 @@ void Seeder_add_target(Seeder *seeder, Sequence *target){
             else
                 Seeder_VFSM_traverse(seeder, seq, &target_info);
             g_free(seq);
-            }
+        }
     } else {
         target_info.curr_frame = 0;
         target_masked = Sequence_mask(target);
@@ -776,4 +777,3 @@ void Seeder_add_target(Seeder *seeder, Sequence *target){
 /**/
 
 /* FIXME: replace FSM/VFSM conditional stuff with funcs */
-

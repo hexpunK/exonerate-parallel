@@ -91,11 +91,13 @@ static gboolean Layout_model_state_is_valid_input(C4_Model *model,
                              C4_State *state,
                              gint query_pos, gint target_pos,
                              gint query_length, gint target_length){
-    register gint i;
+    register guint i;
     register C4_Transition *transition;
     if(state == model->start_state->state)
         return TRUE;
-    for(i = 0; i < state->input_transition_list->len; i++){
+
+    guint len = state->input_transition_list->len
+    for(i = 0; i < len; i++){
         transition = state->input_transition_list->pdata[i];
         if((transition->advance_query == 0)
          && (transition->advance_target == 0)){ /* If silent */
@@ -110,10 +112,10 @@ static gboolean Layout_model_state_is_valid_input(C4_Model *model,
                    target_pos-transition->advance_target,
                    query_length, target_length))
                 return TRUE;
-            }
         }
-    return FALSE;
     }
+    return FALSE;
+}
 /* The input state must be in scope,
  * and be traceable to a non-silent transition
  * from an state which is also in scope.
@@ -435,7 +437,7 @@ Layout *Layout_create(C4_Model *model){
         g_assert(layout->row_list->len < 1024); /* safety check */
     } while(TRUE);
     return layout;
-    }
+}
 /* FIXME: optimisation
  *        may be possible to trim the pattern for some models
  *        where dimensions are <= layout->max_{query,target}_advance
@@ -448,7 +450,7 @@ void Layout_destroy(Layout *layout){
     g_ptr_array_free(layout->row_list, TRUE);
     g_free(layout);
     return;
-    }
+}
 
 void Layout_info(Layout *layout, C4_Model *model){
     register gint i;
@@ -467,4 +469,3 @@ void Layout_info(Layout *layout, C4_Model *model){
     }
 
 /**/
-
