@@ -29,14 +29,18 @@ FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
     g_assert(alphabet);
     g_assert(merge_func);
     g_assert(combine_func);
-    for(p = ((guchar*)alphabet); *p; p++)
+    for(p = ((guchar*)alphabet); *p; p++) {
         f->index[*p] = 1;
-    for(p = f->index+ALPHABETSIZE; p > f->index; p--)
+    }
+    guchar indEnd = f->index+ALPHABETSIZE;
+    guchar indStart = f->index;
+    for(p = indEnd; p > indStart; p--) {
         if(*p)
             *p = ++f->width;
+    }
     f->width++; /* Add one for NULL */
-    memcpy(f->insertion_filter, f->index, sizeof(gchar)*ALPHABETSIZE);
-    memcpy(f->traversal_filter, f->index, sizeof(gchar)*ALPHABETSIZE);
+    memcpy(f->insertion_filter, indStart, sizeof(gchar)*ALPHABETSIZE);
+    memcpy(f->traversal_filter, indStart, sizeof(gchar)*ALPHABETSIZE);
     f->merge_func = merge_func;
     f->combine_func = combine_func;
     f->user_data = user_data;
@@ -45,7 +49,7 @@ FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
     f->root = RecycleBin_alloc_blank(f->recycle);
     f->is_compiled = FALSE;
     return f;
-    }
+}
 
 gsize FSM_memory_usage(FSM *f){
     return sizeof(FSM)
@@ -147,18 +151,20 @@ void FSM_compile(FSM *f){
     g_assert(!f->is_compiled);
     out->next = in;              /* Initialise queue */
     f->root->next = f->root;
-    for(i = 1; i < f->width; i++)
-        if(f->root[i].next){
+    guchar end = f->width;
+    for(i = 1; i < end; i++) {
+        if(f->root[i].next) {
             in->data = f->root;
             in->next = f->root[i].next;
             in       = f->root[i].next;
         } else
             f->root[i].next   = f->root;
+    }
     while(out != in){
         prev   = out;
         suffix = out->data;
         out    = out->next;
-        for(i = 1; i < f->width; i++){
+        for(i = 1; i < end; i++) {
             if(suffix[i].data){
                 if(out[i].data)
                     out[i].data = f->combine_func(out[i].data,
@@ -166,22 +172,22 @@ void FSM_compile(FSM *f){
                                                   f->user_data);
                 else
                     out[i].data = suffix[i].data;
-                }
+            }
             if(out[i].next){
                 in->data = suffix[i].next;
                 in->next = out[i].next;
                 in       = out[i].next;
             } else
                 out[i].next = suffix[i].next;
-            }
+        }
         prev->next = f->root;
         prev->data = NULL;
-        }
+    }
     out->next = f->root;
     out->data = NULL;
     f->is_compiled = TRUE;
     return;
-    }
+}
 
 void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
                   gpointer user_data){
@@ -195,11 +201,12 @@ void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
         n = n[c].next;
     } while(*++p);
     return;
-    }
+}
 
 static void FSM_add_filter(FSM *f, guchar *src, guchar *dst){
     register gint i;
     if(dst){ /* Merge filter */
+        #pragma ivdep
         for(i = 0; i < ALPHABETSIZE; i++)
             dst[i] = dst[src[i]];
     } else { /* Reset to original index */
@@ -217,4 +224,3 @@ void FSM_add_traversal_filter(FSM *f, guchar *filter){
     FSM_add_filter(f, filter, f->traversal_filter);
     return;
     }
-
