@@ -57,7 +57,7 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'a', "acgtn", NULL,
         "Only allow [ACGTN] nucleotide symbols", "FALSE",
         Argument_parse_boolean, &fci.clean_acgtn);
-    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    ArgumentSet_add_option(as, 'O', "output", "path",
         "Specify the output file", "stdout",
         Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);

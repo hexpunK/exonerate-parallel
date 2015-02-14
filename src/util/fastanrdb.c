@@ -204,7 +204,7 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'r', "revcomp", NULL,
         "Check for revcomp duplicates", "FALSE",
         Argument_parse_boolean, &ni.check_revcomp);
-    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    ArgumentSet_add_option(as, 'O', "output", "path",
         "Specify the output file", "stdout",
         Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);

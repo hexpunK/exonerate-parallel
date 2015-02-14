@@ -271,7 +271,7 @@ int Argument_main(Argument *arg){
     register FastaDB *fdb;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path, *sort_key;
+    gchar *query_path, *sort_key, *outputFile;
     gboolean check_order, reverse_order;
     register Sort_KeyMask sort_key_mask;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
@@ -286,10 +286,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'r', "reverse", NULL,
         "Reverse sort order", "FALSE",
         Argument_parse_boolean, &reverse_order);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastasort",
         "A utility for sorting fasta sequence databases\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     /**/
     fdb = FastaDB_open(query_path, NULL);
     sort_key_mask = SortKey_Mask_create(sort_key, reverse_order);

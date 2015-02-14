@@ -98,7 +98,7 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'm', "masked", "path",
         "Second fasta input file", NULL,
         Argument_parse_string, &masked_path);
-    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    ArgumentSet_add_option(as, 'O', "output", "path",
         "Specify the output file", "stdout",
         Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);

@@ -65,7 +65,7 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'j', "jump", NULL,
         "Jump between each chunk", "90000",
         Argument_parse_int, &foi.jump_size);
-    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    ArgumentSet_add_option(as, 'O', "output", "path",
         "Specify the output file", "stdout",
         Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);

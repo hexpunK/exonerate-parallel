@@ -35,7 +35,7 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'l', "length", "length",
         "Subsequence length", NULL,
         Argument_parse_int, &subseq_length);
-    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    ArgumentSet_add_option(as, 'O', "output", "path",
         "Specify the output file", "stdout",
         Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
