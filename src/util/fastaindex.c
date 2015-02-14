@@ -58,7 +58,7 @@ static void fasta_index_build(gchar *fasta_path, gchar *index_path){
 int Argument_main(Argument *arg){
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *fasta_path, *index_path;
+    gchar *fasta_path, *index_path, *outputFile;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
         Argument_parse_string, &fasta_path);
@@ -69,7 +69,18 @@ int Argument_main(Argument *arg){
     Argument_process(arg, "fastaindex",
         "Index a fasta file\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fasta_index_build(fasta_path, index_path);
     return 0;
     }
-

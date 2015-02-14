@@ -56,7 +56,7 @@ int Argument_main(Argument *arg){
            = Alphabet_create(Alphabet_Type_DNA, FALSE);
     register Alphabet *protein_alphabet
            = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
-    gchar *query_path;
+    gchar *query_path, *outputFile;
     gint frame;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
@@ -64,11 +64,26 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'F', "frame", NULL,
         "Reading frame to translate", "0",
         Argument_parse_int, &frame);
+    ArgumentSet_add_option(as_input, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Translate_ArgumentSet_create(arg);
     Argument_process(arg, "fastatranslate",
         "A utility to translate fasta format sequences\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fdb = FastaDB_open(query_path, dna_alphabet);
     translate = Translate_create(FALSE);
     while((fdbs = FastaDB_next(fdb, FastaDB_Mask_ALL))){

@@ -21,6 +21,7 @@
 FILE *file;
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register C4_Score score;
     register C4_Model *ner;
     register Alignment *alignment;

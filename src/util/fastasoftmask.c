@@ -91,17 +91,32 @@ static void fasta_softmask(gchar *unmasked_path, gchar *masked_path){
 int Argument_main(Argument *arg){
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *unmasked_path, *masked_path;
+    gchar *unmasked_path, *masked_path, *outputFile;
     ArgumentSet_add_option(as, 'u', "unmasked", "path",
         "First fasta input file", NULL,
         Argument_parse_string, &unmasked_path);
     ArgumentSet_add_option(as, 'm', "masked", "path",
         "Second fasta input file", NULL,
         Argument_parse_string, &masked_path);
+    ArgumentSet_add_option(as_input, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastasoftmask",
         "Merge masked and unmasked files as softmasked sequences\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fasta_softmask(unmasked_path, masked_path);
     return 0;
     }
