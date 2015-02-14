@@ -14,6 +14,7 @@
 \****************************************************************/
 
 #include <stdio.h>
+
 #include "globals.h"
 #include "compoundfile.h"
 
