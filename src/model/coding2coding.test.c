@@ -50,6 +50,7 @@ static void test_coding2coding(Sequence *query, Sequence *target){
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
     register Sequence

@@ -19,4 +19,3 @@ int Argument_main(Argument *arg){
     g_warning("test [%s] does nothing", __FILE__);
     return 0;
     }
-

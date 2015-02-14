@@ -21,6 +21,7 @@
 FILE *file;
 
 int main(void){
+    file = stdout;
     register gchar *path_a =
         g_strconcat(SOURCE_ROOT_DIR, G_DIR_SEPARATOR_S,
                     "src", G_DIR_SEPARATOR_S,

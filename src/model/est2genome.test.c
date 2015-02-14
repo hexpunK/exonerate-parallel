@@ -22,6 +22,7 @@
 FILE *file;
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register C4_Model *est2genome;
     register C4_Score score;
     register Alignment *alignment;

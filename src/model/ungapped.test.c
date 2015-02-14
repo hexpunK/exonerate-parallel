@@ -63,6 +63,7 @@ static void run_ungapped_test(Sequence *query, Sequence *target,
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register Alphabet
      *dna_alphabet = Alphabet_create(Alphabet_Type_DNA, FALSE),
      *protein_alphabet = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);

@@ -22,6 +22,7 @@
 FILE *file;
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register C4_Model *edit_distance = EditDistance_create();
     register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);

@@ -101,6 +101,7 @@ static void test_model(Affine_Model_Type type, C4_Score expected_score){
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     Match_ArgumentSet_create(arg);
     Affine_ArgumentSet_create(arg);
     Argument_process(arg, "affine.test", NULL, NULL);
