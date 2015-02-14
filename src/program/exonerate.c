@@ -131,21 +131,21 @@ int Argument_main(Argument *arg){
     if(verbosity > 0)
         Argument_info(arg);
     /**/
-    if (*outputFile != NULL) {
+    if (outputFile != NULL) {
         fprintf(stdout, "Writing output to %s\n", outputFile);
         file = fopen(outputFile, "w");
     } else {
         file = stdout;
     }
     if (file == NULL) {
-        fprintf(stderr, "Could not create output file '%s'\n" outputFile);
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
         exit(-1);
     }
     analysis = Analysis_create(query_path_list, query_type,
                                query_chunk_id, query_chunk_total,
                                target_path_list, target_type,
                                target_chunk_id, target_chunk_total,
-                               verbosity, outputFile);
+                               verbosity);
     Analysis_process(analysis);
     Analysis_destroy(analysis);
     /**/
