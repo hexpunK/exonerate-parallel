@@ -18,10 +18,11 @@
 #include <strings.h> /* For strcasemp() */
 #include <ctype.h> /* For toupper() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 /**/
 
 typedef enum {

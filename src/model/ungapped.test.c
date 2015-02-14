@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "ungapped.h"
 #include "alignment.h"
 #include "argument.h"
@@ -20,7 +21,7 @@
 #include "optimal.h"
 #include "alignment.h"
 
-extern FILE *file;
+FILE *file;
 
 static void run_ungapped_test(Sequence *query, Sequence *target,
         gboolean translate_both, gint crib){

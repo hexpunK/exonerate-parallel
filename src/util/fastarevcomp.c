@@ -13,10 +13,11 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 static gboolean fasta_revcomp_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){

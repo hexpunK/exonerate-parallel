@@ -13,11 +13,12 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 #include "translate.h"
 
-extern FILE *file;
+FILE *file;
 
 static void fasta_translate_seq(FastaDB_Seq *fdbs,
                                 Translate *translate, gint frame,

@@ -13,12 +13,13 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "edit_distance.h"
 #include "alignment.h"
 #include "optimal.h"
 #include "sequence.h"
 
-extern FILE *file;
+FILE *file;
 
 int Argument_main(Argument *arg){
     register C4_Model *edit_distance = EditDistance_create();

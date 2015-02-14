@@ -19,10 +19,11 @@
 #include <strings.h>
 #include <errno.h>
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 static gint fasta_index_seek_to_char(FILE *fp, gchar c){
     register gint ch;

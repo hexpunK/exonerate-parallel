@@ -22,6 +22,7 @@ extern "C" {
 
 #include <glib.h>
 
+#include "globals.h"
 #include "fastapipe.h"
 #include "gam.h"
 #include "bsam.h"
@@ -32,7 +33,7 @@ extern "C" {
 #include "socket.h"
 #include "jobqueue.h"
 
-extern FILE *file;
+FILE *file;
 
 typedef struct {
     gboolean  use_exhaustive;

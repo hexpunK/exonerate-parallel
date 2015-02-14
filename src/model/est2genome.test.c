@@ -13,12 +13,13 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "est2genome.h"
 
 #include "alignment.h"
 #include "optimal.h"
 
-extern FILE *file;
+FILE *file;
 
 int Argument_main(Argument *arg){
     register C4_Model *est2genome;

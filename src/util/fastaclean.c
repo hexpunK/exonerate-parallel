@@ -15,10 +15,11 @@
 
 #include <ctype.h>
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 typedef struct {
     gboolean clean_protein;

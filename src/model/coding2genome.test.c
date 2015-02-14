@@ -13,12 +13,13 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "coding2genome.h"
 #include "alignment.h"
 #include "optimal.h"
 #include "submat.h"
 
-extern FILE *file;
+FILE *file;
 
 static void test_coding2genome(Sequence *query, Sequence *target){
     register C4_Score score;

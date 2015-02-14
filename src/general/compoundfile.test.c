@@ -14,9 +14,10 @@
 \****************************************************************/
 
 #include <stdio.h>
+#include "globals.h"
 #include "compoundfile.h"
 
-extern FILE *file;
+FILE *file;
 
 int main(void){
     register gchar *path_a =

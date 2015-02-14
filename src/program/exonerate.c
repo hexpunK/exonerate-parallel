@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "analysis.h"
 #include "gam.h"

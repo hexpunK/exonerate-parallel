@@ -13,9 +13,10 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 gint Argument_main(Argument *arg){
     register FastaDB *fdb;

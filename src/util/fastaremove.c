@@ -18,10 +18,11 @@
 #include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For isspace() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 static gboolean fasta_remove_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){

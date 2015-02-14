@@ -20,12 +20,13 @@
 #include <strings.h> /* For strcasecmp() */
 #include <unistd.h> /* For unlink(), getpid(), getppid() etc */
 
+#include "globals.h"
 #include "gam.h"
 #include "ungapped.h"
 #include "opair.h"
 #include "rangetree.h"
 
-extern FILE *file;
+FILE *file;
 
 static GAM *_gam; /* file-scope variable for passing to twalk() */
 

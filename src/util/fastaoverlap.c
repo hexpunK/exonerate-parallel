@@ -13,10 +13,11 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 typedef struct {
     gint chunk_size;

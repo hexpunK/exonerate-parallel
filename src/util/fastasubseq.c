@@ -13,10 +13,11 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 int Argument_main(Argument *arg){
     register FastaDB_Seq *fdbs;

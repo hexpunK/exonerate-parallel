@@ -13,11 +13,12 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "affine.h"
 #include "alignment.h"
 #include "optimal.h"
 
-extern FILE *file;
+FILE *file;
 
 static void test_model(Affine_Model_Type type, C4_Score expected_score){
     register C4_Model *affine = Affine_create(type,

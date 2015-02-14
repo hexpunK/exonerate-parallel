@@ -15,10 +15,11 @@
 
 #include <ctype.h> /* For toupper() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 static gboolean is_start_codon(gchar *seq){
     if((toupper(seq[0]) == 'A')

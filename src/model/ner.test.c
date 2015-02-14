@@ -13,11 +13,12 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "ner.h"
 #include "alignment.h"
 #include "optimal.h"
 
-extern FILE *file;
+FILE *file;
 
 int Argument_main(Argument *arg){
     register C4_Score score;

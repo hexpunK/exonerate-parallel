@@ -16,10 +16,11 @@
 #include <string.h> /* For strcmp() */
 #include <ctype.h>  /* For tolower() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
-extern FILE *file;
+FILE *file;
 
 static void fasta_softmask_merge(Sequence *unmasked, Sequence *masked){
     register Sequence *softmask_seq;

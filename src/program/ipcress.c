@@ -18,13 +18,14 @@
 #include <stdlib.h> /* For atoi() */
 #include <string.h> /* For strlen() */
 
+#include "globals.h"
 #include "argument.h"
 #include "exonerate_util.h"
 #include "pcr.h"
 #include "fastadb.h"
 #include "lineparse.h"
 
-extern FILE *file;
+FILE *file;
 
 /*
 

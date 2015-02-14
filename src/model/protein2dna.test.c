@@ -13,12 +13,13 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "protein2dna.h"
 #include "alignment.h"
 #include "optimal.h"
 #include "frameshift.h"
 
-extern FILE *file;
+FILE *file;
 
 static void test_alignment(C4_Model *model,
                            Sequence *query, Sequence *target,
