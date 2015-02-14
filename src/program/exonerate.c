@@ -80,8 +80,8 @@ int Argument_main(Argument *arg){
     "Show search progress", "1",
     Argument_parse_int, &verbosity);
     /**/
-    ArgumentSet_add_option(as_input, 'o', "output", "path",
-    "Specify the output file", NULL,
+    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    "Specify the output file", "stdout",
     Argument_parse_string, &outputFile);
     /**/
     Argument_absorb_ArgumentSet(arg, as_input);
@@ -131,7 +131,7 @@ int Argument_main(Argument *arg){
     if(verbosity > 0)
         Argument_info(arg);
     /**/
-    if (outputFile != NULL) {
+    if (g_strcmp0(outputFile, "stdout") != 0) {
         fprintf(stdout, "Writing output to %s\n", outputFile);
         file = fopen(outputFile, "w");
     } else {
