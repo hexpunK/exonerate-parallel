@@ -18,6 +18,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gboolean fasta_clip_traverse_func(FastaDB_Seq *fdbs,
                                               gpointer user_data){
     register gint clip_char = GPOINTER_TO_INT(user_data);
@@ -33,7 +35,7 @@ static gboolean fasta_clip_traverse_func(FastaDB_Seq *fdbs,
     end_clip = fdbs->seq->len-i-1;
     clip_len = fdbs->seq->len-start_clip-end_clip;
     clip_seq = Sequence_subseq(fdbs->seq, start_clip, clip_len);
-    Sequence_print_fasta(clip_seq, stdout, FALSE);
+    Sequence_print_fasta(clip_seq, file, FALSE);
     Sequence_destroy(clip_seq);
     return FALSE;
     }
@@ -61,4 +63,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-

@@ -18,6 +18,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gboolean is_start_codon(gchar *seq){
     if((toupper(seq[0]) == 'A')
     && (toupper(seq[1]) == 'T')
@@ -100,7 +102,7 @@ static gboolean fasta_valid_cds_traverse_func(FastaDB_Seq *fdbs,
             return FALSE;
             }
         }
-    FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+    FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                    |FastaDB_Mask_DEF
                                    |FastaDB_Mask_SEQ);
     g_free(seq);
@@ -131,4 +133,3 @@ int Argument_main(Argument *arg){
     }
 
 /**/
-

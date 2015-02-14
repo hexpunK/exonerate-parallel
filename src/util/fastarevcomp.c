@@ -16,10 +16,12 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gboolean fasta_revcomp_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){
     register FastaDB_Seq *revcomp_fdbs = FastaDB_Seq_revcomp(fdbs);
-    FastaDB_Seq_print(revcomp_fdbs, stdout, FastaDB_Mask_ID
+    FastaDB_Seq_print(revcomp_fdbs, file, FastaDB_Mask_ID
                                    |FastaDB_Mask_DEF
                                    |FastaDB_Mask_SEQ);
     FastaDB_Seq_destroy(revcomp_fdbs);
@@ -50,4 +52,3 @@ int Argument_main(Argument *arg){
 /* FIXME: should avoid FastaDB_traverse
  *        to allow the revcomp to be done in place.
  */
- 

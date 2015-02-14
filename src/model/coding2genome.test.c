@@ -18,6 +18,8 @@
 #include "optimal.h"
 #include "submat.h"
 
+extern FILE *file;
+
 static void test_coding2genome(Sequence *query, Sequence *target){
     register C4_Score score;
     register C4_Model *model = Coding2Genome_create();
@@ -39,7 +41,7 @@ static void test_coding2genome(Sequence *query, Sequence *target){
     Alignment_display(alignment, query, target,
                      Coding2Genome_Data_get_submat(c2gd),
                      Coding2Genome_Data_get_submat(c2gd),
-                     Coding2Genome_Data_get_translate(c2gd), stdout);
+                     Coding2Genome_Data_get_translate(c2gd), file);
     g_assert(score == alignment->score);
     Coding2Genome_Data_destroy(c2gd);
     C4_Model_destroy(model);
@@ -81,5 +83,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(alphabet);
     return 0;
     }
-
-

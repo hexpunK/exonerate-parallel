@@ -21,11 +21,13 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gboolean fasta_remove_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){
     register GTree *id_tree = user_data;
     if(!g_tree_lookup(id_tree, fdbs->seq->id))
-        FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+        FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                        |FastaDB_Mask_DEF
                                        |FastaDB_Mask_SEQ);
     return FALSE;
@@ -92,4 +94,3 @@ int Argument_main(Argument *arg){
     g_string_chunk_free(id_alloc);
     return 0;
     }
-

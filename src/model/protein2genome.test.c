@@ -17,6 +17,8 @@
 #include "alignment.h"
 #include "optimal.h"
 
+extern FILE *file;
+
 static void test_alignment(C4_Model *model,
                            Sequence *query, Sequence *target,
                            Protein2Genome_Data *p2gd){
@@ -38,7 +40,7 @@ static void test_alignment(C4_Model *model,
     Alignment_display(alignment, query, target,
                       NULL,
                       Protein2Genome_Data_get_submat(p2gd),
-                      Protein2Genome_Data_get_translate(p2gd), stdout);
+                      Protein2Genome_Data_get_translate(p2gd), file);
     g_assert(score == alignment->score);
     Alignment_destroy(alignment);
     Optimal_destroy(optimal);
@@ -90,4 +92,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(protein_alphabet);
     return 0;
     }
-

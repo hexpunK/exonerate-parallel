@@ -18,6 +18,8 @@
 #include "optimal.h"
 #include "submat.h"
 
+extern FILE *file;
+
 static void test_cdna2genome(Sequence *query, Sequence *target){
     register C4_Score score;
     register C4_Model *model = CDNA2Genome_create();
@@ -39,7 +41,7 @@ static void test_cdna2genome(Sequence *query, Sequence *target){
     Alignment_display(alignment, query, target,
                      CDNA2Genome_Data_get_dna_submat(cd2gd),
                      CDNA2Genome_Data_get_protein_submat(cd2gd),
-                     CDNA2Genome_Data_get_translate(cd2gd), stdout);
+                     CDNA2Genome_Data_get_translate(cd2gd), file);
     g_assert(score == alignment->score);
     CDNA2Genome_Data_destroy(cd2gd);
     C4_Model_destroy(model);
@@ -93,5 +95,3 @@ int Argument_main(Argument *arg){
 /*   Query: (cDNA) UTR:CDS:UTR
  *  Target:  (gen) gen:UTR5:intron:CDS:intron:CDS:UTR3:intron:UTR3:gen
  */
-
-

@@ -18,11 +18,13 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gboolean fasta_hard_mask_traverse_func(FastaDB_Seq *fdbs,
                                               gpointer user_data){
     register Sequence *s = Sequence_filter(fdbs->seq,
                                            Alphabet_Filter_Type_MASKED);
-    Sequence_print_fasta(s, stdout, FALSE);
+    Sequence_print_fasta(s, file, FALSE);
     Sequence_destroy(s);
     return FALSE;
     }
@@ -45,4 +47,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-

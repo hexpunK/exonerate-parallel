@@ -17,6 +17,8 @@
 #include "fastadb.h"
 #include "translate.h"
 
+extern FILE *file;
+
 static void fasta_translate_seq(FastaDB_Seq *fdbs,
                                 Translate *translate, gint frame,
                                 Alphabet *protein_alphabet){
@@ -38,7 +40,7 @@ static void fasta_translate_seq(FastaDB_Seq *fdbs,
         aa_seq = Sequence_translate(fdbs->seq, translate, frame);
         }
     if(aa_seq->len)
-        Sequence_print_fasta(aa_seq, stdout, FALSE);
+        Sequence_print_fasta(aa_seq, file, FALSE);
     Sequence_destroy(aa_seq);
     return;
     }
@@ -78,4 +80,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(protein_alphabet);
     return 0;
     }
-

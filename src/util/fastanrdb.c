@@ -21,6 +21,7 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
 /**/
 
 typedef struct {
@@ -129,7 +130,7 @@ static void NRDB_Data_report_redundant_set(GPtrArray *redundant_set){
             g_string_append(merge_def, ".revcomp");
             }
         first_forward->seq->def = merge_def->str;
-        FastaDB_Seq_print(first_forward, stdout, mask);
+        FastaDB_Seq_print(first_forward, file, mask);
         g_string_free(merge_def, TRUE);
         first_forward->seq->def = curr_def;
         }
@@ -227,4 +228,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(alphabet);
     return 0;
     }
-

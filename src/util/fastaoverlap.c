@@ -16,6 +16,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 typedef struct {
     gint chunk_size;
     gint jump_size;
@@ -30,7 +32,7 @@ static gboolean fasta_overlap_traverse_func(FastaDB_Seq *fdbs,
         region_end = fdbs->seq->len;
     nfe = Sequence_subseq(fdbs->seq, region_start,
                           region_end - region_start);
-    Sequence_print_fasta(nfe, stdout, FALSE);
+    Sequence_print_fasta(nfe, file, FALSE);
     Sequence_destroy(nfe);
     while(region_end < fdbs->seq->len){
         region_start += foi->jump_size;
@@ -41,7 +43,7 @@ static gboolean fasta_overlap_traverse_func(FastaDB_Seq *fdbs,
             region_end = fdbs->seq->len;
         nfe = Sequence_subseq(fdbs->seq, region_start,
                               region_end - region_start);
-        Sequence_print_fasta(nfe, stdout, FALSE);
+        Sequence_print_fasta(nfe, file, FALSE);
         Sequence_destroy(nfe);
         }
     return FALSE;
@@ -78,4 +80,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-

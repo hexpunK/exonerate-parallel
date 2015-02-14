@@ -17,6 +17,8 @@
 #include "alignment.h"
 #include "optimal.h"
 
+extern FILE *file;
+
 static void test_model(Affine_Model_Type type, C4_Score expected_score){
     register C4_Model *affine = Affine_create(type,
                                               Alphabet_Type_PROTEIN,
@@ -83,8 +85,8 @@ static void test_model(Affine_Model_Type type, C4_Score expected_score){
     g_message("Alignment score is [%d]", alignment->score);
     Alignment_display(alignment, query, target,
             Affine_Data_get_dna_submat(ad),
-            Affine_Data_get_protein_submat(ad), NULL, stdout);
-    Alignment_display_vulgar(alignment, query, target, stdout);
+            Affine_Data_get_protein_submat(ad), NULL, file);
+    Alignment_display_vulgar(alignment, query, target, file);
     g_assert(score == alignment->score);
 /**/
     C4_Model_destroy(affine);
@@ -107,6 +109,3 @@ int Argument_main(Argument *arg){
     test_model(Affine_Model_Type_OVERLAP, 18);
     return 0;
     }
-
-
-

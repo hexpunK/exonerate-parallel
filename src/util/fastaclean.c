@@ -18,6 +18,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 typedef struct {
     gboolean clean_protein;
     gboolean clean_acgtn;
@@ -33,7 +35,7 @@ static gboolean fasta_clean_traverse_func(FastaDB_Seq *fdbs,
     else
         filter_type = Alphabet_Filter_Type_CLEAN;
     seq = Sequence_filter(fdbs->seq, filter_type);
-    Sequence_print_fasta(seq, stdout, FALSE);
+    Sequence_print_fasta(seq, file, FALSE);
     Sequence_destroy(seq);
     return FALSE;
     }
@@ -69,4 +71,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(alphabet);
     return 0;
     }
-

@@ -16,6 +16,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 int Argument_main(Argument *arg){
     register FastaDB_Seq *fdbs;
     register Sequence *subseq;
@@ -45,9 +47,8 @@ int Argument_main(Argument *arg){
         g_error("Subsequence must end before end of [%s](%d)",
                 fdbs->seq->id, fdbs->seq->len);
     subseq = Sequence_subseq(fdbs->seq, subseq_start, subseq_length);
-    Sequence_print_fasta(subseq, stdout, FALSE);
+    Sequence_print_fasta(subseq, file, FALSE);
     Sequence_destroy(subseq);
     FastaDB_Seq_destroy(fdbs);
     return 0;
     }
-

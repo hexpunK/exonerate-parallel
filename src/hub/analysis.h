@@ -32,6 +32,8 @@ extern "C" {
 #include "socket.h"
 #include "jobqueue.h"
 
+extern FILE *file;
+
 typedef struct {
     gboolean  use_exhaustive;
     gboolean  use_bigseq;
@@ -112,4 +114,3 @@ void Analysis_process(Analysis *analysis);
 #endif /* __cplusplus */
 
 #endif /* INCLUDED_ANALYSIS_H */
-

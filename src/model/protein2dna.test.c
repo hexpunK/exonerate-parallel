@@ -18,6 +18,8 @@
 #include "optimal.h"
 #include "frameshift.h"
 
+extern FILE *file;
+
 static void test_alignment(C4_Model *model,
                            Sequence *query, Sequence *target,
                            Protein2DNA_Data *p2dd){
@@ -38,7 +40,7 @@ static void test_alignment(C4_Model *model,
     Alignment_display(alignment, query, target,
                       NULL,
                       Protein2DNA_Data_get_submat(p2dd),
-                      Protein2DNA_Data_get_translate(p2dd), stdout);
+                      Protein2DNA_Data_get_translate(p2dd), file);
     g_assert(score == alignment->score);
     Alignment_destroy(alignment);
     Optimal_destroy(optimal);
@@ -85,4 +87,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(protein_alphabet);
     return 0;
     }
-

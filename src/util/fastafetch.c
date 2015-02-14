@@ -22,6 +22,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gint fasta_index_seek_to_char(FILE *fp, gchar c){
     register gint ch;
     while((ch = getc(fp)) != EOF){
@@ -159,7 +161,7 @@ static void fetch_sequences(gchar *fasta_path, gchar *index_path,
         fdbs = fasta_index_fetch(fdb, index_fp, mask,
                                  query_list->pdata[i], be_silent);
         if(fdbs){
-            FastaDB_Seq_print(fdbs, stdout, mask);
+            FastaDB_Seq_print(fdbs, file, mask);
             FastaDB_Seq_destroy(fdbs);
             }
         }
@@ -198,4 +200,3 @@ int Argument_main(Argument *arg){
     fetch_sequences(fasta_path, index_path, use_fosn, be_silent, query);
     return 0;
     }
-

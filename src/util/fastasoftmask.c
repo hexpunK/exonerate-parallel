@@ -19,6 +19,8 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static void fasta_softmask_merge(Sequence *unmasked, Sequence *masked){
     register Sequence *softmask_seq;
     register gchar *sm = g_new(gchar, unmasked->len+1);
@@ -39,7 +41,7 @@ static void fasta_softmask_merge(Sequence *unmasked, Sequence *masked){
     g_free(ms);
     g_free(us);
     g_free(sm);
-    Sequence_print_fasta(softmask_seq, stdout, FALSE);
+    Sequence_print_fasta(softmask_seq, file, FALSE);
     Sequence_destroy(softmask_seq);
     return;
     }
@@ -102,4 +104,3 @@ int Argument_main(Argument *arg){
     fasta_softmask(unmasked_path, masked_path);
     return 0;
     }
-

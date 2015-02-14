@@ -21,6 +21,7 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
 /**/
 
 typedef enum {
@@ -252,7 +253,7 @@ static void fasta_sort_sort_data(FastaDB *fdb,
     for(i = 0; i < si.sort_data_list->len; i++){
         sd = si.sort_data_list->pdata[i];
         fdbs = FastaDB_Key_get_seq(sd->key, FastaDB_Mask_ALL);
-        FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+        FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                        |FastaDB_Mask_DEF
                                        |FastaDB_Mask_SEQ);
         FastaDB_Seq_destroy(fdbs);
@@ -298,4 +299,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-

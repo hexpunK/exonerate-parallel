@@ -24,6 +24,8 @@
 #include "fastadb.h"
 #include "lineparse.h"
 
+extern FILE *file;
+
 /*
 
 Input Format:
@@ -221,7 +223,7 @@ static gboolean Ipcress_report_product(Sequence *sequence,
                   sequence->id,
                   match_a->position,
                   product_length);
-        Sequence_print_fasta_block(seq, stdout);
+        Sequence_print_fasta_block(seq, file);
         Sequence_destroy(seq);
         }
     return FALSE;
@@ -362,4 +364,3 @@ int Argument_main(Argument *arg){
     g_print("-- completed ipcress analysis\n");
     return 0;
     }
-

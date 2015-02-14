@@ -16,9 +16,11 @@
 #include "argument.h"
 #include "fastadb.h"
 
+extern FILE *file;
+
 static gboolean fasta_reformat_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){
-    FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+    FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                    |FastaDB_Mask_DEF
                                    |FastaDB_Mask_SEQ);
     return FALSE;
@@ -42,4 +44,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-
