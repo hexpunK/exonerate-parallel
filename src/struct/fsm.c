@@ -21,6 +21,7 @@
 #include "fsm.h"
 
 #include <string.h> /* For memcpy() */
+#include ”omp.h”
 
 FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
                 FSM_Join_Func combine_func, gpointer user_data){
@@ -190,8 +191,12 @@ void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
     register gint c;
     g_assert(f->is_compiled);
     do {
-        if(n[c = f->traversal_filter[*p]].data)
+        if(n[c = f->traversal_filter[*p]].data) {
+           #pragma omp parallel
+           {
            ftf(p-(guchar*)seq, n[c].data, user_data);
+           }
+        }
         n = n[c].next;
     } while(*++p);
     return;
