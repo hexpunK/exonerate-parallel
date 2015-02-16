@@ -18,6 +18,7 @@
 #include <ctype.h>  /* For toupper() */
 #include <search.h> /* For tdelete(), tfind(), tsearch(), and twalk() */
 #include <stdlib.h> /* For atoi() */
+#include "omp.h"
 
 #include "sequence.h"
 #include "lineparse.h"
@@ -709,24 +710,27 @@ Sequence *Sequence_mask(Sequence *s){
     register Sequence_Filter *seq_filter;
     register Sequence_Translation *seq_translation;
     /* Find the base sequence */
-    #pragma omp parallel private(seq_subseq, seq_filter, seq_translation) {
+    #pragma omp parallel default(none) private(seq_subseq, seq_filter, seq_translation)
+    {
         while(ok) {
-            if (curr_seq->type == Sequence_Type_INTMEM
+            #pragma omp flush(ok)
+            if (!ok && curr_seq->type == Sequence_Type_INTMEM
                 || curr_seq->type == Sequence_Type_EXTMEM) {
                 ok = FALSE;
             } else {
-                #pragma omp critical(seq_list) {
-                    g_ptr_array_add(seq_list, curr_seq);
+                #pragma omp critical(seq_list)
+                {
+                    if (ok) g_ptr_array_add(seq_list, curr_seq);
                 }
-                if (curr_seq->type == Sequence_Type_SUBSEQ) {
+                if (ok && curr_seq->type == Sequence_Type_SUBSEQ) {
                     seq_subseq = curr_seq->data;
                     curr_seq = seq_subseq->sequence;
-                } else if (curr_seq->type == Sequence_Type_REVCOMP) {
+                } else if (ok && curr_seq->type == Sequence_Type_REVCOMP) {
                     curr_seq = curr_seq->data;
-                } else if (curr_seq->type == Sequence_Type_FILTER) {
+                } else if (ok && curr_seq->type == Sequence_Type_FILTER) {
                     seq_filter = curr_seq->data;
                     curr_seq = seq_filter->sequence;
-                } else if (curr_seq->type == Sequence_Type_TRANSLATE) {
+                } else if (ok && curr_seq->type == Sequence_Type_TRANSLATE) {
                     seq_translation = curr_seq->data;
                     curr_seq = seq_translation->sequence;
                 } else {
@@ -738,7 +742,7 @@ Sequence *Sequence_mask(Sequence *s){
     /* Apply masking filter to base sequence */
     new_seq = Sequence_filter(curr_seq, Alphabet_Filter_Type_MASKED);
     /* Apply other transformations to filtered sequence copy */
-    #pragma omp parallel for private(new_seq, seq_subseq)
+    #pragma omp parallel for default(none) private(new_seq, seq_subseq)
     for(i = seq_list->len-1; i >= 0; i--){
         curr_seq = seq_list->pdata[i];
         prev_seq = new_seq;
