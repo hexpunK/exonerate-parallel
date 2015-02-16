@@ -709,13 +709,13 @@ Sequence *Sequence_mask(Sequence *s){
     register Sequence_Translation *seq_translation;
     /* Find the base sequence */
     #pragma omp parallel for private(seq_subseq, seq_filter, seq_translation)
-    for (; i > 0; ) {
+    for (; i > 0; i+=0) {
         #pragma omp flush(i)
         if (curr_seq->type == Sequence_Type_INTMEM
             || curr_seq->type == Sequence_Type_EXTMEM) {
             i = 0;
         } else {
-            #pragma omp critical {
+            #pragma omp critical(seq_list) {
                 g_ptr_array_add(seq_list, curr_seq);
             }
             if (curr_seq->type == Sequence_Type_SUBSEQ) {
