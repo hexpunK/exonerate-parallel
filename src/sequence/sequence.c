@@ -709,7 +709,7 @@ Sequence *Sequence_mask(Sequence *s){
     register Sequence_Translation *seq_translation;
     /* Find the base sequence */
     #pragma omp parallel for private(seq_subseq, seq_filter, seq_translation)
-    for (; i > 0; i+=0) {
+    for (i = 1; i > 0; i+=1) {
         #pragma omp flush(i)
         if (curr_seq->type == Sequence_Type_INTMEM
             || curr_seq->type == Sequence_Type_EXTMEM) {
