@@ -119,7 +119,7 @@ gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
                                        user_data);
             fasta_pipe->is_full = TRUE;
             fasta_pipe->prep_func(user_data);
-            }
+        }
         target_stop = FastaPipe_process_database(
                                    fasta_pipe->target_db,
                                    fasta_pipe->target_func,
@@ -131,8 +131,7 @@ gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
             FastaDB_rewind(fasta_pipe->target_db);
             fasta_pipe->is_full = FALSE;
             fasta_pipe->term_func(user_data);
-            }
+        }
     } while(!target_stop);
     return target_stop;
-    }
-
+}
