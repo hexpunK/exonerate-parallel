@@ -701,6 +701,7 @@ void Sequence_destroy(Sequence *s){
     }
 
 Sequence *Sequence_mask(Sequence *s){
+    register gboolean ok = TRUE;
     register Sequence *curr_seq = s, *new_seq, *prev_seq;
     register gint i;
     register GPtrArray *seq_list = g_ptr_array_new();
@@ -708,29 +709,29 @@ Sequence *Sequence_mask(Sequence *s){
     register Sequence_Filter *seq_filter;
     register Sequence_Translation *seq_translation;
     /* Find the base sequence */
-    #pragma omp parallel for private(seq_subseq, seq_filter, seq_translation)
-    for (i = 1; i > 0; i+=1) {
-        #pragma omp flush(i)
-        if (curr_seq->type == Sequence_Type_INTMEM
-            || curr_seq->type == Sequence_Type_EXTMEM) {
-            i = 0;
-        } else {
-            #pragma omp critical(seq_list) {
-                g_ptr_array_add(seq_list, curr_seq);
-            }
-            if (curr_seq->type == Sequence_Type_SUBSEQ) {
-                seq_subseq = curr_seq->data;
-                curr_seq = seq_subseq->sequence;
-            } else if (curr_seq->type == Sequence_Type_REVCOMP) {
-                curr_seq = curr_seq->data;
-            } else if (curr_seq->type == Sequence_Type_FILTER) {
-                seq_filter = curr_seq->data;
-                curr_seq = seq_filter->sequence;
-            } else if (curr_seq->type == Sequence_Type_TRANSLATE) {
-                seq_translation = curr_seq->data;
-                curr_seq = seq_translation->sequence;
+    #pragma omp parallel private(seq_subseq, seq_filter, seq_translation) {
+        while(ok) {
+            if (curr_seq->type == Sequence_Type_INTMEM
+                || curr_seq->type == Sequence_Type_EXTMEM) {
+                ok = FALSE;
             } else {
-                g_error("Unknown Sequence Type [%d]", curr_seq->type);
+                #pragma omp critical(seq_list) {
+                    g_ptr_array_add(seq_list, curr_seq);
+                }
+                if (curr_seq->type == Sequence_Type_SUBSEQ) {
+                    seq_subseq = curr_seq->data;
+                    curr_seq = seq_subseq->sequence;
+                } else if (curr_seq->type == Sequence_Type_REVCOMP) {
+                    curr_seq = curr_seq->data;
+                } else if (curr_seq->type == Sequence_Type_FILTER) {
+                    seq_filter = curr_seq->data;
+                    curr_seq = seq_filter->sequence;
+                } else if (curr_seq->type == Sequence_Type_TRANSLATE) {
+                    seq_translation = curr_seq->data;
+                    curr_seq = seq_translation->sequence;
+                } else {
+                    g_error("Unknown Sequence Type [%d]", curr_seq->type);
+                }
             }
         }
     }
