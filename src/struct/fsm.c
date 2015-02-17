@@ -191,7 +191,7 @@ void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
     g_assert(f->is_compiled);
     //do {
     #pragma omp parallel for
-    for ( ; *p != NULL; *++p) {
+    for ( ; p > 0; *++p) {
         if(n[c = f->traversal_filter[*p]].data)
            ftf(p-(guchar*)seq, n[c].data, user_data);
         n = n[c].next;
