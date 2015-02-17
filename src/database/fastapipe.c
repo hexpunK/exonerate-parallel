@@ -92,14 +92,14 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
                           FastaDB_Seq **prev_seq, gpointer user_data){
     register FastaDB_Seq *fdbs;
     register gboolean stop_requested = FALSE;
-        while((fdbs = FastaPipe_next_seq(fdb, mask,
-                                     use_revcomp, prev_seq))){
-            #pragma omp task shared(stop_requested) firstprivate(fdbs, user_data) {
-                #pragma omp flush(stop_requested)
-                if(!stop_requested) {
-                    stop_requested = next_seq_func(fdbs, user_data);
-                    FastaDB_Seq_destroy(fdbs);
-                }
+    while((fdbs = FastaPipe_next_seq(fdb, mask,
+             use_revcomp, prev_seq))){
+        #pragma omp task shared(stop_requested) private(fdbs, user_data)
+        {
+            #pragma omp flush(stop_requested)
+            if(!stop_requested) {
+                stop_requested = next_seq_func(fdbs, user_data);
+                FastaDB_Seq_destroy(fdbs);
             }
         }
         #pragma omp taskwait
