@@ -322,7 +322,7 @@ FastaDB_Seq *FastaDB_Seq_share(FastaDB_Seq *fdbs){
 
 void FastaDB_Seq_destroy(FastaDB_Seq *fdbs){
     g_assert(fdbs);
-    if(--fdbs->ref_count)
+    if(!fdbs || --fdbs->ref_count)
         return;
     CompoundFile_Location_destroy(fdbs->location);
     FastaDB_close(fdbs->source);
@@ -1118,4 +1118,3 @@ Alphabet_Type FastaDB_guess_type(gchar *path){
     Alphabet_destroy(alphabet);
     return type;
     }
-
