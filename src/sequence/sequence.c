@@ -18,7 +18,6 @@
 #include <ctype.h>  /* For toupper() */
 #include <search.h> /* For tdelete(), tfind(), tsearch(), and twalk() */
 #include <stdlib.h> /* For atoi() */
-#include <omp.h>
 
 #include "sequence.h"
 #include "lineparse.h"
@@ -78,7 +77,7 @@ static GTree *Sequence_create_annotation_tree(gchar *path){
                 }
             annotation = Sequence_Annotation_create(id, strand,
                                              cds_start, cds_length);
-            g_assert(!tfind((void*)annotation->id, &tree,
+            g_assert(!tfind((void*)annotation->id, &tree, 
                           Sequence_Annotation_compare));
             tsearch((void*)annotation, &tree, Sequence_Annotation_compare);
             }
@@ -743,33 +742,39 @@ Sequence *Sequence_mask(Sequence *s){
     /* Apply masking filter to base sequence */
     new_seq = Sequence_filter(curr_seq, Alphabet_Filter_Type_MASKED);
     /* Apply other transformations to filtered sequence copy */
-    #pragma omp parallel for private(new_seq, seq_subseq)
     for(i = seq_list->len-1; i >= 0; i--){
         curr_seq = seq_list->pdata[i];
         prev_seq = new_seq;
-        if (curr_seq->type == Sequence_Type_SUBSEQ) {
-            seq_subseq = curr_seq->data;
-            new_seq = Sequence_subseq(prev_seq,
-                                      seq_subseq->start,
-                                      seq_subseq->sequence->len);
-        } else if (curr_seq->type == Sequence_Type_REVCOMP) {
-            new_seq = Sequence_revcomp(prev_seq);
-        } else if (curr_seq->type == Sequence_Type_FILTER) {
-            new_seq = Sequence_revcomp(prev_seq);
-        } else if (curr_seq->type == Sequence_Type_TRANSLATE) {
-            seq_translation = curr_seq->data;
-            new_seq = Sequence_translate(prev_seq,
-                                         seq_translation->translate,
-                                         seq_translation->frame);
-        } else if (curr_seq->type == Sequence_Type_INTMEM
-            || curr_seq->type == Sequence_Type_INTMEM) {
-            g_error("impossible");
-        } else {
-            g_error("Unknown Sequence type");
-        }
-
+        switch(curr_seq->type){
+            case Sequence_Type_SUBSEQ:
+                seq_subseq = curr_seq->data;
+                new_seq = Sequence_subseq(prev_seq,
+                                          seq_subseq->start,
+                                          seq_subseq->sequence->len);
+                break;
+            case Sequence_Type_REVCOMP:
+                new_seq = Sequence_revcomp(prev_seq);
+                break;
+            case Sequence_Type_FILTER:
+                seq_filter = curr_seq->data;
+                new_seq = Sequence_filter(prev_seq, seq_filter->filter_type);
+                break;
+            case Sequence_Type_TRANSLATE:
+                seq_translation = curr_seq->data;
+                new_seq = Sequence_translate(prev_seq,
+                                             seq_translation->translate,
+                                             seq_translation->frame);
+                break;
+            case Sequence_Type_INTMEM:
+            case Sequence_Type_EXTMEM:
+                g_error("impossible");
+                break;
+            default:
+                g_error("Unknown Sequence type");
+                break;
+            }
         Sequence_destroy(prev_seq);
-    }
+        }
     g_ptr_array_free(seq_list, TRUE);
     return new_seq;
     }
@@ -874,3 +879,6 @@ void Sequence_unlock(Sequence *s){
 #endif /* USE_PTHREADS */
     return;
     }
+
+
+
