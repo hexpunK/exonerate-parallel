@@ -12,6 +12,7 @@
 *  If you use this code, please keep this notice intact.         *
 *                                                                *
 \****************************************************************/
+#include <omp.h>
 
 #include "fastapipe.h"
 
@@ -91,15 +92,20 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
                           FastaDB_Seq **prev_seq, gpointer user_data){
     register FastaDB_Seq *fdbs;
     register gboolean stop_requested = FALSE;
-    while((fdbs = FastaPipe_next_seq(fdb, mask,
+        while((fdbs = FastaPipe_next_seq(fdb, mask,
                                      use_revcomp, prev_seq))){
-        stop_requested = next_seq_func(fdbs, user_data);
-        FastaDB_Seq_destroy(fdbs);
-        if(stop_requested)
-            break;
+            #pragma omp task shared(stop_requested) firstprivate(fdbs, user_data) {
+                #pragma omp flush(stop_requested)
+                if(!stop_requested) {
+                    stop_requested = next_seq_func(fdbs, user_data);
+                    FastaDB_Seq_destroy(fdbs);
+                }
+            }
         }
-    return stop_requested;
+        #pragma omp taskwait
     }
+    return stop_requested;
+}
 /* Will return FALSE at end of database file
  */
 
