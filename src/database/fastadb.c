@@ -1118,3 +1118,4 @@ Alphabet_Type FastaDB_guess_type(gchar *path){
     Alphabet_destroy(alphabet);
     return type;
     }
+

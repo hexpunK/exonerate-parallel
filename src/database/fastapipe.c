@@ -12,7 +12,6 @@
 *  If you use this code, please keep this notice intact.         *
 *                                                                *
 \****************************************************************/
-#include <omp.h>
 
 #include "fastapipe.h"
 
@@ -92,25 +91,15 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
                           FastaDB_Seq **prev_seq, gpointer user_data){
     register FastaDB_Seq *fdbs;
     register gboolean stop_requested = FALSE;
-    fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq)
-    #pragma omp parallel
-    {
-        #pragma omp single
-        {
-            while(fdbs) {
-                #pragma omp task shared(stop_requested) firstprivate(fdbs)
-                {
-                    if(!stop_requested) {
-                        stop_requested = next_seq_func(fdbs, user_data);
-                        FastaDB_Seq_destroy(fdbs);
-                    }
-                }
-                fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq)
-            }
+    while((fdbs = FastaPipe_next_seq(fdb, mask,
+                                     use_revcomp, prev_seq))){
+        stop_requested = next_seq_func(fdbs, user_data);
+        FastaDB_Seq_destroy(fdbs);
+        if(stop_requested)
+            break;
         }
-    }
     return stop_requested;
-}
+    }
 /* Will return FALSE at end of database file
  */
 
@@ -130,7 +119,7 @@ gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
                                        user_data);
             fasta_pipe->is_full = TRUE;
             fasta_pipe->prep_func(user_data);
-        }
+            }
         target_stop = FastaPipe_process_database(
                                    fasta_pipe->target_db,
                                    fasta_pipe->target_func,
@@ -142,7 +131,8 @@ gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
             FastaDB_rewind(fasta_pipe->target_db);
             fasta_pipe->is_full = FALSE;
             fasta_pipe->term_func(user_data);
-        }
+            }
     } while(!target_stop);
     return target_stop;
-}
+    }
+
