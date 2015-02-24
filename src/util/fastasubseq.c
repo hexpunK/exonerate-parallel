@@ -13,15 +13,18 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
+
+FILE *file;
 
 int Argument_main(Argument *arg){
     register FastaDB_Seq *fdbs;
     register Sequence *subseq;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path;
+    gchar *query_path, *outputFile;
     gint subseq_start, subseq_length;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
@@ -32,10 +35,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'l', "length", "length",
         "Subsequence length", NULL,
         Argument_parse_int, &subseq_length);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastasubseq",
         "A utility to extract fasta format subsequences\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fdbs = FastaDB_get_single(query_path, NULL);
     if(subseq_start < 0)
         g_error("Subsequence must start after sequence start");
@@ -45,9 +63,8 @@ int Argument_main(Argument *arg){
         g_error("Subsequence must end before end of [%s](%d)",
                 fdbs->seq->id, fdbs->seq->len);
     subseq = Sequence_subseq(fdbs->seq, subseq_start, subseq_length);
-    Sequence_print_fasta(subseq, stdout, FALSE);
+    Sequence_print_fasta(subseq, file, FALSE);
     Sequence_destroy(subseq);
     FastaDB_Seq_destroy(fdbs);
     return 0;
     }
-

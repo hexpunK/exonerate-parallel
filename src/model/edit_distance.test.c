@@ -13,12 +13,16 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "edit_distance.h"
 #include "alignment.h"
 #include "optimal.h"
 #include "sequence.h"
 
+FILE *file;
+
 int Argument_main(Argument *arg){
+    file = stdout;
     register C4_Model *edit_distance = EditDistance_create();
     register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
@@ -55,7 +59,7 @@ int Argument_main(Argument *arg){
                                   C4_IMPOSSIBLY_LOW_SCORE, NULL);
     g_message("Alignment score is [%d] (expect -23)",
               alignment->score);
-    Alignment_display(alignment, query, target, NULL, NULL, NULL, stdout);
+    Alignment_display(alignment, query, target, NULL, NULL, NULL, file);
     g_assert(score == alignment->score);
 /**/
     C4_Model_destroy(edit_distance);
@@ -70,4 +74,3 @@ int Argument_main(Argument *arg){
     g_free(tg);
     return 0;
     }
-

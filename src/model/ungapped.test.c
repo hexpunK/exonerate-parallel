@@ -13,12 +13,15 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "ungapped.h"
 #include "alignment.h"
 #include "argument.h"
 #include "submat.h"
 #include "optimal.h"
 #include "alignment.h"
+
+FILE *file;
 
 static void run_ungapped_test(Sequence *query, Sequence *target,
         gboolean translate_both, gint crib){
@@ -51,7 +54,7 @@ static void run_ungapped_test(Sequence *query, Sequence *target,
     Alignment_display(alignment, query, target,
               Ungapped_Data_get_dna_submat(ud),
               Ungapped_Data_get_protein_submat(ud),
-              Ungapped_Data_get_translate(ud), stdout);
+              Ungapped_Data_get_translate(ud), file);
     Alignment_destroy(alignment);
     Optimal_destroy(optimal);
     C4_Model_destroy(ungapped);
@@ -60,6 +63,7 @@ static void run_ungapped_test(Sequence *query, Sequence *target,
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register Alphabet
      *dna_alphabet = Alphabet_create(Alphabet_Type_DNA, FALSE),
      *protein_alphabet = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
@@ -90,4 +94,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(protein_alphabet);
     return 0;
     }
-

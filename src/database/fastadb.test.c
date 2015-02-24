@@ -13,7 +13,10 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "fastadb.h"
+
+FILE *file;
 
 gint Argument_main(Argument *arg){
     register FastaDB *fdb;
@@ -28,7 +31,7 @@ gint Argument_main(Argument *arg){
         g_message("opened file [%s]", path);
         while((fdbs = FastaDB_next(fdb, FastaDB_Mask_ALL))){
             g_message("read [%s]", fdbs->seq->id);
-            FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ALL);
+            FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ALL);
             FastaDB_Seq_destroy(fdbs);
             }
         FastaDB_close(fdb);
@@ -36,4 +39,3 @@ gint Argument_main(Argument *arg){
         }
     return 0;
     }
-

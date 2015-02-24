@@ -13,12 +13,16 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "est2genome.h"
 
 #include "alignment.h"
 #include "optimal.h"
 
+FILE *file;
+
 int Argument_main(Argument *arg){
+    file = stdout;
     register C4_Model *est2genome;
     register C4_Score score;
     register Alignment *alignment;
@@ -68,7 +72,7 @@ int Argument_main(Argument *arg){
     Alignment_display(alignment, query, target,
                       EST2Genome_Data_get_submat(e2gd),
                       EST2Genome_Data_get_submat(e2gd),
-                      NULL, stdout);
+                      NULL, file);
     g_assert(score == alignment->score);
 /**/
     Alphabet_destroy(dna_alphabet);
@@ -81,4 +85,3 @@ int Argument_main(Argument *arg){
     Region_destroy(region);
     return 0;
     }
-

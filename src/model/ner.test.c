@@ -13,11 +13,15 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "ner.h"
 #include "alignment.h"
 #include "optimal.h"
 
+FILE *file;
+
 int Argument_main(Argument *arg){
+    file = stdout;
     register C4_Score score;
     register C4_Model *ner;
     register Alignment *alignment;
@@ -61,7 +65,7 @@ int Argument_main(Argument *arg){
     g_message("Alignment score is [%d]", alignment->score);
     Alignment_display(alignment, query, target,
             NER_Data_get_dna_submat(nd),
-            NER_Data_get_protein_submat(nd), NULL, stdout);
+            NER_Data_get_protein_submat(nd), NULL, file);
     g_assert(score == alignment->score);
 /**/
     Alignment_destroy(alignment);
@@ -74,4 +78,3 @@ int Argument_main(Argument *arg){
     Sequence_destroy(target);
     return 0;
     }
-

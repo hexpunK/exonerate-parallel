@@ -20,10 +20,13 @@
 #include <strings.h> /* For strcasecmp() */
 #include <unistd.h> /* For unlink(), getpid(), getppid() etc */
 
+#include "globals.h"
 #include "gam.h"
 #include "ungapped.h"
 #include "opair.h"
 #include "rangetree.h"
+
+FILE *file;
 
 static GAM *_gam; /* file-scope variable for passing to twalk() */
 
@@ -214,14 +217,14 @@ static void GAM_StoredResult_display(GAM_StoredResult *gsr,
             putchar(ch);
             }
         }
-    fflush(stdout);
+    fflush(file);
     return;
     }
 
 /**/
 
 static int GAM_compare_id(const void *gqr1, const void *gqr2){
-    return strcmp(((const GAM_QueryResult*)gqr1)->query_id, 
+    return strcmp(((const GAM_QueryResult*)gqr1)->query_id,
                   ((const GAM_QueryResult*)gqr2)->query_id);
     }
 
@@ -692,7 +695,7 @@ static C4_Score GAM_get_query_threshold(GAM *gam, Sequence *query){
             }
         }
     if(gam->gas->percent_threshold){
-        tree_node = tfind((void*)&gq_lookup, &gam->percent_threshold_tree, 
+        tree_node = tfind((void*)&gq_lookup, &gam->percent_threshold_tree,
                           GAM_compare_id);
         gqi = tree_node ? *(GAM_QueryInfo **)tree_node : NULL;
         if(!gqi){
@@ -1244,7 +1247,7 @@ static void GAM_Result_display(GAM_Result *gam_result){
         alignment = gam_result->alignment_list->pdata[i];
         GAM_display_alignment(gam_result->gam, alignment,
                 gam_result->query, gam_result->target,
-                i+1, 0, gam_result->user_data, gam_result->self_data, stdout);
+                i+1, 0, gam_result->user_data, gam_result->self_data, file);
         }
     return;
     }
@@ -1289,4 +1292,3 @@ void GAM_unlock(GAM *gam){
     }
 
 /**/
-

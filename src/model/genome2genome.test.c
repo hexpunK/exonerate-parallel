@@ -13,10 +13,13 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "genome2genome.h"
 #include "alignment.h"
 #include "optimal.h"
 #include "submat.h"
+
+FILE *file;
 
 static void test_genome2genome(Sequence *query, Sequence *target){
     register C4_Score score;
@@ -39,7 +42,7 @@ static void test_genome2genome(Sequence *query, Sequence *target){
     Alignment_display(alignment, query, target,
                      Genome2Genome_Data_get_dna_submat(g2gd),
                      Genome2Genome_Data_get_protein_submat(g2gd),
-                     Genome2Genome_Data_get_translate(g2gd), stdout);
+                     Genome2Genome_Data_get_translate(g2gd), file);
     g_assert(score == alignment->score);
     Genome2Genome_Data_destroy(g2gd);
     C4_Model_destroy(model);
@@ -49,6 +52,7 @@ static void test_genome2genome(Sequence *query, Sequence *target){
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
     register Sequence
@@ -81,5 +85,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(alphabet);
     return 0;
     }
-
-

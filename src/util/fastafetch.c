@@ -19,8 +19,11 @@
 #include <strings.h>
 #include <errno.h>
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
+
+FILE *file;
 
 static gint fasta_index_seek_to_char(FILE *fp, gchar c){
     register gint ch;
@@ -159,7 +162,7 @@ static void fetch_sequences(gchar *fasta_path, gchar *index_path,
         fdbs = fasta_index_fetch(fdb, index_fp, mask,
                                  query_list->pdata[i], be_silent);
         if(fdbs){
-            FastaDB_Seq_print(fdbs, stdout, mask);
+            FastaDB_Seq_print(fdbs, file, mask);
             FastaDB_Seq_destroy(fdbs);
             }
         }
@@ -174,7 +177,7 @@ static void fetch_sequences(gchar *fasta_path, gchar *index_path,
 int Argument_main(Argument *arg){
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *fasta_path, *index_path, *query;
+    gchar *fasta_path, *index_path, *query, *outputFile;
     gboolean use_fosn, be_silent;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
@@ -191,11 +194,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 's', "silent", NULL,
         "Silently skip ids which cannot be found", "FALSE",
         Argument_parse_boolean, &be_silent);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastafetch",
         "Fetch a sequence from a fasta file\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fetch_sequences(fasta_path, index_path, use_fosn, be_silent, query);
     return 0;
     }
-

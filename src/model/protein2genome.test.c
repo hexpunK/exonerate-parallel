@@ -13,9 +13,12 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "protein2genome.h"
 #include "alignment.h"
 #include "optimal.h"
+
+FILE *file;
 
 static void test_alignment(C4_Model *model,
                            Sequence *query, Sequence *target,
@@ -38,7 +41,7 @@ static void test_alignment(C4_Model *model,
     Alignment_display(alignment, query, target,
                       NULL,
                       Protein2Genome_Data_get_submat(p2gd),
-                      Protein2Genome_Data_get_translate(p2gd), stdout);
+                      Protein2Genome_Data_get_translate(p2gd), file);
     g_assert(score == alignment->score);
     Alignment_destroy(alignment);
     Optimal_destroy(optimal);
@@ -59,6 +62,7 @@ static void test_protein2genome(Sequence *query, Sequence *target){
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register Alphabet *dna_alphabet
            = Alphabet_create(Alphabet_Type_DNA, FALSE),
              *protein_alphabet
@@ -90,4 +94,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(protein_alphabet);
     return 0;
     }
-

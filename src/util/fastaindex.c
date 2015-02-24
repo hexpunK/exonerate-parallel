@@ -69,7 +69,7 @@ int Argument_main(Argument *arg){
     Argument_process(arg, "fastaindex",
         "Index a fasta file\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
     fasta_index_build(fasta_path, index_path);
     return 0;
     }
-

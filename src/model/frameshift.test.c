@@ -19,4 +19,3 @@ int Argument_main(Argument *arg){
     g_warning("test does nothing");
     return 0;
     }
-

@@ -18,9 +18,11 @@
 #include <strings.h> /* For strcasemp() */
 #include <ctype.h> /* For toupper() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
 
+FILE *file;
 /**/
 
 typedef enum {
@@ -252,7 +254,7 @@ static void fasta_sort_sort_data(FastaDB *fdb,
     for(i = 0; i < si.sort_data_list->len; i++){
         sd = si.sort_data_list->pdata[i];
         fdbs = FastaDB_Key_get_seq(sd->key, FastaDB_Mask_ALL);
-        FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+        FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                        |FastaDB_Mask_DEF
                                        |FastaDB_Mask_SEQ);
         FastaDB_Seq_destroy(fdbs);
@@ -269,7 +271,7 @@ int Argument_main(Argument *arg){
     register FastaDB *fdb;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path, *sort_key;
+    gchar *query_path, *sort_key, *outputFile;
     gboolean check_order, reverse_order;
     register Sort_KeyMask sort_key_mask;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
@@ -284,10 +286,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'r', "reverse", NULL,
         "Reverse sort order", "FALSE",
         Argument_parse_boolean, &reverse_order);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastasort",
         "A utility for sorting fasta sequence databases\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     /**/
     fdb = FastaDB_open(query_path, NULL);
     sort_key_mask = SortKey_Mask_create(sort_key, reverse_order);
@@ -298,4 +315,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-

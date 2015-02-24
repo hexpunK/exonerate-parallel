@@ -15,8 +15,11 @@
 
 #include <ctype.h>
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
+
+FILE *file;
 
 static gboolean fasta_clip_traverse_func(FastaDB_Seq *fdbs,
                                               gpointer user_data){
@@ -33,7 +36,7 @@ static gboolean fasta_clip_traverse_func(FastaDB_Seq *fdbs,
     end_clip = fdbs->seq->len-i-1;
     clip_len = fdbs->seq->len-start_clip-end_clip;
     clip_seq = Sequence_subseq(fdbs->seq, start_clip, clip_len);
-    Sequence_print_fasta(clip_seq, stdout, FALSE);
+    Sequence_print_fasta(clip_seq, file, FALSE);
     Sequence_destroy(clip_seq);
     return FALSE;
     }
@@ -42,7 +45,7 @@ int Argument_main(Argument *arg){
     register FastaDB *fdb;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path;
+    gchar *query_path, *outputFile;
     gchar clip_char;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
@@ -50,10 +53,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'c', "clip", "path",
         "Clip character", "N",
         Argument_parse_char, &clip_char);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastaclip",
         "A utility clip terminal Ns from fasta format sequences\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fdb = FastaDB_open(query_path, NULL);
     FastaDB_traverse(fdb, FastaDB_Mask_ALL,
                      fasta_clip_traverse_func,
@@ -61,4 +79,3 @@ int Argument_main(Argument *arg){
     FastaDB_close(fdb);
     return 0;
     }
-

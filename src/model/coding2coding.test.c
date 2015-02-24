@@ -13,10 +13,13 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "coding2coding.h"
 #include "alignment.h"
 #include "optimal.h"
 #include "submat.h"
+
+FILE *file;
 
 static void test_coding2coding(Sequence *query, Sequence *target){
     register C4_Score score;
@@ -39,7 +42,7 @@ static void test_coding2coding(Sequence *query, Sequence *target){
     Alignment_display(alignment, query, target,
                      Coding2Coding_Data_get_submat(c2cd),
                      Coding2Coding_Data_get_submat(c2cd),
-                     Coding2Coding_Data_get_translate(c2cd), stdout);
+                     Coding2Coding_Data_get_translate(c2cd), file);
     g_assert(score == alignment->score);
     Coding2Coding_Data_destroy(c2cd);
     C4_Model_destroy(model);
@@ -47,6 +50,7 @@ static void test_coding2coding(Sequence *query, Sequence *target){
     }
 
 int Argument_main(Argument *arg){
+    file = stdout;
     register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
     register Sequence
@@ -74,4 +78,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(alphabet);
     return 0;
     }
-

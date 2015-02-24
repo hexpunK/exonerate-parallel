@@ -13,6 +13,7 @@
 *                                                                *
 \****************************************************************/
 
+#include "globals.h"
 #include "argument.h"
 #include "analysis.h"
 #include "gam.h"
@@ -35,6 +36,8 @@
 #include "sdp.h"
 #include "splice.h"
 
+FILE *file; // An output file, can be a file or stdout/err. Awful global hack.
+
 int Argument_main(Argument *arg){
     register Analysis *analysis;
     register ArgumentSet *as_input =
@@ -44,6 +47,7 @@ int Argument_main(Argument *arg){
     gint query_chunk_id, target_chunk_id,
          query_chunk_total, target_chunk_total,
          verbosity;
+    gchar *outputFile;
     /**/
     ArgumentSet_add_option(as_input, 'q', "query", "path",
     "Specify query sequences as a fasta format file", NULL,
@@ -75,6 +79,10 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as_input, 'V', "verbose", "level",
     "Show search progress", "1",
     Argument_parse_int, &verbosity);
+    /**/
+    ArgumentSet_add_option(as_input, 'O', "output", "path",
+    "Specify the output file", "stdout",
+    Argument_parse_string, &outputFile);
     /**/
     Argument_absorb_ArgumentSet(arg, as_input);
     Translate_ArgumentSet_create(arg);
@@ -123,6 +131,16 @@ int Argument_main(Argument *arg){
     if(verbosity > 0)
         Argument_info(arg);
     /**/
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
     analysis = Analysis_create(query_path_list, query_type,
                                query_chunk_id, query_chunk_total,
                                target_path_list, target_type,
@@ -133,8 +151,8 @@ int Argument_main(Argument *arg){
     /**/
     if(verbosity > 0)
         g_print("-- completed exonerate analysis\n");
+    fclose(file);
     return 0;
     }
 
 /**/
-

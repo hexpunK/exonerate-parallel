@@ -14,9 +14,14 @@
 \****************************************************************/
 
 #include <stdio.h>
+
+#include "globals.h"
 #include "compoundfile.h"
 
+FILE *file;
+
 int main(void){
+    file = stdout;
     register gchar *path_a =
         g_strconcat(SOURCE_ROOT_DIR, G_DIR_SEPARATOR_S,
                     "src", G_DIR_SEPARATOR_S,
@@ -58,9 +63,9 @@ int main(void){
     cfl_stop = CompoundFile_Location_from_pos(cf, (total_length/4)*3);
     CompoundFile_set_limits(cf, cfl_start, cfl_stop);
     g_print("File truncated from [");
-    CompoundFile_Pos_print(stdout, total_length);
+    CompoundFile_Pos_print(file, total_length);
     g_print("] to [");
-    CompoundFile_Pos_print(stdout, CompoundFile_get_length(cf));
+    CompoundFile_Pos_print(file, CompoundFile_get_length(cf));
     g_print("]\n");
     CompoundFile_Location_destroy(cfl_start);
     CompoundFile_Location_destroy(cfl_stop);
@@ -76,4 +81,3 @@ int main(void){
     g_free(path_c);
     return 0;
     }
-

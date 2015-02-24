@@ -15,8 +15,11 @@
 
 #include <ctype.h>
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
+
+FILE *file;
 
 typedef struct {
     gboolean clean_protein;
@@ -33,7 +36,7 @@ static gboolean fasta_clean_traverse_func(FastaDB_Seq *fdbs,
     else
         filter_type = Alphabet_Filter_Type_CLEAN;
     seq = Sequence_filter(fdbs->seq, filter_type);
-    Sequence_print_fasta(seq, stdout, FALSE);
+    Sequence_print_fasta(seq, file, FALSE);
     Sequence_destroy(seq);
     return FALSE;
     }
@@ -42,7 +45,7 @@ int Argument_main(Argument *arg){
     register FastaDB *fdb;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path;
+    gchar *query_path, *outputFile;
     register Alphabet *alphabet;
     FastaClean_Info fci;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
@@ -54,10 +57,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'a', "acgtn", NULL,
         "Only allow [ACGTN] nucleotide symbols", "FALSE",
         Argument_parse_boolean, &fci.clean_acgtn);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastaclean",
         "A utility to clean fasta format file symbols\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     if(fci.clean_protein)
         alphabet = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
     else
@@ -69,4 +87,3 @@ int Argument_main(Argument *arg){
     Alphabet_destroy(alphabet);
     return 0;
     }
-

@@ -15,8 +15,11 @@
 
 #include <ctype.h> /* For toupper() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
+
+FILE *file;
 
 static gboolean is_start_codon(gchar *seq){
     if((toupper(seq[0]) == 'A')
@@ -100,7 +103,7 @@ static gboolean fasta_valid_cds_traverse_func(FastaDB_Seq *fdbs,
             return FALSE;
             }
         }
-    FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+    FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                    |FastaDB_Mask_DEF
                                    |FastaDB_Mask_SEQ);
     g_free(seq);
@@ -111,7 +114,7 @@ int Argument_main(Argument *arg){
     register FastaDB *fdb;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path;
+    gchar *query_path, *outputFile;
     gboolean explain;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
@@ -119,10 +122,25 @@ int Argument_main(Argument *arg){
     ArgumentSet_add_option(as, 'e', "explain", NULL,
         "Explain reasons for rejection", "FALSE",
         Argument_parse_boolean, &explain);
+    ArgumentSet_add_option(as, 'O', "output", "path",
+        "Specify the output file", "stdout",
+        Argument_parse_string, &outputFile);
     Argument_absorb_ArgumentSet(arg, as);
     Argument_process(arg, "fastavalidcds",
         "A utility to check for valid CDS sequences\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2004.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     fdb = FastaDB_open(query_path, NULL);
     FastaDB_traverse(fdb, FastaDB_Mask_ALL,
                          fasta_valid_cds_traverse_func, &explain);
@@ -131,4 +149,3 @@ int Argument_main(Argument *arg){
     }
 
 /**/
-

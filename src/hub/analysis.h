@@ -22,6 +22,7 @@ extern "C" {
 
 #include <glib.h>
 
+#include "globals.h"
 #include "fastapipe.h"
 #include "gam.h"
 #include "bsam.h"
@@ -31,6 +32,8 @@ extern "C" {
 #include "comparison.h"
 #include "socket.h"
 #include "jobqueue.h"
+
+FILE *file;
 
 typedef struct {
     gboolean  use_exhaustive;
@@ -112,4 +115,3 @@ void Analysis_process(Analysis *analysis);
 #endif /* __cplusplus */
 
 #endif /* INCLUDED_ANALYSIS_H */
-

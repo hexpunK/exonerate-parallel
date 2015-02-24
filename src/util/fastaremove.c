@@ -18,14 +18,17 @@
 #include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For isspace() */
 
+#include "globals.h"
 #include "argument.h"
 #include "fastadb.h"
+
+FILE *file;
 
 static gboolean fasta_remove_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){
     register GTree *id_tree = user_data;
     if(!g_tree_lookup(id_tree, fdbs->seq->id))
-        FastaDB_Seq_print(fdbs, stdout, FastaDB_Mask_ID
+        FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                        |FastaDB_Mask_DEF
                                        |FastaDB_Mask_SEQ);
     return FALSE;
@@ -61,7 +64,7 @@ int Argument_main(Argument *arg){
     register FILE *remove_fp;
     register ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    gchar *query_path, *remove_path;
+    gchar *query_path, *remove_path, *outputFile;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
         Argument_parse_string, &query_path);
@@ -72,6 +75,18 @@ int Argument_main(Argument *arg){
     Argument_process(arg, "fastaremove",
         "Remove sequences from a fasta file\n"
         "Guy St.C. Slater. guy@ebi.ac.uk. 2000-2003.\n", NULL);
+
+    if (g_strcmp0(outputFile, "stdout") != 0) {
+        fprintf(stdout, "Writing output to %s\n", outputFile);
+        file = fopen(outputFile, "w");
+    } else {
+        file = stdout;
+    }
+    if (file == NULL) {
+        fprintf(stderr, "Could not create output file '%s'\n", outputFile);
+        exit(-1);
+    }
+
     if(!strcasecmp(remove_path, "stdin")){
         remove_fp = stdin;
     } else {
@@ -92,4 +107,3 @@ int Argument_main(Argument *arg){
     g_string_chunk_free(id_alloc);
     return 0;
     }
-
