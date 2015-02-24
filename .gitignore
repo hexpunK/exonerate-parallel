@@ -49,3 +49,5 @@ Makefile.in
 *.guess
 *.bak
 *.sub
+*.trs
+*.rpt
