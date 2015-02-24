@@ -44,3 +44,10 @@ Makefile.in
 /install-sh
 /missing
 /stamp-h1
+
+*.log
+*.guess
+*.bak
+*.sub
+*.trs
+*.rpt
