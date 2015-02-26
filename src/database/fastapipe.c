@@ -14,6 +14,8 @@
 \****************************************************************/
 
 #include "fastapipe.h"
+#include <stdio.h>
+#include <omp.h>
 
 FastaPipe *FastaPipe_create(FastaDB *query_fdb, FastaDB *target_fdb,
                FastaPipe_Boundary_Func init_func,
@@ -48,22 +50,22 @@ FastaPipe *FastaPipe_create(FastaDB *query_fdb, FastaDB *target_fdb,
     } else {
         fasta_pipe->revcomp_query = FALSE;
         fasta_pipe->revcomp_target = FALSE;
-        }
+    }
     fasta_pipe->prev_query = NULL;
     fasta_pipe->prev_target = NULL;
     return fasta_pipe;
-    }
+}
 
 void FastaPipe_destroy(FastaPipe *fasta_pipe){
     FastaDB_close(fasta_pipe->query_db);
     FastaDB_close(fasta_pipe->target_db);
     g_free(fasta_pipe);
     return;
-    }
+}
 
 static FastaDB_Seq *FastaPipe_next_seq(FastaDB *fdb, FastaDB_Mask mask,
                     gboolean use_revcomp, FastaDB_Seq **prev_seq){
-    register FastaDB_Seq *fdbs, *revcomp_fdbs;
+    FastaDB_Seq *fdbs, *revcomp_fdbs;
     if(*prev_seq){
         fdbs = FastaDB_Seq_revcomp(*prev_seq);
         FastaDB_Seq_destroy(*prev_seq);
@@ -76,35 +78,61 @@ static FastaDB_Seq *FastaPipe_next_seq(FastaDB *fdb, FastaDB_Mask mask,
                 revcomp_fdbs = FastaDB_Seq_revcomp(fdbs);
                 FastaDB_Seq_destroy(fdbs);
                 return revcomp_fdbs;
-                }
+            }
             if((!fdbs->seq->annotation)
              || (fdbs->seq->annotation->strand == Sequence_Strand_REVCOMP))
                 (*prev_seq) = FastaDB_Seq_share(fdbs);
-            }
         }
-    return fdbs;
     }
+    return fdbs;
+}
 
 static gboolean FastaPipe_process_database(FastaDB *fdb,
                           FastaPipe_NextSeq_Func next_seq_func,
                           FastaDB_Mask mask, gboolean use_revcomp,
                           FastaDB_Seq **prev_seq, gpointer user_data){
-    register FastaDB_Seq *fdbs;
-    register gboolean stop_requested = FALSE;
-    while((fdbs = FastaPipe_next_seq(fdb, mask,
-                                     use_revcomp, prev_seq))){
-        stop_requested = next_seq_func(fdbs, user_data);
-        FastaDB_Seq_destroy(fdbs);
-        if(stop_requested)
-            break;
+    FastaDB_Seq *fdbs;
+    gboolean stop_requested = FALSE;
+    int i = 0;
+
+    fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
+    printf("First fdbs set.\n");
+    #pragma omp parallel
+    {
+	printf("Entered parallel section.\n");
+        #pragma omp single nowait
+        {
+	    printf("Entered single section.\n");
+            while(fdbs){
+	      //printf("FastaPipe_process %d\n", i++);
+	      printf("fdbs %p\n", fdbs);
+                #pragma omp task default(shared) firstprivate(fdbs)
+                {
+                   next_seq_func(fdbs, user_data);
+                   //#pragma omp critical
+                   //{
+                   //    stop_requested = tmpStop;
+                   //}
+                }
+                fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
+                //#pragma omp flush(stop_requested)
+                //if(stop_requested)
+                //    break;
+            }
         }
-    return stop_requested;
     }
+
+    while((fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq))){
+        FastaDB_Seq_destroy(fdbs);
+    }
+
+    return stop_requested;
+}
 /* Will return FALSE at end of database file
  */
 
 gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
-    register gboolean target_stop = FALSE;
+    gboolean target_stop = FALSE;
     do {
         if(!fasta_pipe->is_full){
             if(FastaDB_is_finished(fasta_pipe->query_db)
@@ -119,7 +147,7 @@ gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
                                        user_data);
             fasta_pipe->is_full = TRUE;
             fasta_pipe->prep_func(user_data);
-            }
+        }
         target_stop = FastaPipe_process_database(
                                    fasta_pipe->target_db,
                                    fasta_pipe->target_func,
@@ -131,8 +159,8 @@ gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
             FastaDB_rewind(fasta_pipe->target_db);
             fasta_pipe->is_full = FALSE;
             fasta_pipe->term_func(user_data);
-            }
+       }
     } while(!target_stop);
     return target_stop;
-    }
+}
 

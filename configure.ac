@@ -51,7 +51,7 @@ case $host in
    # use the TRU64 C compiler
    CC="cc"
    GCC= # No longer true (prevents GCC specific CFLAGS being set)
-   CFLAGS="-O3 -arch ev6 -fast"
+   CFLAGS="-arch ev6 -fast"
    ;;
    *-irix*)
    echo "Customising build for IRIX"
@@ -162,7 +162,7 @@ elif test "$enable_assert" = no; then
     if test "$GCC" = "yes"; then
         # Not currently using -fomit-frame-pointer as clashes with -pg
         # CFLAGS="$CFLAGS -O3 -fomit-frame-pointer -finline-functions"
-        CFLAGS="$CFLAGS -O3 -finline-functions"
+        CFLAGS="$CFLAGS -finline-functions"
     fi
 else
     echo "error: must be yes or no: --enable-assert:[$enable_assert]"

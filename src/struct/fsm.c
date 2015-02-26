@@ -21,6 +21,7 @@
 #include "fsm.h"
 
 #include <string.h> /* For memcpy() */
+#include <stdio.h>
 #include "omp.h"
 
 FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
@@ -32,9 +33,10 @@ FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
     g_assert(combine_func);
     for(p = ((guchar*)alphabet); *p; p++)
         f->index[*p] = 1;
-    for(p = f->index+ALPHABETSIZE; p > f->index; p--)
+    for(p = f->index+ALPHABETSIZE; p > f->index; p--) {
         if(*p)
             *p = ++f->width;
+    }
     f->width++; /* Add one for NULL */
     memcpy(f->insertion_filter, f->index, sizeof(gchar)*ALPHABETSIZE);
     memcpy(f->traversal_filter, f->index, sizeof(gchar)*ALPHABETSIZE);
@@ -103,9 +105,11 @@ void FSM_destroy_with_data(FSM *f, FSM_Destroy_Func fdf,
     }
 
 gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
-    register FSM_Node **ptp, *n = f->root;
-    register guchar *useq, *end;
+    FSM_Node **ptp, *n = f->root;
+    guchar *useq, *end;
     g_assert(!f->is_compiled);
+    //printf("*n pointer: %p\n", n);
+    //printf("*n[1] pointer: %p\n", n[1]);
     for(useq = (guchar*)seq, end = useq+len-1; useq < end; useq++){
         if(!f->insertion_filter[*useq])
             g_error("Illegal char (%d)[%c] in FSM word [%s]",
@@ -113,9 +117,9 @@ gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
         if(!*(ptp = &n[f->insertion_filter[*useq]].next)){
             *ptp = RecycleBin_alloc_blank(f->recycle);
             f->chunk_count++;
-            }
-        n = *ptp;
         }
+        n = *ptp;
+    }
     if(n[f->insertion_filter[*useq]].data){
         if(node_data)
             n[f->insertion_filter[*useq]].data =
@@ -123,9 +127,9 @@ gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
                               node_data, f->user_data);
     } else {
         n[f->insertion_filter[*useq]].data = node_data;
-        }
-    return n[f->insertion_filter[*useq]].data;
     }
+    return n[f->insertion_filter[*useq]].data;
+}
 
 /* FSM_compile : Converts the pre-FSM trie to the FSM.
    1: All position zero nodes must have no score and point to root.
@@ -189,27 +193,18 @@ void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
     register FSM_Node *n = f->root;
     register guchar *p = (guchar*)seq;
     register gint c;
+    int i = 0;
     g_assert(f->is_compiled);
-<<<<<<< HEAD
-    //do {
-    #pragma omp parallel for
-    for ( ; *p != NULL; *++p) {
-        if(n[c = f->traversal_filter[*p]].data)
-           ftf(p-(guchar*)seq, n[c].data, user_data);
-=======
+    //printf("FSM_Traverse - outer\n");
     do {
+        //printf("FSM_Traverse - innder %d\n", i++);
         if(n[c = f->traversal_filter[*p]].data) {
-         	#pragma omp parallel
-		{  	
-			ftf(p-(guchar*)seq, n[c].data, user_data);
-		}
+            ftf(p-(guchar*)seq, n[c].data, user_data);
 	}
->>>>>>> 2.4
-        n = n[c].next;
-    }
-    //} while(*++p);
+        n = n[c].next; 
+    } while(*++p);
     return;
-    }
+}
 
 static void FSM_add_filter(FSM *f, guchar *src, guchar *dst){
     register gint i;
