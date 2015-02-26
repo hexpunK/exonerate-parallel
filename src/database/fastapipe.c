@@ -91,36 +91,23 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
                           FastaPipe_NextSeq_Func next_seq_func,
                           FastaDB_Mask mask, gboolean use_revcomp,
                           FastaDB_Seq **prev_seq, gpointer user_data){
-    FastaDB_Seq *fdbs;
+    FastaDB_Seq *fdbs, *init_seq = *prev_seq;
     gboolean stop_requested = FALSE;
-    int i = 0;
+    int i = 0, j = 0;
 
-    fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
-    printf("First fdbs set.\n");
-    #pragma omp parallel
-    {
-	printf("Entered parallel section.\n");
-        #pragma omp single nowait
-        {
-	    printf("Entered single section.\n");
-            while(fdbs){
-	      //printf("FastaPipe_process %d\n", i++);
-	      printf("fdbs %p\n", fdbs);
-                #pragma omp task default(shared) firstprivate(fdbs)
-                {
-                   next_seq_func(fdbs, user_data);
-                   //#pragma omp critical
-                   //{
-                   //    stop_requested = tmpStop;
-                   //}
-                }
-                fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
-                //#pragma omp flush(stop_requested)
-                //if(stop_requested)
-                //    break;
-            }
-        }
+    while((fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq))){
+      i++;
     }
+
+    FastaDB_rewind(fdb);
+    
+    #pragma omp parallel for
+    for (; j < i; j++) {
+        fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
+        next_seq_func(fdbs, user_data);	
+    }
+
+    FastaDB_rewind(fdb);
 
     while((fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq))){
         FastaDB_Seq_destroy(fdbs);
