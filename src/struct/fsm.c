@@ -22,17 +22,17 @@
 
 #include <string.h> /* For memcpy() */
 #include <stdio.h>
-#include "omp.h"
+#include <omp.h>
 
 FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
                 FSM_Join_Func combine_func, gpointer user_data){
-    register FSM *f = g_new0(FSM, 1);
-    register guchar *p;
+    FSM *f = g_new0(FSM, 1);
+    guchar *p;
     g_assert(alphabet);
     g_assert(merge_func);
     g_assert(combine_func);
     for(p = ((guchar*)alphabet); *p; p++)
-        f->index[*p] = 1;
+        f->index[*p] = 1;    
     for(p = f->index+ALPHABETSIZE; p > f->index; p--) {
         if(*p)
             *p = ++f->width;
@@ -105,7 +105,7 @@ void FSM_destroy_with_data(FSM *f, FSM_Destroy_Func fdf,
     }
 
 gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
-    FSM_Node **ptp, *n = f->root;
+    FSM_Node *ptp, *n = f->root;
     guchar *useq, *end;
     g_assert(!f->is_compiled);
     //printf("*n pointer: %p\n", n);
@@ -114,11 +114,11 @@ gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
         if(!f->insertion_filter[*useq])
             g_error("Illegal char (%d)[%c] in FSM word [%s]",
                     *useq, *useq, seq);
-        if(!*(ptp = &n[f->insertion_filter[*useq]].next)){
-            *ptp = RecycleBin_alloc_blank(f->recycle);
+        if(!(ptp = n[f->insertion_filter[*useq]].next)){
+            ptp = RecycleBin_alloc_blank(f->recycle);
             f->chunk_count++;
         }
-        n = *ptp;
+        n = ptp;
     }
     if(n[f->insertion_filter[*useq]].data){
         if(node_data)

@@ -37,7 +37,6 @@ typedef struct JobQueue_Task {
 } JobQueue_Task;
 
 typedef struct {
-#ifdef USE_PTHREADS
            gboolean  is_complete;
                gint  thread_total;
                gint  running_count;
@@ -45,7 +44,6 @@ typedef struct {
           pthread_t *thread;
              PQueue *pq;
           PQueueSet *pq_set;
-#endif /* USE_PTHREADS */
 } JobQueue;
 
 JobQueue *JobQueue_create(gint thread_total);
