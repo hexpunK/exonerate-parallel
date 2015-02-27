@@ -19,7 +19,7 @@
 #ifdef USE_PTHREADS
 static JobQueue_Task *JobQueue_Task_create(JobQueue_Func job_func,
                                            gpointer job_data, gint priority){
-    register JobQueue_Task *task = g_new(JobQueue_Task, 1);
+    JobQueue_Task *task = g_new(JobQueue_Task, 1);
     task->job_func = job_func;
     task->job_data = job_data;
     task->priority = priority;
@@ -32,8 +32,8 @@ static void JobQueue_Task_destroy(JobQueue_Task *task){
     }
 
 static void *JobQueue_thread_func(void *data){
-    register JobQueue *jq = data;
-    register JobQueue_Task *task;
+    JobQueue *jq = data;
+    JobQueue_Task *task;
     do {
         pthread_mutex_lock(&jq->queue_lock);
         task = PQueue_pop(jq->pq);
@@ -55,16 +55,16 @@ static void *JobQueue_thread_func(void *data){
 
 static gboolean JobQueue_Task_compare(gpointer low, gpointer high,
                                       gpointer user_data){
-    register JobQueue_Task *low_task = (JobQueue_Task*)low,
-                           *high_task = (JobQueue_Task*)high;
+    JobQueue_Task *low_task = (JobQueue_Task*)low,
+                  *high_task = (JobQueue_Task*)high;
     return low_task->priority < high_task->priority;
     }
 #endif /* USE_PTHREADS */
 
 JobQueue *JobQueue_create(gint thread_total){
-    register JobQueue *jq = g_new(JobQueue, 1);
+    JobQueue *jq = g_new(JobQueue, 1);
 #ifdef USE_PTHREADS
-    register gint i;
+    gint i;
     jq->is_complete = FALSE;
     jq->thread_total = thread_total;
     jq->running_count = 0;
@@ -80,7 +80,7 @@ JobQueue *JobQueue_create(gint thread_total){
 
 #ifdef USE_PTHREADS
 static void JobQueue_Task_free_func(gpointer data, gpointer user_data){
-    register JobQueue_Task *task = data;
+    JobQueue_Task *task = data;
     JobQueue_Task_destroy(task);
     return;
     }
@@ -101,7 +101,7 @@ void JobQueue_destroy(JobQueue *jq){
 void JobQueue_submit(JobQueue *jq, JobQueue_Func job_func,
                      gpointer job_data, gint priority){
 #ifdef USE_PTHREADS
-    register JobQueue_Task *task;
+    JobQueue_Task *task;
     g_assert(jq);
     pthread_mutex_lock(&jq->queue_lock);
     task = JobQueue_Task_create(job_func, job_data, priority);
@@ -117,7 +117,7 @@ void JobQueue_submit(JobQueue *jq, JobQueue_Func job_func,
 
 void JobQueue_complete(JobQueue *jq){
 #ifdef USE_PTHREADS
-    register gint i, job_total;
+    gint i, job_total;
     do { /* wait for job queue to empty */
         pthread_mutex_lock(&jq->queue_lock);
         job_total = PQueue_total(jq->pq) + jq->running_count;
