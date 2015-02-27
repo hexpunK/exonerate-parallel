@@ -19,7 +19,7 @@
 
 EditDistance_Data *EditDistance_Data_create(gchar *query,
                                             gchar *target){
-    register EditDistance_Data *edd = g_new(EditDistance_Data, 1);
+    EditDistance_Data *edd = g_new(EditDistance_Data, 1);
     edd->query = g_strdup(query);
     edd->target = g_strdup(target);
     edd->query_len = strlen(query);
@@ -36,7 +36,7 @@ void EditDistance_Data_destroy(EditDistance_Data *edd){
 
 static C4_Score edit_match_calc_func(gint query_pos, gint target_pos,
                                      gpointer user_data){
-    register EditDistance_Data *edd = (EditDistance_Data*)user_data;
+    EditDistance_Data *edd = (EditDistance_Data*)user_data;
     g_assert(query_pos >= 0);
     g_assert(target_pos >= 0);
     g_assert(query_pos < edd->query_len);
@@ -48,10 +48,10 @@ static C4_Score edit_match_calc_func(gint query_pos, gint target_pos,
     }
 
 C4_Model *EditDistance_create(void){
-    register C4_Model *edit_distance = C4_Model_create("edit distance");
-    register C4_State
+    C4_Model *edit_distance = C4_Model_create("edit distance");
+    C4_State
         *main_state   = C4_Model_add_state(edit_distance, "main");
-    register C4_Calc
+    C4_Calc
      *indel_calc = C4_Model_add_calc(edit_distance, "indel",  -1,
          NULL, NULL, NULL, NULL, NULL, NULL, C4_Protect_NONE),
      *match_calc = C4_Model_add_calc(edit_distance, "match", 0,

@@ -32,7 +32,7 @@ static ArgumentOption *ArgumentOption_create(ArgumentSet *as,
                                              gchar *default_string,
                                              ArgumentHandler handler,
                                              gpointer handler_data){
-    register ArgumentOption *ao= g_new(ArgumentOption, 1);
+    ArgumentOption *ao= g_new(ArgumentOption, 1);
     ao->as = as;
     ao->symbol = symbol;
     ao->option = g_strdup(option);
@@ -76,8 +76,8 @@ static void ArgumentSet_nodes_destroy(ArgumentSet *as, void **option_registry){
         }
     }
 static void ArgumentSet_destroy(ArgumentSet *as){
-    register gint i;
-    register ArgumentOption *ao;
+    gint i;
+    ArgumentOption *ao;
     for(i = 0; i < as->arg_option->len; i++){
         ao = as->arg_option->pdata[i];
         ArgumentOption_destroy(ao);
@@ -90,7 +90,7 @@ static void ArgumentSet_destroy(ArgumentSet *as){
 
 static void ArgumentOption_print_values(ArgumentOption *ao,
                                         gint use_long){
-    register gint i;
+    gint i;
     if(ao->arg_list){
         if(ao->arg_list->len){
             if((!ao->default_string)
@@ -148,7 +148,7 @@ static gboolean ArgumentOption_is_mandatory(ArgumentOption *ao){
 /**/
 
 static gboolean ArgumentParse_boolean(gchar *arg_string){
-    register gint i;
+    gint i;
     gchar *true_string[6]  = {"Y", "T", "TRUE",  "YES", "ON", "1"},
           *false_string[6] = {"N", "F", "FALSE", "NO",  "OFF", "0"};
     for(i = 0; i < 6; i++){
@@ -165,7 +165,7 @@ static gboolean ArgumentParse_boolean(gchar *arg_string){
 
 static gchar *ArgumentHandler_short_help_func(gchar *arg_string,
                                               gpointer data){
-    register Argument *arg = (Argument*)data;
+    Argument *arg = (Argument*)data;
     if(ArgumentParse_boolean(arg_string))
         arg->show_short_help = TRUE;
     return NULL;
@@ -173,14 +173,14 @@ static gchar *ArgumentHandler_short_help_func(gchar *arg_string,
 
 static gchar *ArgumentHandler_long_help_func(gchar *arg_string,
                                              gpointer data){
-    register Argument *arg = (Argument*)data;
+    Argument *arg = (Argument*)data;
     if(ArgumentParse_boolean(arg_string))
         arg->show_long_help = TRUE;
     return NULL;
     }
 
 static void Argument_show_version(Argument *arg){
-    register gchar *branch = "$Name:  $";
+    gchar *branch = "$Name:  $";
     g_print("%s from %s version %s\n",
             arg->name, PACKAGE, VERSION);
     g_print("Using glib version %d.%d.%d\n",
@@ -195,7 +195,7 @@ static void Argument_show_version(Argument *arg){
 
 static gchar *ArgumentHandler_version_func(gchar *arg_string,
                                            gpointer data){
-    register Argument *arg = (Argument*)data;
+    Argument *arg = (Argument*)data;
     if(ArgumentParse_boolean(arg_string)){
         Argument_show_version(arg);
         exit(1);
@@ -204,7 +204,7 @@ static gchar *ArgumentHandler_version_func(gchar *arg_string,
     }
 
 static void Argument_add_standard_options(Argument *arg){
-    register ArgumentSet *as = ArgumentSet_create("General Options");
+    ArgumentSet *as = ArgumentSet_create("General Options");
     ArgumentSet_add_option(as, 'h', "shorthelp", NULL,
         "Display compact help text",
         "FALSE", ArgumentHandler_short_help_func, arg);
@@ -228,7 +228,7 @@ typedef struct {
 void Argument_add_cleanup(Argument *arg,
                           Argument_Cleanup_Func cleanup_func,
                           gpointer user_data){
-    register Argument_Cleanup *cleanup = g_new(Argument_Cleanup, 1);
+    Argument_Cleanup *cleanup = g_new(Argument_Cleanup, 1);
     cleanup->cleanup_func = cleanup_func;
     cleanup->user_data = user_data;
     g_ptr_array_add(arg->cleanup_list, cleanup);
@@ -236,8 +236,8 @@ void Argument_add_cleanup(Argument *arg,
     }
 
 static void Argument_cleanup(Argument *arg){
-    register Argument_Cleanup *cleanup;
-    register gint i;
+    Argument_Cleanup *cleanup;
+    gint i;
     for(i = 0; i < arg->cleanup_list->len; i++){
         cleanup = arg->cleanup_list->pdata[i];
         cleanup->cleanup_func(cleanup->user_data);
@@ -249,7 +249,7 @@ static void Argument_cleanup(Argument *arg){
 /**/
 
 static Argument *Argument_create(gint argc, gchar **argv){
-    register Argument *arg = g_new0(Argument, 1);
+    Argument *arg = g_new0(Argument, 1);
     arg->arg_set = g_ptr_array_new();
     arg->mandatory_set = g_ptr_array_new();
     arg->cleanup_list = g_ptr_array_new();
@@ -260,8 +260,8 @@ static Argument *Argument_create(gint argc, gchar **argv){
     }
 
 static void Argument_destroy(Argument *arg){
-    register ArgumentSet *as;
-    register gint i;
+    ArgumentSet *as;
+    gint i;
 
     for(i = 0; i < arg->arg_set->len; i++) {
         as = arg->arg_set->pdata[i];
@@ -291,8 +291,8 @@ static void Argument_error_handler(const gchar *log_domain,
                                    GLogLevelFlags log_level,
                                    const gchar *message,
                                    gpointer user_data){
-    register Argument *arg = user_data;
-    register gchar
+    Argument *arg = user_data;
+    gchar
         *stack_trace_str = (gchar*)g_getenv("EXONERATE_DEBUG_STACK_TRACE"),
         *debug_str = (gchar*)g_getenv("EXONERATE_DEBUG");
     fprintf(stderr, "** FATAL ERROR **: %s\n", message);
@@ -317,8 +317,8 @@ static void Argument_error_handler(const gchar *log_domain,
  */
 
 int main(int argc, char **argv){
-    register Argument *arg;
-    register gint retval;
+    Argument *arg;
+    gint retval;
 #ifdef USE_PTHREADS
     if(!g_thread_supported())
         g_thread_init(NULL);
@@ -333,8 +333,8 @@ int main(int argc, char **argv){
     }
 
 static void Argument_usage(Argument *arg, gchar *synopsis){
-    register ArgumentOption *ao;
-    register gint i;
+    ArgumentOption *ao;
+    gint i;
     Argument_show_version(arg);
     g_print("\n%s: %s\n", arg->name, arg->desc);
     if(synopsis){
@@ -351,9 +351,9 @@ static void Argument_usage(Argument *arg, gchar *synopsis){
     }
 
 static void Argument_short_help(Argument *arg){
-    register ArgumentSet *as;
-    register ArgumentOption *ao;
-    register gint i, j;
+    ArgumentSet *as;
+    ArgumentOption *ao;
+    gint i, j;
     for(i = 0; i < arg->arg_set->len; i++){
         as = arg->arg_set->pdata[i];
         if(as->arg_option->len){
@@ -384,10 +384,10 @@ static void Argument_short_help(Argument *arg){
     }
 
 static void Argument_long_help(Argument *arg){
-    register ArgumentSet *as;
-    register ArgumentOption *ao;
-    register gint i, j;
-    register gchar *env_value;
+    ArgumentSet *as;
+    ArgumentOption *ao;
+    gint i, j;
+    gchar *env_value;
     for(i = 0; i < arg->arg_set->len; i++){
         as = arg->arg_set->pdata[i];
         if(as->arg_option->len){
@@ -472,8 +472,8 @@ static void Argument_traverse_registry_func(const void *ptr,
 
 static ArgumentOption *Argument_process_get_option(Argument *arg,
                            gchar *string, GPtrArray *error_queue){
-    register ArgumentOption *ao = NULL;
-    register gint i;
+    ArgumentOption *ao = NULL;
+    gint i;
     if(string[0] == '-'){
         if(string[1] == '-'){
             void *tree_node = tfind((void*)&(ArgumentOption){.option=string+2},
@@ -499,7 +499,7 @@ static ArgumentOption *Argument_process_get_option(Argument *arg,
     }
 
 void Argument_info(Argument *arg){
-    register gchar *cl = g_strjoinv(" ", arg->argv);
+    gchar *cl = g_strjoinv(" ", arg->argv);
     gchar hostname[1024];
     g_print("Command line: [%s]\n", cl);
     g_free(cl);
@@ -511,10 +511,10 @@ void Argument_info(Argument *arg){
 
 void Argument_process(Argument *arg, gchar *name, gchar *desc,
                       gchar *synopsis){
-    register gint i;
-    register GPtrArray *unflagged_arg = g_ptr_array_new();
-    register ArgumentOption *ao;
-    register GPtrArray *error_queue = g_ptr_array_new();
+    gint i;
+    GPtrArray *unflagged_arg = g_ptr_array_new();
+    ArgumentOption *ao;
+    GPtrArray *error_queue = g_ptr_array_new();
     arg->desc = desc?g_strdup(desc):g_strdup("");
     arg->name = g_strdup(name);
     _twalk_data = (void *)arg->name; /* used in Argument_set_env_var_func() */ 
@@ -610,7 +610,7 @@ void Argument_process(Argument *arg, gchar *name, gchar *desc,
 /* FIXME: tidy */
 
 ArgumentSet *ArgumentSet_create(gchar *desc){
-    register ArgumentSet *as = g_new(ArgumentSet, 1);
+    ArgumentSet *as = g_new(ArgumentSet, 1);
     g_assert(desc);
     as->desc = g_strdup(desc);
     as->arg_option = g_ptr_array_new();
@@ -618,8 +618,8 @@ ArgumentSet *ArgumentSet_create(gchar *desc){
     }
 
 void Argument_absorb_ArgumentSet(Argument *arg, ArgumentSet *as){
-    register ArgumentOption *ao;
-    register gint i;
+    ArgumentOption *ao;
+    gint i;
     g_ptr_array_add(arg->arg_set, as);
     for(i = 0; i < as->arg_option->len; i++){
         ao = as->arg_option->pdata[i];
@@ -644,7 +644,7 @@ void ArgumentSet_add_option(ArgumentSet *as,
                             gchar *default_string,
                             ArgumentHandler handler,
                             gpointer handler_data){
-    register ArgumentOption *ao = ArgumentOption_create(
+    ArgumentOption *ao = ArgumentOption_create(
              as, symbol, option, type, desc,
              default_string, handler, handler_data);
     g_ptr_array_add(as->arg_option, ao);
@@ -652,7 +652,7 @@ void ArgumentSet_add_option(ArgumentSet *as,
     }
 
 gchar *Argument_parse_string(gchar *arg_string, gpointer data){
-    register gchar **dst_string = (gchar**)data;
+    gchar **dst_string = (gchar**)data;
     if(!strcasecmp(arg_string, "NULL"))
         (*dst_string) = NULL;
     else
@@ -661,7 +661,7 @@ gchar *Argument_parse_string(gchar *arg_string, gpointer data){
     }
 
 gchar *Argument_parse_char(gchar *arg_string, gpointer data){
-    register gchar *dst_char = (gchar*)data;
+    gchar *dst_char = (gchar*)data;
     if((!arg_string[0]) || (arg_string[1]))
         return g_strdup_printf(
                 "Expected single character argument not [%s]",
@@ -671,19 +671,19 @@ gchar *Argument_parse_char(gchar *arg_string, gpointer data){
     }
 
 gchar *Argument_parse_int(gchar *arg_string, gpointer data){
-    register gint *dst_int = (gint*)data;
+    gint *dst_int = (gint*)data;
     (*dst_int) = atoi(arg_string);
     return NULL;
     }
 
 gchar *Argument_parse_float(gchar *arg_string, gpointer data){
-    register gfloat *dst_float = (gfloat*)data;
+    gfloat *dst_float = (gfloat*)data;
     (*dst_float) = atof(arg_string);
     return NULL;
     }
 
 gchar *Argument_parse_boolean(gchar *arg_string, gpointer data){
-    register gboolean *dst_boolean = (gboolean*)data;
+    gboolean *dst_boolean = (gboolean*)data;
     (*dst_boolean) = ArgumentParse_boolean(arg_string);
     return NULL;
     }

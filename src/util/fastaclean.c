@@ -28,9 +28,9 @@ typedef struct {
 
 static gboolean fasta_clean_traverse_func(FastaDB_Seq *fdbs,
                                           gpointer user_data){
-    register FastaClean_Info *fci = user_data;
-    register Alphabet_Filter_Type filter_type;
-    register Sequence *seq;
+    FastaClean_Info *fci = user_data;
+    Alphabet_Filter_Type filter_type;
+    Sequence *seq;
     if(fci->clean_acgtn)
         filter_type = Alphabet_Filter_Type_CLEAN_ACGTN;
     else
@@ -42,11 +42,11 @@ static gboolean fasta_clean_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *outputFile;
-    register Alphabet *alphabet;
+    Alphabet *alphabet;
     FastaClean_Info fci;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,

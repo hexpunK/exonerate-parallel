@@ -16,7 +16,7 @@
 #include "lookahead.h"
 
 static void test_free_func(gpointer data, gpointer user_data){
-    register gchar *word = data;
+    gchar *word = data;
     g_assert(word);
     g_message("freeing [%s]", word);
     g_free(word);
@@ -24,9 +24,9 @@ static void test_free_func(gpointer data, gpointer user_data){
     }
 
 int main(void){
-    register Lookahead *lookahead = Lookahead_create(0, 32,
+    Lookahead *lookahead = Lookahead_create(0, 32,
                                   test_free_func, NULL);
-    register gchar *word;
+    gchar *word;
     word = Lookahead_get(lookahead, 0);
     g_assert(!word);
     /**/

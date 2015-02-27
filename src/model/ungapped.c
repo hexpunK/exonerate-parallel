@@ -33,13 +33,13 @@ void Ungapped_Data_init(Ungapped_Data *ud,
 
 Ungapped_Data *Ungapped_Data_create(Sequence *query, Sequence *target,
                                     Match_Type match_type){
-    register Ungapped_Data *ud = g_new0(Ungapped_Data, 1);
+    Ungapped_Data *ud = g_new0(Ungapped_Data, 1);
     Ungapped_Data_init(ud, query, target, match_type);
     return ud;
     }
 
 void Ungapped_Data_clear(Ungapped_Data *ud){
-    register gint i;
+    gint i;
     if(ud->query){
         Sequence_destroy(ud->query);
         ud->query = NULL;
@@ -66,8 +66,8 @@ void Ungapped_Data_destroy(Ungapped_Data *ud){
     static C4_Score Ungapped_calc_func_##type(gint query_pos,      \
                                               gint target_pos,     \
                                               gpointer user_data){ \
-        register Ungapped_Data *ud = (Ungapped_Data*)user_data;    \
-        register Match *match = ud->match_list[Match_Type_##type]; \
+        Ungapped_Data *ud = (Ungapped_Data*)user_data;    \
+        Match *match = ud->match_list[Match_Type_##type]; \
         g_assert(ud);                                              \
         g_assert(query_pos >= 0);                                  \
         g_assert(target_pos >= 0);                                 \
@@ -104,13 +104,13 @@ Ungapped_CalcElements(CODON2CODON)
 /**/
 
 C4_Model *Ungapped_create(Match_Type match_type){
-    register gchar *model_name;
-    register C4_Model *ungapped;
-    register C4_State *match_state;
-    register C4_Calc *match_calc;
-    register C4_CalcFunc calc_func = NULL;
-    register gchar *calc_macro = Match_Type_get_score_macro(match_type);
-    register Match *match = Match_find(match_type);
+    gchar *model_name;
+    C4_Model *ungapped;
+    C4_State *match_state;
+    C4_Calc *match_calc;
+    C4_CalcFunc calc_func = NULL;
+    gchar *calc_macro = Match_Type_get_score_macro(match_type);
+    Match *match = Match_find(match_type);
     model_name = g_strdup_printf("ungapped:%s",
                                  Match_Type_get_name(match->type));
     ungapped = C4_Model_create(model_name);
@@ -155,7 +155,7 @@ C4_Model *Ungapped_create(Match_Type match_type){
     C4_Model_append_codegen(ungapped,
       "#include \"ungapped.h\"\n"
       "#include \"submat.h\"\n",
-      "register Ungapped_Data *ud = (Ungapped_Data*)user_data;\n",
+      "Ungapped_Data *ud = (Ungapped_Data*)user_data;\n",
       " -I" SOURCE_ROOT_DIR "/src/model"
       " -I" SOURCE_ROOT_DIR "/src/comparison"
       " -I" SOURCE_ROOT_DIR "/src/c4"
@@ -167,14 +167,14 @@ C4_Model *Ungapped_create(Match_Type match_type){
 
 Alignment *Ungapped_Alignment_create(C4_Model *model,
                                      Ungapped_Data *ud, HSP *hsp){
-    register gint i;
-    register C4_Transition *transition, *start2match = NULL,
+    gint i;
+    C4_Transition *transition, *start2match = NULL,
                            *match2match = NULL, *match2end = NULL;
-    register Region *region = Region_create(hsp->query_start,
+    Region *region = Region_create(hsp->query_start,
                                             hsp->target_start,
                        HSP_query_end(hsp)-hsp->query_start,
                        HSP_target_end(hsp)-hsp->target_start);
-    register Alignment *alignment = Alignment_create(model,
+    Alignment *alignment = Alignment_create(model,
                                            region, hsp->score);
     g_assert(model->transition_list->len == 3);
     for(i = 0; i < model->transition_list->len; i++){

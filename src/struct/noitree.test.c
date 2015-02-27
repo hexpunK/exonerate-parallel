@@ -22,8 +22,8 @@ static void test_traverse_func(gint start, gint length,
     }
 
 int main(void){
-    register NOI_Tree_Set *nts = NOI_Tree_Set_create(NULL);
-    register NOI_Tree *nt = NOI_Tree_create(nts);
+    NOI_Tree_Set *nts = NOI_Tree_Set_create(NULL);
+    NOI_Tree *nt = NOI_Tree_create(nts);
     /**/
 #if 0
     NOI_Tree_insert(nt, nts,  1, 3);

@@ -20,10 +20,10 @@
 
 static gboolean fasta_explode_traverse_func(FastaDB_Seq *fdbs,
                                             gpointer user_data){
-    register gchar *dir_path = user_data;
-    register gchar *output_path = g_strconcat(dir_path,
+    gchar *dir_path = user_data;
+    gchar *output_path = g_strconcat(dir_path,
         G_DIR_SEPARATOR_S, fdbs->seq->id, ".fa", NULL);
-    register FILE *fp = fopen(output_path, "r");
+    FILE *fp = fopen(output_path, "r");
     if(fp){
         fclose(fp);
         g_error("File [%s] already exists", output_path);
@@ -40,8 +40,8 @@ static gboolean fasta_explode_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *dir_path;
     ArgumentSet_add_option(as, 'f', "fasta", "path",

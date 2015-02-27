@@ -16,12 +16,12 @@
 #include "vfsm.h"
 
 int main(void){
-    register gint i, j;
-    register VFSM *vfsm = VFSM_create("ACGT", 12);
-    register guchar *seq = (guchar*)
+    gint i, j;
+    VFSM *vfsm = VFSM_create("ACGT", 12);
+    guchar *seq = (guchar*)
                  "CGATCGATCTGATCGTAGNTAGCTCGATCGATGNAGCTAGC";
-    register VFSM_Int state = 0;
-    register gchar *testword;
+    VFSM_Int state = 0;
+    gchar *testword;
     gchar word[13];
     VFSM_info(vfsm);
     for(i = j = 0; seq[i]; i++){

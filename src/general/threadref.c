@@ -16,7 +16,7 @@
 #include "threadref.h"
 
 ThreadRef *ThreadRef_create(void){
-    register ThreadRef *threadref = g_new(ThreadRef, 1);
+    ThreadRef *threadref = g_new(ThreadRef, 1);
     threadref->ref_count = 1;
 #ifdef USE_PTHREADS
     pthread_mutex_init(&threadref->ref_lock, NULL);
@@ -46,7 +46,7 @@ ThreadRef *ThreadRef_share(ThreadRef *threadref){
     }
 
 gint ThreadRef_get_count(ThreadRef *threadref){
-    register gint ref_count;
+    gint ref_count;
     ThreadRef_lock(threadref);
     ref_count = threadref->ref_count;
     ThreadRef_unlock(threadref);

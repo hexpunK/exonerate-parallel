@@ -16,14 +16,14 @@
 #include "translate.h"
 
 static void reverse_func(gchar *dna, gint length, gpointer user_data){
-    register gint *rt_count = user_data;
+    gint *rt_count = user_data;
     g_message("Reverse translated [%s]", dna);
     (*rt_count)++;
     return;
     }
 
 static void check_translate(Translate *t, gchar *codon, gchar crib){
-    register gchar aa = Translate_codon(t, codon);
+    gchar aa = Translate_codon(t, codon);
     g_message("Translate [%s] -> [%c] (crib:[%c]", codon, aa, crib);
     g_assert(aa == crib);
     return;
@@ -39,7 +39,7 @@ static void check_reverse_translate(Translate *t, gchar *word, gint crib){
     }
 
 gint Argument_main(Argument *arg){
-    register Translate *t;
+    Translate *t;
     Translate_ArgumentSet_create(arg);
     Argument_process(arg, "translate.test", NULL, NULL);
     t = Translate_create(FALSE);

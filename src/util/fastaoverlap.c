@@ -26,9 +26,9 @@ typedef struct {
 
 static gboolean fasta_overlap_traverse_func(FastaDB_Seq *fdbs,
                                             gpointer user_data){
-    register FastaOverlap_Info *foi = user_data;
-    register gint region_start = 0, region_end = foi->chunk_size;
-    register Sequence *nfe;
+    FastaOverlap_Info *foi = user_data;
+    gint region_start = 0, region_end = foi->chunk_size;
+    Sequence *nfe;
     if(region_end > fdbs->seq->len)
         region_end = fdbs->seq->len;
     nfe = Sequence_subseq(fdbs->seq, region_start,
@@ -51,8 +51,8 @@ static gboolean fasta_overlap_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *outputFile;
     FastaOverlap_Info foi;

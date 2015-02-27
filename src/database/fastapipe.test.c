@@ -16,7 +16,7 @@
 #include "fastapipe.h"
 
 static void test_init_func(gpointer user_data){
-    register gint *count = user_data;
+    gint *count = user_data;
     g_message("Initiate pipeline");
     (*count) = 0;
     return;
@@ -34,7 +34,7 @@ static void test_term_func(gpointer user_data){
 
 static gboolean test_query_func(FastaDB_Seq *fdbs,
                                 gpointer user_data){
-    register gint *count = user_data;
+    gint *count = user_data;
     g_message("Have query [%s]", fdbs->seq->id);
     if((++(*count)) < 2) /* Try to use 2 queries per pipeline */
         return FALSE;
@@ -48,12 +48,12 @@ static gboolean test_target_func(FastaDB_Seq *fdbs,
     }
 
 gint Argument_main(Argument *arg){
-    register FastaPipe *fasta_pipe;
-    register gchar *query_path, *target_path;
-    register GPtrArray *query_path_list = g_ptr_array_new(),
+    FastaPipe *fasta_pipe;
+    gchar *query_path, *target_path;
+    GPtrArray *query_path_list = g_ptr_array_new(),
                        *target_path_list = g_ptr_array_new();
-    register Alphabet *alphabet;
-    register FastaDB *query_fdb, *target_fdb;
+    Alphabet *alphabet;
+    FastaDB *query_fdb, *target_fdb;
     gint count;
     if(arg->argc == 3){
         query_path = arg->argv[1];

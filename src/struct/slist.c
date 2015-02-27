@@ -18,7 +18,7 @@
 /**/
 
 SListSet *SListSet_create(void){
-    register SListSet *slist_set = g_new(SListSet, 1);
+    SListSet *slist_set = g_new(SListSet, 1);
     slist_set->list_recycle = RecycleBin_create("SList",
                                                 sizeof(SList), 256);
     slist_set->node_recycle = RecycleBin_create("SListNode",
@@ -43,7 +43,7 @@ gsize SListSet_memory_usage(SListSet *slist_set){
 /**/
 
 static SListNode *SListNode_alloc(SListSet *slist_set){
-    register SListNode *sln = RecycleBin_alloc(slist_set->node_recycle);
+    SListNode *sln = RecycleBin_alloc(slist_set->node_recycle);
     sln->next = NULL;
     sln->data = NULL;
     return sln;
@@ -57,7 +57,7 @@ static void SListNode_free(SListSet *slist_set, SListNode *sln){
 /**/
 
 SList *SList_create(SListSet *slist_set){
-    register SList *slist;
+    SList *slist;
     g_assert(slist_set);
     slist = RecycleBin_alloc(slist_set->list_recycle);
     slist->head = slist->tail = SListNode_alloc(slist_set);
@@ -82,7 +82,7 @@ void SList_destroy(SList *slist){
 void SList_empty_with_data(SList *slist,
                            SList_DestroyFunc destroy_func,
                            gpointer user_data){
-    register gpointer *data;
+    gpointer *data;
     g_assert(slist);
     g_assert(destroy_func);
     while(!SList_isempty(slist)){
@@ -111,7 +111,7 @@ void SList_queue(SList *slist, gpointer data){
     }
 
 void SList_stack(SList *slist, gpointer data){
-    register SListNode *sln;
+    SListNode *sln;
     g_assert(slist);
     sln = SListNode_alloc(slist->set);
     slist->head->data = data;
@@ -121,8 +121,8 @@ void SList_stack(SList *slist, gpointer data){
     }
 
 gpointer SList_pop(SList *slist){
-    register gpointer data;
-    register SListNode *sln;
+    gpointer data;
+    SListNode *sln;
     g_assert(slist);
     data = slist->head->next->data;
     sln = slist->head;
@@ -132,7 +132,7 @@ gpointer SList_pop(SList *slist){
     }
 
 SList *SList_join(SList *left, SList *right){
-    register SListNode *head, *tail;
+    SListNode *head, *tail;
     g_assert(left);
     g_assert(right);
     g_assert(left->set == right->set);
@@ -157,8 +157,8 @@ SList *SList_join(SList *left, SList *right){
 
 SList *SList_merge(SList *left, SList *right,
                    SList_CompareFunc compare_func, gpointer user_data){
-    register SList *merged = SList_create(left->set);
-    register SList swap;
+    SList *merged = SList_create(left->set);
+    SList swap;
     g_assert(left->set == right->set);
     while(!(SList_isempty(left) || SList_isempty(right))){
         if(compare_func(left->head->next->data,
@@ -183,7 +183,7 @@ SList *SList_merge(SList *left, SList *right,
 /* FIXME: optimisation : more efficient without the pop/queue */
 
 void SList_remove(SList *slist, SListNode *prev_node){
-    register SListNode *sln;
+    SListNode *sln;
     g_assert(slist);
     if(!prev_node){
         SList_pop(slist);
@@ -198,7 +198,7 @@ void SList_remove(SList *slist, SListNode *prev_node){
     }
 
 void SList_insert(SList *slist, SListNode *prev_node, SList *new_slist){
-    register SListNode *sln;
+    SListNode *sln;
     g_assert(slist);
     g_assert(new_slist);
     g_assert(slist->set == new_slist->set);
@@ -216,7 +216,7 @@ void SList_insert(SList *slist, SListNode *prev_node, SList *new_slist){
 
 void SList_traverse(SList *slist, SList_TraverseFunc traverse_func,
                     gpointer user_data){
-    register SListNode *sln;
+    SListNode *sln;
     g_assert(slist);
     g_assert(traverse_func);
     for(sln = slist->head->next; sln; sln = sln->next)

@@ -18,7 +18,7 @@
 #include "c4.h"
 
 int main(void){
-    register Region *region = Region_create(0, 0, 10, 10);
+    Region *region = Region_create(0, 0, 10, 10);
     Region_destroy(region);
     return 0;
     }

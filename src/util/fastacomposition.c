@@ -21,7 +21,7 @@
 
 static void fasta_composition_report(gchar *name, glong *count,
                                      gboolean ignore_case){
-    register gint i;
+    gint i;
     g_print("%s", name);
     if(ignore_case){
         for(i = 0; i < 256; i++)
@@ -51,9 +51,9 @@ typedef struct {
 
 static gboolean fasta_composition_traverse_func(FastaDB_Seq *fdbs,
                                                 gpointer user_data){
-    register gint i;
-    register FastaComposition_Data *fcd = user_data;
-    register gchar *str = Sequence_get_str(fdbs->seq);
+    gint i;
+    FastaComposition_Data *fcd = user_data;
+    gchar *str = Sequence_get_str(fdbs->seq);
     if(fcd->report_separately)
         memset(fcd->count, 0, sizeof(gint)*256);
     for(i = 0; i < fdbs->seq->len; i++)
@@ -65,8 +65,8 @@ static gboolean fasta_composition_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path;
     FastaComposition_Data fcd = {{0},FALSE, FALSE};

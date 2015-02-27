@@ -21,18 +21,18 @@
 FILE *file;
 
 static void test_model(Affine_Model_Type type, C4_Score expected_score){
-    register C4_Model *affine = Affine_create(type,
+    C4_Model *affine = Affine_create(type,
                                               Alphabet_Type_PROTEIN,
                                               Alphabet_Type_PROTEIN,
                                               FALSE);
 /**/
-    register C4_Score score;
-    register Alignment *alignment;
-    register gchar *name = NULL;
-    register Optimal *optimal;
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_PROTEIN,
+    C4_Score score;
+    Alignment *alignment;
+    gchar *name = NULL;
+    Optimal *optimal;
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_PROTEIN,
                                                   FALSE);
-    register Sequence
+    Sequence
         *query = Sequence_create("qy", NULL,
                      "MEEPQSDPSVEPPLSQETFSDLWKLL", 0,
                      Sequence_Strand_UNKNOWN, alphabet),
@@ -40,7 +40,7 @@ static void test_model(Affine_Model_Type type, C4_Score expected_score){
                      "PENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGP"
                      "EHSCETFDIWKWCPIECDFLNVISEPNEPIPSQ", 0,
                      Sequence_Strand_UNKNOWN, alphabet);
-    register Affine_Data *ad = Affine_Data_create(query, target, FALSE);
+    Affine_Data *ad = Affine_Data_create(query, target, FALSE);
       /*
       "TVPEPIVTEPTTITEPEVPEKEEPKAEVEKTKKAKGSKPKKASKPRNPA"
       "SHPTYEEMIKDAIVSLKEKNGSSQYAIA",

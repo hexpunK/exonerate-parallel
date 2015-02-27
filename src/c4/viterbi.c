@@ -25,7 +25,7 @@
 /**/
 
 Viterbi_ArgumentSet *Viterbi_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Viterbi_ArgumentSet vas = {32};
     if(arg){
         as = ArgumentSet_create("Viterbi algorithm options");
@@ -40,7 +40,7 @@ Viterbi_ArgumentSet *Viterbi_ArgumentSet_create(Argument *arg){
 /**/
 
 static gsize Viterbi_get_cell_size(Viterbi *viterbi){
-    register gint cell_size = 1
+    gint cell_size = 1
                             + viterbi->model->total_shadow_designations;
     if(viterbi->mode == Viterbi_Mode_FIND_REGION){
         if(viterbi->model->start_state->scope != C4_Scope_CORNER){
@@ -58,8 +58,8 @@ static gsize Viterbi_get_cell_size(Viterbi *viterbi){
 Viterbi *Viterbi_create(C4_Model *model, gchar *name,
                         Viterbi_Mode mode, gboolean use_continuation,
                         gboolean use_codegen){
-    register Viterbi *viterbi = g_new(Viterbi, 1);
-    register Codegen_ArgumentSet *cas
+    Viterbi *viterbi = g_new(Viterbi, 1);
+    Codegen_ArgumentSet *cas
            = Codegen_ArgumentSet_create(NULL);
     g_assert(model);
     g_assert(name);
@@ -106,7 +106,7 @@ void Viterbi_destroy(Viterbi *viterbi){
 /**/
 
 static gsize Viterbi_get_row_size(Viterbi *viterbi, Region *region){
-    register gint mat_size;
+    gint mat_size;
     mat_size = Matrix4d_size(viterbi->model->max_target_advance+1,
                              region->query_length+1,
                              viterbi->model->state_list->len,
@@ -126,10 +126,10 @@ static gsize Viterbi_traceback_memory_size(Viterbi *viterbi,
     }
 
 gboolean Viterbi_use_reduced_space(Viterbi *viterbi, Region *region){
-    register gsize row_memory = Viterbi_get_row_size(viterbi, region);
-    register gsize traceback_memory
+    gsize row_memory = Viterbi_get_row_size(viterbi, region);
+    gsize traceback_memory
                  = Viterbi_traceback_memory_size(viterbi, region);
-    register gsize memory_limit = viterbi->vas->traceback_memory_limit
+    gsize memory_limit = viterbi->vas->traceback_memory_limit
                                 << 20;
     g_assert(Region_is_valid(region));
     if(region->query_length
@@ -153,8 +153,8 @@ gboolean Viterbi_use_reduced_space(Viterbi *viterbi, Region *region){
 
 static Viterbi_Row *Viterbi_Row_create(Viterbi *viterbi,
                                        Region *region){
-    register Viterbi_Row *vr = g_new0(Viterbi_Row, 1);
-    register gint i, j, k;
+    Viterbi_Row *vr = g_new0(Viterbi_Row, 1);
+    gint i, j, k;
     g_assert(region);
     vr->region_start_query_id = -1;
     vr->region_start_target_id = -1;
@@ -193,7 +193,7 @@ static void Viterbi_Row_destroy(Viterbi_Row *vr){
 /**/
 
 static gsize Viterbi_Row_get_size(Viterbi *viterbi, Region *region){
-    register gint mat_size;
+    gint mat_size;
     mat_size = Matrix4d_size(viterbi->model->max_target_advance+1,
                              region->query_length+1,
                              viterbi->model->state_list->len,
@@ -205,10 +205,10 @@ static gsize Viterbi_Row_get_size(Viterbi *viterbi, Region *region){
     }
 
 static gint Viterbi_checkpoint_rows(Viterbi *viterbi, Region *region){
-    register gsize row_memory = Viterbi_Row_get_size(viterbi, region);
-    register gint avail_rows =
+    gsize row_memory = Viterbi_Row_get_size(viterbi, region);
+    gint avail_rows =
         ((viterbi->vas->traceback_memory_limit << 20)/row_memory) - 1;
-    register gint max_rows = (region->target_length
+    gint max_rows = (region->target_length
                            / (viterbi->model->max_target_advance << 1))
                            - 2;
     g_assert(max_rows > 0);
@@ -231,10 +231,10 @@ static C4_Transition ****Viterbi_traceback_memory_create(
 static Viterbi_Checkpoint *Viterbi_Checkpoint_create(Viterbi *viterbi,
                                                      Region *region,
                                                      Viterbi_Row *vr){
-    register Viterbi_Checkpoint *vc = g_new0(Viterbi_Checkpoint, 1);
-    register gint cp_count = Viterbi_checkpoint_rows(viterbi, region);
-    register gint i;
-    register C4_Score ****cp;
+    Viterbi_Checkpoint *vc = g_new0(Viterbi_Checkpoint, 1);
+    gint cp_count = Viterbi_checkpoint_rows(viterbi, region);
+    gint i;
+    C4_Score ****cp;
     g_assert(cp_count > 0);
     vc->checkpoint_list = g_ptr_array_new();
     vc->cell_size = vr->cell_size;
@@ -254,7 +254,7 @@ static Viterbi_Checkpoint *Viterbi_Checkpoint_create(Viterbi *viterbi,
     }
 
 static void Viterbi_Checkpoint_destroy(Viterbi_Checkpoint *vc){
-    register gint i;
+    gint i;
     for(i = 0; i < vc->checkpoint_list->len; i++)
         g_free(vc->checkpoint_list->pdata[i]);
     g_ptr_array_free(vc->checkpoint_list, TRUE);
@@ -267,7 +267,7 @@ static void Viterbi_Checkpoint_destroy(Viterbi_Checkpoint *vc){
 static Viterbi_Continuation *Viterbi_Continuation_create(
                   C4_State *first_state, C4_Score *first_cell,
                   C4_State *final_state, C4_Score *final_cell){
-    register Viterbi_Continuation *vc = g_new(Viterbi_Continuation, 1);
+    Viterbi_Continuation *vc = g_new(Viterbi_Continuation, 1);
     g_assert(first_state);
     g_assert(first_cell);
     g_assert(final_state);
@@ -308,7 +308,7 @@ void Viterbi_Data_clear_continuation(Viterbi_Data *vd){
 /**/
 
 Viterbi_Data *Viterbi_Data_create(Viterbi *viterbi, Region *region){
-    register Viterbi_Data *vd = g_new0(Viterbi_Data, 1);
+    Viterbi_Data *vd = g_new0(Viterbi_Data, 1);
     g_assert(viterbi);
     g_assert(region);
     vd->vr = Viterbi_Row_create(viterbi, region);
@@ -341,11 +341,11 @@ void Viterbi_Data_destroy(Viterbi_Data *vd){
 
 Alignment *Viterbi_Data_create_Alignment(Viterbi_Data *vd,
                   C4_Model *model, C4_Score score, Region *region){
-    register Alignment *alignment;
-    register GPtrArray *transition_path = g_ptr_array_new();
-    register gint i = vd->curr_query_end, j = vd->curr_target_end;
-    register Region *alignment_region;
-    register C4_Transition *transition;
+    Alignment *alignment;
+    GPtrArray *transition_path = g_ptr_array_new();
+    gint i = vd->curr_query_end, j = vd->curr_target_end;
+    Region *alignment_region;
+    C4_Transition *transition;
     g_assert(vd->traceback);
     if(vd->continuation)
         transition = vd->traceback[i][j]
@@ -398,8 +398,8 @@ static void Viterbi_Row_shadow_start(Viterbi_Row *vr,
                 Region *region,
                 C4_Score *src, gint query_pos, gint target_pos,
                 gpointer user_data){
-    register gint i;
-    register C4_Shadow *shadow;
+    gint i;
+    C4_Shadow *shadow;
     if(transition->input == model->start_state->state){
         if(vr->region_start_query_id != -1){
             src[vr->region_start_query_id]
@@ -428,8 +428,8 @@ static void Viterbi_Row_shadow_end(Viterbi_Row *vr,
                 Region *region, C4_Score *src,
                 gint query_pos, gint target_pos,
                 gpointer user_data){
-    register gint i;
-    register C4_Shadow *shadow;
+    gint i;
+    C4_Shadow *shadow;
     for(i = 0; i < transition->dst_shadow_list->len; i++){
         shadow = transition->dst_shadow_list->pdata[i];
         shadow->end_func(src[shadow->designation+1],
@@ -447,7 +447,7 @@ static void Viterbi_Data_assign(Viterbi *viterbi, Viterbi_Data *vd,
                     gint query_pos, gint target_pos,
                     C4_Transition *transition, Region *region,
                     gpointer user_data){
-    register gint i;
+    gint i;
     dst[0] = score;
     /* Call shadow start on src */
     Viterbi_Row_shadow_start(vd->vr, viterbi->model, transition,
@@ -484,8 +484,8 @@ static Viterbi_SubAlignment *Viterbi_SubAlignment_create(
                          gint query_length, gint target_length,
                          C4_State *first_state, C4_Score *final_cell,
                          gint cell_length){
-    register Viterbi_SubAlignment *vsa = g_new(Viterbi_SubAlignment, 1);
-    register gint i;
+    Viterbi_SubAlignment *vsa = g_new(Viterbi_SubAlignment, 1);
+    gint i;
     vsa->region = Region_create(query_start, target_start,
                                 query_length, target_length);
     vsa->first_state = first_state;
@@ -523,7 +523,7 @@ static gint Viterbi_Checkpoint_SRP_encode(C4_Model *model,
 
 static void Viterbi_Checkpoint_SRP_decode(C4_Model *model, gint srp,
             Viterbi_Checkpoint_SRP *result){
-    register gint remainder;
+    gint remainder;
     result->row = srp % model->max_target_advance;
     remainder = srp / model->max_target_advance;
     result->state = model->state_list->pdata
@@ -537,13 +537,13 @@ static void Viterbi_Checkpoint_SRP_decode(C4_Model *model, gint srp,
 GPtrArray *Viterbi_Checkpoint_traceback(Viterbi *viterbi,
         Viterbi_Data *vd, Region *region,
         C4_State *first_state, C4_Score *final_cell){
-    register gint prev_row;
-    register Viterbi_SubAlignment *vsa;
-    register gint query_start, target_start;
-    register C4_Score cp_srp;
-    register C4_Score ****checkpoint, *cell = final_cell;
-    register gint i;
-    register GPtrArray *vsa_list = g_ptr_array_new();
+    gint prev_row;
+    Viterbi_SubAlignment *vsa;
+    gint query_start, target_start;
+    C4_Score cp_srp;
+    C4_Score ****checkpoint, *cell = final_cell;
+    gint i;
+    GPtrArray *vsa_list = g_ptr_array_new();
     Viterbi_Checkpoint_SRP srp;
     g_assert(vd->checkpoint);
     Viterbi_Checkpoint_SRP_decode(viterbi->model,
@@ -605,8 +605,8 @@ GPtrArray *Viterbi_Checkpoint_traceback(Viterbi *viterbi,
 static void Viterbi_Checkpoint_process(Viterbi_Checkpoint *vc,
                 C4_Model *model, Region *region, gint target_pos,
                 C4_Score ****prev_row){
-    register gint i, j, k, l;
-    register C4_Score ****checkpoint;
+    gint i, j, k, l;
+    C4_Score ****checkpoint;
     if((!(target_pos % vc->section_length)) && target_pos){
         if(vc->counter < vc->checkpoint_list->len){
             checkpoint = vc->checkpoint_list->pdata[vc->counter++];
@@ -656,18 +656,18 @@ static C4_Score Viterbi_interpreted(Viterbi *viterbi, Region *region,
                                     Viterbi_Data *vd,
                                     SubOpt_Index *soi,
                                     gpointer user_data){
-    register C4_Score t, score = C4_IMPOSSIBLY_LOW_SCORE;
-    register C4_Score ***swap_row, *src, *dst;
-    register C4_Score ****prev_row
+    C4_Score t, score = C4_IMPOSSIBLY_LOW_SCORE;
+    C4_Score ***swap_row, *src, *dst;
+    C4_Score ****prev_row
             = g_new(C4_Score***, viterbi->model->max_target_advance+1);
-    register gint i, j, k, l;
-    register C4_Transition *transition;
-    register C4_Calc *calc;
-    register gboolean *state_is_set = g_new(gboolean,
+    gint i, j, k, l;
+    C4_Transition *transition;
+    C4_Calc *calc;
+    gboolean *state_is_set = g_new(gboolean,
                                             viterbi->model->state_list->len);
-    register gboolean end_is_set = FALSE;
-    register C4_State *final_state = NULL;
-    register C4_Score *dummy_start = g_new(C4_Score, vd->vr->cell_size),
+    gboolean end_is_set = FALSE;
+    C4_State *final_state = NULL;
+    C4_Score *dummy_start = g_new(C4_Score, vd->vr->cell_size),
                       *tmp_start;
     /**/
     g_assert(!viterbi->model->is_open);
@@ -846,8 +846,8 @@ static C4_Score Viterbi_interpreted(Viterbi *viterbi, Region *region,
 C4_Score Viterbi_calculate(Viterbi *viterbi, Region *region,
                            Viterbi_Data *vd, gpointer user_data,
                            SubOpt *subopt){
-    register C4_Score score;
-    register SubOpt_Index *soi = NULL;
+    C4_Score score;
+    SubOpt_Index *soi = NULL;
     g_assert(viterbi);
     g_assert(Region_is_valid(region));
     if(subopt)
@@ -869,9 +869,9 @@ C4_Score Viterbi_calculate(Viterbi *viterbi, Region *region,
 static gchar *Viterbi_expand_macro(gchar *macro,
               gint advance_query, gint advance_target,
               C4_Shadow *shadow, gchar *cell){
-    register GString *str = g_string_sized_new(strlen(macro));
-    register gchar *expanded_macro, *tmp;
-    register gint i;
+    GString *str = g_string_sized_new(strlen(macro));
+    gchar *expanded_macro, *tmp;
+    gint i;
     for(i = 0; macro[i]; i++){
         if((macro[i] == '%')){
             i++;
@@ -984,8 +984,8 @@ static gchar *Viterbi_expand_macro(gchar *macro,
 /**/
 
 static gboolean Viterbi_implement_require_shadow(Viterbi *viterbi){
-    register gint i;
-    register C4_Shadow *shadow;
+    gint i;
+    C4_Shadow *shadow;
     for(i = 0; i < viterbi->model->shadow_list->len; i++){
         shadow = viterbi->model->shadow_list->pdata[i];
         g_assert(shadow->start_func);
@@ -999,8 +999,8 @@ static gboolean Viterbi_implement_require_shadow(Viterbi *viterbi){
     }
 
 static gboolean Viterbi_implement_require_transition(Viterbi *viterbi){
-    register gint i;
-    register C4_Calc *calc;
+    gint i;
+    C4_Calc *calc;
     if(viterbi->use_continuation
     || (viterbi->mode == Viterbi_Mode_FIND_PATH))
         return TRUE;
@@ -1013,8 +1013,8 @@ static gboolean Viterbi_implement_require_transition(Viterbi *viterbi){
     }
 
 static gboolean Viterbi_implement_require_calc(Viterbi *viterbi){
-    register gint i;
-    register C4_Calc *calc;
+    gint i;
+    C4_Calc *calc;
     for(i = 0; i < viterbi->model->calc_list->len; i++){
         calc = viterbi->model->calc_list->pdata[i];
         if(calc->init_func && (!calc->init_macro))
@@ -1028,9 +1028,9 @@ static gboolean Viterbi_implement_require_calc(Viterbi *viterbi){
 static void Viterbi_implement_shadow_start(Viterbi *viterbi,
                                            Codegen *codegen,
                                            C4_Transition *transition){
-    register gint i;
-    register C4_Shadow *shadow;
-    register gchar *expanded_macro;
+    gint i;
+    C4_Shadow *shadow;
+    gchar *expanded_macro;
     if(transition->input == viterbi->model->start_state->state){
         if(viterbi->mode == Viterbi_Mode_FIND_REGION){
             if(viterbi->model->start_state->scope != C4_Scope_CORNER){
@@ -1077,9 +1077,9 @@ static void Viterbi_implement_shadow_start(Viterbi *viterbi,
 static void Viterbi_implement_shadow_end(Viterbi *viterbi,
                                          Codegen *codegen,
                                          C4_Transition *transition){
-    register gint i;
-    register C4_Shadow *shadow;
-    register gchar *expanded_macro;
+    gint i;
+    C4_Shadow *shadow;
+    gchar *expanded_macro;
     for(i = 0; i < transition->dst_shadow_list->len; i++){
         shadow = transition->dst_shadow_list->pdata[i];
         if(shadow->end_macro){
@@ -1108,7 +1108,7 @@ static void Viterbi_implement_shadow_end(Viterbi *viterbi,
 static void Viterbi_implement_dp_set_cell(Viterbi *viterbi,
                     Codegen *codegen, C4_Transition *transition,
                     gint cell_size){
-    register gint i;
+    gint i;
     /* Call shadow start on src */
     Viterbi_implement_shadow_start(viterbi, codegen, transition);
     Codegen_printf(codegen, "dst[0] = t;\n");
@@ -1154,10 +1154,10 @@ static void Viterbi_implement_register_end(Viterbi *viterbi,
 
 static void Viterbi_implement_dp_cell(Viterbi *viterbi,
                 Codegen *codegen, Layout_Mask *mask, gint cell_size){
-    register gint i, j;
-    register C4_Transition *transition;
-    register gchar *end_cell, *expanded_macro;
-    register gboolean is_valid, t_is_set;
+    gint i, j;
+    C4_Transition *transition;
+    gchar *end_cell, *expanded_macro;
+    gboolean is_valid, t_is_set;
     g_assert(mask);
     /**/
     /* Zero dst cell */
@@ -1393,9 +1393,9 @@ static void Viterbi_implement_dp_cell(Viterbi *viterbi,
 
 static void Viterbi_implement_opc(Viterbi *viterbi, Codegen *codegen,
                 gint row_id, gint cell_id, gint cell_size){
-    register Layout_Row *row = viterbi->layout->row_list->pdata[row_id];
-    register Layout_Cell *cell = row->cell_list->pdata[cell_id];
-    register gchar *next_row;
+    Layout_Row *row = viterbi->layout->row_list->pdata[row_id];
+    Layout_Cell *cell = row->cell_list->pdata[cell_id];
+    gchar *next_row;
     /* The Keyword That Dare Not Speak Its Name: */
     gchar tktdnsin[5] = {0x67, 0x6F, 0x74, 0x6F, 0x00};
     Codegen_printf(codegen, "/* CELL [%d,%d] */\n", row_id, cell_id);
@@ -1515,8 +1515,8 @@ static void Viterbi_implement_opc(Viterbi *viterbi, Codegen *codegen,
 
 static void Viterbi_implement_dp_row(Viterbi *viterbi, Codegen *codegen,
                gint row_id, gint cell_size){
-    register gint i, j, cp_row;
-    register Layout_Row *row = viterbi->layout->row_list->pdata[row_id];
+    gint i, j, cp_row;
+    Layout_Row *row = viterbi->layout->row_list->pdata[row_id];
     /**/
     if(row_id){
         if(row_id == (viterbi->layout->row_list->len-1))
@@ -1636,44 +1636,44 @@ static void Viterbi_implement_finalise(Viterbi *viterbi,
     }
 
 static void Viterbi_implement_dp(Viterbi *viterbi, Codegen *codegen){
-    register gint i;
-    register gint cell_size = Viterbi_get_cell_size(viterbi);
+    gint i;
+    gint cell_size = Viterbi_get_cell_size(viterbi);
     Codegen_printf(codegen, "/* Implementing [%d] explicit rows */\n",
                   viterbi->layout->row_list->len);
     Codegen_printf(codegen, "C4_Score %s%s{\n",
                   viterbi->name, Viterbi_DP_Func_ARGS_STR);
     Codegen_indent(codegen, 1);
-    Codegen_printf(codegen, "register C4_Score score"
+    Codegen_printf(codegen, "C4_Score score"
                           " = C4_IMPOSSIBLY_LOW_SCORE;\n");
     /* Preliminary code */
-    Codegen_printf(codegen, "register gint i, j = 0;\n");
+    Codegen_printf(codegen, "gint i, j = 0;\n");
     for(i = 0; i <= viterbi->model->max_target_advance; i++){
         Codegen_printf(codegen,
-             "register C4_Score ***prev_row_%d"
+             "C4_Score ***prev_row_%d"
              " = vd->vr->score_matrix[%d];\n",
               i, i);
         }
-    Codegen_printf(codegen, "register C4_Score ***swap_row,"
+    Codegen_printf(codegen, "C4_Score ***swap_row,"
                           " *src, *dst, t;\n");
     if(Viterbi_implement_require_shadow(viterbi)){
         Codegen_printf(codegen,
-                      "register C4_Transition *transition;\n");
-        Codegen_printf(codegen, "register C4_Shadow *shadow;\n");
+                      "C4_Transition *transition;\n");
+        Codegen_printf(codegen, "C4_Shadow *shadow;\n");
     } else {
         if(Viterbi_implement_require_transition(viterbi))
             Codegen_printf(codegen,
-                     "register C4_Transition *transition;\n");
+                     "C4_Transition *transition;\n");
         }
     if(Viterbi_implement_require_calc(viterbi))
-        Codegen_printf(codegen, "register C4_Calc *calc;\n");
+        Codegen_printf(codegen, "C4_Calc *calc;\n");
     if(viterbi->mode == Viterbi_Mode_FIND_CHECKPOINTS){
-        Codegen_printf(codegen, "register C4_Score ****checkpoint;\n");
-        Codegen_printf(codegen, "register gint k;\n");
+        Codegen_printf(codegen, "C4_Score ****checkpoint;\n");
+        Codegen_printf(codegen, "gint k;\n");
         }
-    Codegen_printf(codegen, "register gboolean *state_is_set\n"
+    Codegen_printf(codegen, "gboolean *state_is_set\n"
                             " = g_new(gboolean, %d);\n",
                             viterbi->model->state_list->len);
-    Codegen_printf(codegen, "register gboolean end_is_set = FALSE;\n");
+    Codegen_printf(codegen, "gboolean end_is_set = FALSE;\n");
     /* Local code must go between declarations and first block */
     for(i = 0; i < viterbi->model->local_code_list->len; i++)
         Codegen_printf(codegen,
@@ -1727,7 +1727,7 @@ static void Viterbi_implement_dp(Viterbi *viterbi, Codegen *codegen){
     }
 
 Codegen *Viterbi_make_Codegen(Viterbi *viterbi){
-    register Codegen *codegen = Codegen_create(NULL, viterbi->name);
+    Codegen *codegen = Codegen_create(NULL, viterbi->name);
     CGUtil_print_header(codegen, viterbi->model);
     Codegen_printf(codegen,
         "/* Exhaustive Viterbi DP implementation. */\n"

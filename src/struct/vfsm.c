@@ -29,9 +29,9 @@
 #endif /* G_GNUC_EXTENSION */
 
 VFSM *VFSM_create(gchar *alphabet, guint depth){
-    register VFSM *vfsm = g_new0(VFSM, 1);
-    register gint i;
-    register VFSM_Int tmp;
+    VFSM *vfsm = g_new0(VFSM, 1);
+    gint i;
+    VFSM_Int tmp;
     g_assert(depth);
     g_assert(alphabet);
     vfsm->alphabet_size = strlen(alphabet);
@@ -80,7 +80,7 @@ void VFSM_destroy(VFSM *vfsm){
 // allow compilation with "-Werror"
 #pragma GCC diagnostic warning "-Wformat"
 void VFSM_info(VFSM *vfsm){
-    register gint i;
+    gint i;
     G_GNUC_EXTENSION /* Allow %llu without pedantic warning */
     g_message("VFSM info:\n"
            " alphabet          = [%s]\n"
@@ -114,7 +114,7 @@ void VFSM_info(VFSM *vfsm){
     }
 
 static gboolean VFSM_word_is_valid_leaf(VFSM *vfsm, gchar *word){
-    register gint i;
+    gint i;
     for(i = 0; word[i]; i++)
         if(!vfsm->index[(guchar)word[i]])
             return FALSE;
@@ -124,8 +124,8 @@ static gboolean VFSM_word_is_valid_leaf(VFSM *vfsm, gchar *word){
     }
 
 VFSM_Int VFSM_word2state(VFSM *vfsm, gchar *word){
-    register gint i;
-    register VFSM_Int pos;
+    gint i;
+    VFSM_Int pos;
     g_assert(VFSM_word_is_valid_leaf(vfsm, word));
     if(vfsm->is_poweroftwo)
         for(i = 0, pos = 0; i < vfsm->depth; i++){
@@ -141,7 +141,7 @@ VFSM_Int VFSM_word2state(VFSM *vfsm, gchar *word){
     }
 
 gboolean VFSM_state2word(VFSM *vfsm, VFSM_Int state, gchar *word){
-    register gint i, j;
+    gint i, j;
     g_assert(word);
     if(!VFSM_state_is_leaf(vfsm, state))
         return FALSE;
@@ -181,7 +181,7 @@ VFSM_Int VFSM_change_state_POW2(VFSM *vfsm, VFSM_Int state, guchar ch){
     }
 
 gchar VFSM_symbol_by_pos(VFSM *vfsm, VFSM_Int state, guint depth){
-    register guint apos;
+    guint apos;
     g_assert(depth < vfsm->depth);
     apos = VFSM_state2leaf(vfsm, state) / vfsm->branch_size[depth]
          % vfsm->alphabet_size;
@@ -190,7 +190,7 @@ gchar VFSM_symbol_by_pos(VFSM *vfsm, VFSM_Int state, guint depth){
     }
 
 gchar VFSM_symbol_by_pos_POW2(VFSM *vfsm, VFSM_Int state, guint depth){
-    register guint apos;
+    guint apos;
     g_assert(depth < vfsm->depth);
     apos = (VFSM_state2leaf(vfsm, state)
          >> ((vfsm->depth-depth-1) << (vfsm->log_alphabet_size-1))
@@ -201,7 +201,7 @@ gchar VFSM_symbol_by_pos_POW2(VFSM *vfsm, VFSM_Int state, guint depth){
 
 VFSM_Int VFSM_jump(VFSM *vfsm, VFSM_Int state,
                    guint depth, guchar next){
-    register guchar curr;
+    guchar curr;
     g_assert(vfsm);
     curr = VFSM_symbol_by_pos(vfsm, state, depth);
     return state + (vfsm->branch_size[depth]

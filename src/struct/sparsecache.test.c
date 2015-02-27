@@ -17,13 +17,13 @@
 
 static gpointer test_get_func(gint pos, gpointer page_data,
                           gpointer user_data){
-    register gint *data = page_data;
+    gint *data = page_data;
     return GINT_TO_POINTER(data[pos]);
     }
 
 static SparseCache_Page *test_fill_func(gint start, gpointer user_data){
-    register SparseCache_Page *page = g_new(SparseCache_Page, 1);
-    register gint i, *data = g_new(gint, SparseCache_PAGE_SIZE);
+    SparseCache_Page *page = g_new(SparseCache_Page, 1);
+    gint i, *data = g_new(gint, SparseCache_PAGE_SIZE);
     g_message("Filling from [%d] with [%d]", start, SparseCache_PAGE_SIZE);
     for(i = 0; i < SparseCache_PAGE_SIZE; i++){
         data[i] = start + i;
@@ -37,9 +37,9 @@ static SparseCache_Page *test_fill_func(gint start, gpointer user_data){
     }
 
 int main(void){
-    register SparseCache *sc = SparseCache_create(1000, test_fill_func,
+    SparseCache *sc = SparseCache_create(1000, test_fill_func,
                                                   NULL, NULL, NULL);
-    register gint i;
+    gint i;
     for(i = 0; i < 10; i++){
         g_message("checking [%d]", i);
         g_assert(GPOINTER_TO_INT(SparseCache_get(sc, i)) == i);

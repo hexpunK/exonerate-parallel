@@ -28,7 +28,7 @@ void Coding2Genome_Data_init(Coding2Genome_Data *c2gd,
 
 Coding2Genome_Data *Coding2Genome_Data_create(
                          Sequence *query, Sequence *target){
-    register Coding2Genome_Data *c2gd = g_new0(Coding2Genome_Data, 1);
+    Coding2Genome_Data *c2gd = g_new0(Coding2Genome_Data, 1);
     Coding2Genome_Data_init(c2gd, query, target);
     return c2gd;
     }
@@ -51,10 +51,10 @@ void Coding2Genome_Data_destroy(Coding2Genome_Data *c2gd){
 /**/
 
 C4_Model *Coding2Genome_create(void){
-    register C4_Model *model = Coding2Coding_create();
-    register C4_Model *phase_model;
-    register C4_Transition *match_transition;
-    register Match *match;
+    C4_Model *model = Coding2Coding_create();
+    C4_Model *phase_model;
+    C4_Transition *match_transition;
+    Match *match;
     g_assert(model);
     C4_Model_rename(model, "coding2genome");
     C4_Model_open(model);

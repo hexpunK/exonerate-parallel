@@ -19,10 +19,10 @@
 FILE *file;
 
 gint Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register FastaDB_Seq *fdbs;
-    register gchar *path;
-    register Alphabet *alphabet;
+    FastaDB *fdb;
+    FastaDB_Seq *fdbs;
+    gchar *path;
+    Alphabet *alphabet;
     if(arg->argc == 2){
         path = arg->argv[1];
         alphabet = Alphabet_create(Alphabet_Type_UNKNOWN, FALSE);

@@ -25,7 +25,7 @@
 static CompoundFile_Element *CompoundFile_Element_create(
                              gchar *path,
                              CompoundFile_Pos length){
-    register CompoundFile_Element *cfe
+    CompoundFile_Element *cfe
      = g_new(CompoundFile_Element, 1);
     cfe->path = g_strdup(path);
     cfe->length = length;
@@ -41,7 +41,7 @@ static void CompoundFile_Element_destroy(CompoundFile_Element *cfe){
 /**/
 
 static FILE *CompoundFile_open_file(gchar *path){
-    register FILE *fp = fopen(path, "r");
+    FILE *fp = fopen(path, "r");
     if(!fp)
         g_error("Could not open [%s] : %s", path, strerror(errno));
     return fp;
@@ -56,7 +56,7 @@ static void CompoundFile_clear_buffers(CompoundFile *cf,
     }
 
 static void CompoundFile_set_file(CompoundFile *cf, gint element_id){
-    register CompoundFile_Element *cfe;
+    CompoundFile_Element *cfe;
     if(cf->curr_element_id == element_id)
         return;
     if(cf->fp)
@@ -69,8 +69,8 @@ static void CompoundFile_set_file(CompoundFile *cf, gint element_id){
     }
 
 static CompoundFile_Pos CompoundFile_size_from_path(gchar *path){
-    register FILE *fp;
-    register CompoundFile_Pos size;
+    FILE *fp;
+    CompoundFile_Pos size;
     fp = CompoundFile_open_file(path);
     size = lseek(fileno(fp), 0, SEEK_END);
     if(size == -1)
@@ -80,10 +80,10 @@ static CompoundFile_Pos CompoundFile_size_from_path(gchar *path){
     }
 
 static int CompoundFile_sort_path_list(const void *a, const void *b){
-    register CompoundFile_Element
+    CompoundFile_Element
         **element_a = (CompoundFile_Element**)a,
         **element_b = (CompoundFile_Element**)b;
-    register gint ret_val = (*element_a)->length - (*element_b)->length;
+    gint ret_val = (*element_a)->length - (*element_b)->length;
     if(!ret_val)
         ret_val = strcmp((*element_b)->path, (*element_a)->path);
     if(!ret_val)
@@ -104,11 +104,11 @@ static void CompoundFile_sort(CompoundFile *cf){
 
 CompoundFile *CompoundFile_create(GPtrArray *path_list,
                                   gboolean sort_on_file_size){
-    register CompoundFile *cf = g_new(CompoundFile, 1);
-    register CompoundFile_Element *cfe;
-    register CompoundFile_Pos length;
-    register gint i;
-    register gchar *path;
+    CompoundFile *cf = g_new(CompoundFile, 1);
+    CompoundFile_Element *cfe;
+    CompoundFile_Pos length;
+    gint i;
+    gchar *path;
     g_assert(path_list);
     g_assert(path_list->len);
     cf->ref_count = 1;
@@ -134,8 +134,8 @@ CompoundFile *CompoundFile_create(GPtrArray *path_list,
     }
 
 void CompoundFile_destroy(CompoundFile *cf){
-    register gint i;
-    register CompoundFile_Element *cfe;
+    gint i;
+    CompoundFile_Element *cfe;
     if(--cf->ref_count)
         return;
     for(i = 0; i < cf->element_list->len; i++){
@@ -161,10 +161,10 @@ CompoundFile *CompoundFile_share(CompoundFile *cf){
     }
 
 static GPtrArray *CompoundFile_get_path_list(CompoundFile *cf){
-    register gint i;
-    register gchar *path;
-    register GPtrArray *path_list = g_ptr_array_new();
-    register CompoundFile_Element *element;
+    gint i;
+    gchar *path;
+    GPtrArray *path_list = g_ptr_array_new();
+    CompoundFile_Element *element;
     for(i = 0; i < cf->element_list->len; i++){
         element = cf->element_list->pdata[i];
         path = g_strdup(element->path);
@@ -174,11 +174,11 @@ static GPtrArray *CompoundFile_get_path_list(CompoundFile *cf){
     }
 
 CompoundFile *CompoundFile_dup(CompoundFile *cf){
-    register CompoundFile *ncf;
-    register CompoundFile_Location *nstart = NULL, *nstop = NULL;
-    register gint i;
-    register gchar *path;
-    register GPtrArray *path_list = CompoundFile_get_path_list(cf);
+    CompoundFile *ncf;
+    CompoundFile_Location *nstart = NULL, *nstop = NULL;
+    gint i;
+    gchar *path;
+    GPtrArray *path_list = CompoundFile_get_path_list(cf);
     g_assert(path_list);
     ncf = CompoundFile_create(path_list, FALSE);
     if(cf->start_limit)
@@ -203,13 +203,13 @@ CompoundFile *CompoundFile_dup(CompoundFile *cf){
     }
 
 gchar *CompoundFile_current_path(CompoundFile *cf){
-    register CompoundFile_Element *cfe
+    CompoundFile_Element *cfe
         = cf->element_list->pdata[cf->curr_element_id];
     return cfe->path;
     }
 
 gint CompoundFile_buffer_reload(CompoundFile *cf){
-    register gsize read_size = sizeof(gchar)*COMPOUND_FILE_BUFFER_SIZE;
+    gsize read_size = sizeof(gchar)*COMPOUND_FILE_BUFFER_SIZE;
     g_assert(cf);
     cf->in_buffer_start += cf->in_buffer_full;
     if(cf->stop_limit)
@@ -255,7 +255,7 @@ void CompoundFile_rewind(CompoundFile *cf){
     }
 
 void CompoundFile_seek(CompoundFile *cf, CompoundFile_Pos pos){
-    register CompoundFile_Element *cfe;
+    CompoundFile_Element *cfe;
     if(lseek(fileno(cf->fp), pos, SEEK_SET) != pos){
         cfe = cf->element_list->pdata[cf->curr_element_id];
         g_error("Could not seek in file [%s] (%s)",
@@ -269,10 +269,10 @@ void CompoundFile_seek(CompoundFile *cf, CompoundFile_Pos pos){
  */
 
 CompoundFile_Pos CompoundFile_get_length(CompoundFile *cf){
-    register gint i;
-    register CompoundFile_Pos length = 0;
-    register CompoundFile_Element *cfe;
-    register gint start_element, stop_element;
+    gint i;
+    CompoundFile_Pos length = 0;
+    CompoundFile_Element *cfe;
+    gint start_element, stop_element;
     start_element = cf->start_limit?cf->start_limit->element_id
                                    :0;
     stop_element = cf->stop_limit?(cf->stop_limit->element_id + 1)
@@ -291,9 +291,9 @@ CompoundFile_Pos CompoundFile_get_length(CompoundFile *cf){
     }
 
 CompoundFile_Pos CompoundFile_get_max_element_length(CompoundFile *cf){
-    register CompoundFile_Pos max = 0;
-    register CompoundFile_Element *cfe;
-    register gint i;
+    CompoundFile_Pos max = 0;
+    CompoundFile_Element *cfe;
+    gint i;
     for(i = 0; i < cf->element_list->len; i++){
         cfe = cf->element_list->pdata[i];
         if(max < cfe->length)
@@ -315,7 +315,7 @@ gint CompoundFile_read(CompoundFile *cf, gchar *buf, gint length){
 CompoundFile_Location *CompoundFile_Location_create(CompoundFile *cf,
                                                     CompoundFile_Pos pos,
                                                     gint element_id){
-    register CompoundFile_Location *cfl
+    CompoundFile_Location *cfl
      = g_new(CompoundFile_Location, 1);
     g_assert(cf);
     cfl->ref_count = 1;
@@ -357,10 +357,10 @@ void CompoundFile_Location_seek(CompoundFile_Location *cfl){
 
 CompoundFile_Location *CompoundFile_Location_from_pos(
                        CompoundFile *cf, CompoundFile_Pos pos){
-    register CompoundFile_Location *cfl
+    CompoundFile_Location *cfl
      = g_new(CompoundFile_Location, 1);
-    register gint i;
-    register CompoundFile_Element *cfe;
+    gint i;
+    CompoundFile_Element *cfe;
     cfl->ref_count = 1;
     cfl->cf = CompoundFile_share(cf);
     cfl->pos = pos;

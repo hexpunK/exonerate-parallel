@@ -20,8 +20,8 @@
 
 Optimal *Optimal_create(C4_Model *model, gchar *name,
                         Optimal_Type type, gboolean use_codegen){
-    register Optimal *optimal = g_new0(Optimal, 1);
-    register gchar *viterbi_name;
+    Optimal *optimal = g_new0(Optimal, 1);
+    gchar *viterbi_name;
     g_assert(model);
     g_assert(!model->is_open);
     optimal->ref_count = 1;
@@ -100,7 +100,7 @@ Optimal *Optimal_share(Optimal *optimal){
 
 static void Optimal_add_codegen(Viterbi *viterbi,
                                 GPtrArray *codegen_list){
-    register Codegen *codegen;
+    Codegen *codegen;
     if(viterbi){
         codegen = Viterbi_make_Codegen(viterbi);
         g_ptr_array_add(codegen_list, codegen);
@@ -109,7 +109,7 @@ static void Optimal_add_codegen(Viterbi *viterbi,
     }
 
 GPtrArray *Optimal_make_Codegen_list(Optimal *optimal){
-    register GPtrArray *codegen_list = g_ptr_array_new();
+    GPtrArray *codegen_list = g_ptr_array_new();
     Optimal_add_codegen(optimal->find_score, codegen_list);
     Optimal_add_codegen(optimal->find_path, codegen_list);
     Optimal_add_codegen(optimal->find_region, codegen_list);
@@ -122,8 +122,8 @@ GPtrArray *Optimal_make_Codegen_list(Optimal *optimal){
 
 C4_Score Optimal_find_score(Optimal *optimal, Region *region,
                             gpointer user_data, SubOpt *subopt){
-    register C4_Score score;
-    register Viterbi_Data *vd;
+    C4_Score score;
+    Viterbi_Data *vd;
     g_assert(optimal->find_score);
     vd = Viterbi_Data_create(optimal->find_score, region);
     score = Viterbi_calculate(optimal->find_score, region,
@@ -135,9 +135,9 @@ C4_Score Optimal_find_score(Optimal *optimal, Region *region,
 static Region *Optimal_find_region(Optimal *optimal, Region *region,
                          gpointer user_data, C4_Score threshold,
                          SubOpt *subopt, C4_Score *region_score){
-    register Region *alignment_region;
-    register Viterbi_Data *vd;
-    register C4_Score score;
+    Region *alignment_region;
+    Viterbi_Data *vd;
+    C4_Score score;
     g_assert(optimal->type & Optimal_Type_REDUCED_SPACE);
     if(!optimal->find_region) /* Must be a global model */
         return Region_share(region); /* Already know region */
@@ -162,8 +162,8 @@ static C4_Score Optimal_find_checkpoints_continuation(Optimal *optimal,
                   SubOpt *subopt, GPtrArray **sub_vsa_list,
                   C4_State *first_state, C4_Score *first_cell,
                   C4_State *final_state, C4_Score *final_cell){
-    register C4_Score score = C4_IMPOSSIBLY_LOW_SCORE;
-    register Viterbi_Data *vd;
+    C4_Score score = C4_IMPOSSIBLY_LOW_SCORE;
+    Viterbi_Data *vd;
     vd = Viterbi_Data_create(optimal->find_checkpoint_continuation,
                              region);
     g_assert(vd->checkpoint);
@@ -185,13 +185,13 @@ static C4_Score Optimal_find_checkpoints_recur(Optimal *optimal,
                   SubOpt *subopt, SList *vsa_list,
                   C4_State *first_state, C4_Score *first_cell,
                   C4_State *final_state, C4_Score *final_cell){
-    register Viterbi_SubAlignment *vsa, *prev_vsa = NULL,
+    Viterbi_SubAlignment *vsa, *prev_vsa = NULL,
                                         *next_vsa;
-    register C4_Score *sub_first_cell;
-    register C4_State *sub_final_state;
-    register C4_Score score;
-    register gint i;
-    register gboolean used_vsa = TRUE, prev_used_vsa = TRUE;
+    C4_Score *sub_first_cell;
+    C4_State *sub_final_state;
+    C4_Score score;
+    gint i;
+    gboolean used_vsa = TRUE, prev_used_vsa = TRUE;
     GPtrArray *sub_vsa_list = NULL;
     score = Optimal_find_checkpoints_continuation(
              optimal, region, user_data, subopt, &sub_vsa_list,
@@ -234,11 +234,11 @@ static Alignment *Optimal_find_path_quadratic_space_continuation(
            gpointer user_data, SubOpt *subopt,
            C4_State *first_state, C4_Score *first_cell,
            C4_State *final_state, C4_Score *final_cell){
-    register Alignment *alignment;
-    register C4_Score score;
-    register Viterbi_Data *vd
+    Alignment *alignment;
+    C4_Score score;
+    Viterbi_Data *vd
         = Viterbi_Data_create(optimal->find_path_continuation, region);
-    register AlignmentOperation *ao;
+    AlignmentOperation *ao;
     g_assert(!Viterbi_use_reduced_space(optimal->find_path, region));
     Viterbi_Data_set_continuation(vd, first_state, first_cell,
                                       final_state, final_cell);
@@ -267,15 +267,15 @@ static Alignment *Optimal_compute_subalignments(Optimal *optimal,
                       Region *region, gpointer user_data,
                       SubOpt *subopt,
                       SList *vsa_list, C4_Score score, gint cell_size){
-    register gint i;
-    register Viterbi_SubAlignment *vsa = NULL;
-    register Alignment *sub_alignment, *alignment;
-    register AlignmentOperation *ao;
-    register C4_State *sub_final_state;
-    register C4_Score *sub_first_cell;
-    register SListNode *node;
-    register C4_Transition *transition;
-    register C4_Score *dummy_cell = g_new0(C4_Score, cell_size);
+    gint i;
+    Viterbi_SubAlignment *vsa = NULL;
+    Alignment *sub_alignment, *alignment;
+    AlignmentOperation *ao;
+    C4_State *sub_final_state;
+    C4_Score *sub_first_cell;
+    SListNode *node;
+    C4_Transition *transition;
+    C4_Score *dummy_cell = g_new0(C4_Score, cell_size);
     alignment = Alignment_create(optimal->find_path->model,
                                  region, score);
     SList_for_each(vsa_list, node){
@@ -314,17 +314,17 @@ static Alignment *Optimal_compute_subalignments(Optimal *optimal,
 
 static Alignment *Optimal_find_path_reduced_space(Optimal *optimal,
            Region *region, gpointer user_data, SubOpt *subopt){
-    register Alignment *alignment;
-    register SListSet *slist_set = SListSet_create();
-    register SList *vsa_list = SList_create(slist_set);
-    register SListNode *node;
-    register gint cell_size
+    Alignment *alignment;
+    SListSet *slist_set = SListSet_create();
+    SList *vsa_list = SList_create(slist_set);
+    SListNode *node;
+    gint cell_size
              = optimal->find_checkpoint_continuation->cell_size;
-    register C4_Score score,
+    C4_Score score,
                      *dummy_first_cell = g_new0(C4_Score, cell_size),
                      *dummy_final_cell = g_new0(C4_Score, cell_size);
-    register C4_Model *model;
-    register Viterbi_SubAlignment *vsa;
+    C4_Model *model;
+    Viterbi_SubAlignment *vsa;
     g_assert(Viterbi_use_reduced_space(optimal->find_path, region));
     model = optimal->find_checkpoint_continuation->model;
     score = Optimal_find_checkpoints_recur(optimal,
@@ -349,9 +349,9 @@ static Alignment *Optimal_find_path_reduced_space(Optimal *optimal,
 static Alignment *Optimal_find_path_quadratic_space(
            Optimal *optimal, Region *region, gpointer user_data,
            SubOpt *subopt){
-    register Alignment *alignment;
-    register C4_Score score;
-    register Viterbi_Data *vd = Viterbi_Data_create(optimal->find_path,
+    Alignment *alignment;
+    C4_Score score;
+    Viterbi_Data *vd = Viterbi_Data_create(optimal->find_path,
                                                     region);
     g_assert(!Viterbi_use_reduced_space(optimal->find_path, region));
     score = Viterbi_calculate(optimal->find_path, region,
@@ -368,8 +368,8 @@ static Alignment *Optimal_find_path_quadratic_space(
 Alignment *Optimal_find_path(Optimal *optimal, Region *region,
                              gpointer user_data, C4_Score threshold,
                              SubOpt *subopt){
-    register Alignment *alignment = NULL;
-    register Region *alignment_region;
+    Alignment *alignment = NULL;
+    Region *alignment_region;
     C4_Score region_score = C4_IMPOSSIBLY_LOW_SCORE;
     /**/
     g_assert(!optimal->find_path->model->is_open);

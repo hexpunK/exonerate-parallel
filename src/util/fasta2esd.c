@@ -19,14 +19,14 @@
 #include "fastadb.h"
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     GPtrArray *input_path_list;
     gchar *output_path;
     gboolean softmask_input;
     Alphabet_Type alphabet_type;
-    register Dataset *dataset;
-    register FILE *fp;
+    Dataset *dataset;
+    FILE *fp;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta format input sequences", NULL,
         NULL, &input_path_list);

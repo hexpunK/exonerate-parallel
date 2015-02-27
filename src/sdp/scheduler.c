@@ -29,10 +29,10 @@ static void Scheduler_Pair_align_rows(Scheduler_Pair *spair);
 #endif /* USE_COMPILED_MODELS */
 
 static C4_Span **Scheduler_get_span_map(C4_Model *model){
-    register gint i, j;
-    register C4_Span *span,
+    gint i, j;
+    C4_Span *span,
                 **span_map = g_new0(C4_Span*, model->state_list->len);
-    register C4_State *state;
+    C4_State *state;
     for(i = 0; i < model->state_list->len; i++){
         state = model->state_list->pdata[i];
         for(j = 0; j < model->span_list->len; j++){
@@ -53,9 +53,9 @@ Scheduler *Scheduler_create(C4_Model *model,
                       Scheduler_start_Func start_func,
                       Scheduler_end_Func end_func,
                       C4_Score dropoff){
-    register Scheduler *scheduler = g_new(Scheduler, 1);
-    register gchar *raw_name;
-    register Codegen_ArgumentSet *cas
+    Scheduler *scheduler = g_new(Scheduler, 1);
+    gchar *raw_name;
+    Codegen_ArgumentSet *cas
            = Codegen_ArgumentSet_create(NULL);
     g_assert(!(is_forward && start_func));
     g_assert(!(use_boundary && start_func));
@@ -122,7 +122,7 @@ void Scheduler_destroy(Scheduler *scheduler){
 
 static void Scheduler_end_transition(Codegen *codegen,
                                      gint transition_id){
-    register gint sorry = 'o';
+    gint sorry = 'o';
     Codegen_indent(codegen, 1);
     Codegen_printf(codegen, "%c%c%c%c end_of_transition_%d;\n",
                              sorry-8, sorry, sorry+5, sorry, transition_id);
@@ -132,32 +132,32 @@ static void Scheduler_end_transition(Codegen *codegen,
 
 static void Scheduler_implement_DP(Scheduler *scheduler,
                                    Codegen *codegen){
-    register gint i, j, input_pos, output_pos;
-    register C4_Transition *transition;
-    register C4_Span *span;
-    register C4_Shadow *shadow;
+    gint i, j, input_pos, output_pos;
+    C4_Transition *transition;
+    C4_Span *span;
+    C4_Shadow *shadow;
     Codegen_printf(codegen, "void %s(Scheduler_Cell *cell,\n"
                             "        Scheduler_Row *row,\n"
                             "        Scheduler_Pair *spair){\n",
                    scheduler->name);
     Codegen_indent(codegen, 1);
-    Codegen_printf(codegen, "register gint seed_id = 0;\n");
-    Codegen_printf(codegen, "register gint src_query_pos,\n"
+    Codegen_printf(codegen, "gint seed_id = 0;\n");
+    Codegen_printf(codegen, "gint src_query_pos,\n"
                             "              src_target_pos,\n"
                             "              dst_query_pos,\n"
                             "              dst_target_pos;\n");
-    Codegen_printf(codegen, "register C4_Score src_score, dst_score,\n"
+    Codegen_printf(codegen, "C4_Score src_score, dst_score,\n"
                             "         transition_score, max_score;\n");
-    Codegen_printf(codegen, "register C4_Transition *transition;\n");
+    Codegen_printf(codegen, "C4_Transition *transition;\n");
     if(scheduler->model->span_list->len){
         Codegen_printf(codegen, "Scheduler_SpanSeed span_seed;\n");
         Codegen_printf(codegen,
-                   "register Scheduler_SpanData *span_data;\n");
+                   "Scheduler_SpanData *span_data;\n");
         }
     if(scheduler->model->shadow_list->len)
-        Codegen_printf(codegen, "register C4_Shadow *shadow;\n");
-    Codegen_printf(codegen, "register Scheduler_Row *dst_row;\n");
-    Codegen_printf(codegen, "register Scheduler_Cell *dst_cell;\n");
+        Codegen_printf(codegen, "C4_Shadow *shadow;\n");
+    Codegen_printf(codegen, "Scheduler_Row *dst_row;\n");
+    Codegen_printf(codegen, "Scheduler_Cell *dst_cell;\n");
     Codegen_printf(codegen, "src_query_pos = %scell->query_pos;\n",
                    scheduler->is_forward?"":"-");
     Codegen_printf(codegen, "src_target_pos = %srow->target_pos;\n",
@@ -399,7 +399,7 @@ static void Scheduler_implement_DP(Scheduler *scheduler,
  */
 
 Codegen *Scheduler_make_Codegen(Scheduler *scheduler){
-    register Codegen *codegen = Codegen_create(NULL, scheduler->name);
+    Codegen *codegen = Codegen_create(NULL, scheduler->name);
     CGUtil_print_header(codegen, scheduler->model);
     Codegen_printf(codegen,
             "/* Seeded Viterbi DP implementation. */\n"
@@ -421,13 +421,13 @@ Codegen *Scheduler_make_Codegen(Scheduler *scheduler){
 
 static gpointer Scheduler_Cache_get(SparseCache *cache,
                                     gint slot, gint pos){
-    register gpointer *cache_data = SparseCache_get(cache, pos);
+    gpointer *cache_data = SparseCache_get(cache, pos);
     return cache_data[slot];
     }
 
 static void Scheduler_Cache_set(SparseCache *cache,
                                 gint slot, gint pos, gpointer data){
-    register gpointer *cache_data = SparseCache_get(cache, pos);
+    gpointer *cache_data = SparseCache_get(cache, pos);
     cache_data[slot] = data;
     return;
     }
@@ -440,10 +440,10 @@ static Scheduler_SpanSeed *Scheduler_SpanSeed_create(C4_Score score,
                          STraceback_Cell *cell,
                          C4_Score *shadow_data,
                          Scheduler *scheduler){
-    register Scheduler_SpanSeed *span_seed
+    Scheduler_SpanSeed *span_seed
      = g_new(Scheduler_SpanSeed, 1);
-    register gint i;
-    register C4_Model *model = scheduler->model;
+    gint i;
+    C4_Model *model = scheduler->model;
     span_seed->score = score;
     span_seed->max = max;
     span_seed->seed_id = seed_id;
@@ -475,8 +475,8 @@ static void Scheduler_SpanSeed_destroy(Scheduler_SpanSeed *span_seed,
 static void Scheduler_SpanSeed_copy(Scheduler_SpanSeed *src,
                                     Scheduler_SpanSeed *dst,
                                     Scheduler_Pair *spair){
-    register gint i;
-    register C4_Model *model = spair->scheduler->model;
+    gint i;
+    C4_Model *model = spair->scheduler->model;
     g_assert(src);
     g_assert(dst);
     dst->score        = src->score;
@@ -510,19 +510,19 @@ static Scheduler_SpanSeed *Scheduler_SpanSeed_duplicate(
 
 static gpointer Scheduler_Cache_get_func(gint pos, gpointer page_data,
                                          gpointer user_data){
-    register Scheduler_SpanSeed **seed_matrix = page_data;
+    Scheduler_SpanSeed **seed_matrix = page_data;
     return seed_matrix[pos];
     }
 
 static SparseCache_Page *Scheduler_Cache_fill_func(gint start,
                                                    gpointer user_data){
-    register Scheduler_Pair *spair = user_data;
-    register Scheduler_SpanSeed ***seed_matrix
+    Scheduler_Pair *spair = user_data;
+    Scheduler_SpanSeed ***seed_matrix
           = (Scheduler_SpanSeed***)Matrix2d_create(
                          SparseCache_PAGE_SIZE,
                          spair->scheduler->model->span_list->len,
                          sizeof(Scheduler_SpanSeed*));
-    register SparseCache_Page *page = g_new(SparseCache_Page, 1);
+    SparseCache_Page *page = g_new(SparseCache_Page, 1);
     page->data = seed_matrix;
     page->data_size = Matrix2d_size(SparseCache_PAGE_SIZE,
                                     spair->scheduler->model->span_list->len,
@@ -534,9 +534,9 @@ static SparseCache_Page *Scheduler_Cache_fill_func(gint start,
 
 static void Scheduler_Cache_empty_func(SparseCache_Page *page,
                                        gpointer user_data){
-    register Scheduler_Pair *spair = user_data;
-    register Scheduler_SpanSeed *seed, ***seed_matrix = page->data;
-    register gint i, j;
+    Scheduler_Pair *spair = user_data;
+    Scheduler_SpanSeed *seed, ***seed_matrix = page->data;
+    gint i, j;
     for(i = 0; i < SparseCache_PAGE_SIZE; i++)
         for(j = 0; j < spair->scheduler->model->span_list->len; j++){
             seed = seed_matrix[i][j];
@@ -552,7 +552,7 @@ static void Scheduler_Cache_empty_func(SparseCache_Page *page,
 
 static Scheduler_SpanData *Scheduler_SpanData_create(
                            SListSet *slist_set, C4_Span *span){
-    register Scheduler_SpanData *span_data
+    Scheduler_SpanData *span_data
      = g_new(Scheduler_SpanData, 1);
     span_data->span = span;
     span_data->curr_span_seed = NULL;
@@ -568,7 +568,7 @@ void Scheduler_SpanData_get_curr(Scheduler_SpanData *span_data,
                            SparseCache *cache,
                            gint query_pos, gint target_pos,
                            STraceback *straceback){
-    register Scheduler_SpanSeed *stored_seed;
+    Scheduler_SpanSeed *stored_seed;
     g_assert(span_data);
     g_assert(cache);
     /* Remove curr if expired */
@@ -619,7 +619,7 @@ void Scheduler_SpanData_get_curr(Scheduler_SpanData *span_data,
 void Scheduler_SpanData_submit(Scheduler_SpanData *span_data,
                                Scheduler_SpanSeed *span_seed,
                                SparseCache *cache, Scheduler_Pair *spair){
-    register Scheduler_SpanSeed *stored_seed;
+    Scheduler_SpanSeed *stored_seed;
     if(span_data->span->max_target){ /* Challenge cache */
         stored_seed = Scheduler_Cache_get(cache,
                                           span_data->span->id,
@@ -647,11 +647,11 @@ void Scheduler_SpanData_submit(Scheduler_SpanData *span_data,
 static Scheduler_SpanHistory *Scheduler_SpanHistory_create(
                                         SListSet *slist_set,
                                         C4_Model *model){
-    register gint i;
-    register Scheduler_SpanHistory *span_history
+    gint i;
+    Scheduler_SpanHistory *span_history
      = g_new(Scheduler_SpanHistory, 1);
-    register Scheduler_SpanData *span_data;
-    register C4_Span *span;
+    Scheduler_SpanData *span_data;
+    C4_Span *span;
     span_history->model = C4_Model_share(model);
     span_history->span_data = g_new(Scheduler_SpanData*,
                                     model->span_list->len);
@@ -665,8 +665,8 @@ static Scheduler_SpanHistory *Scheduler_SpanHistory_create(
 
 static void Scheduler_SpanHistory_destroy(
             Scheduler_SpanHistory *span_history){
-    register gint i;
-    register Scheduler_SpanData *span_data;
+    gint i;
+    Scheduler_SpanData *span_data;
     for(i = 0; i < span_history->model->span_list->len; i++){
         span_data = span_history->span_data[i];
         Scheduler_SpanData_destroy(span_data);
@@ -685,8 +685,8 @@ static void Scheduler_Cell_init(Scheduler_Cell *cell,
                                 gint query_pos,
                                 gboolean permit_span_thaw,
                                 Scheduler_Pair *spair){
-    register gint i;
-    register C4_Model *model = spair->scheduler->model;
+    gint i;
+    C4_Model *model = spair->scheduler->model;
     memset(cell, 0, spair->scheduler->cell_size);
     cell->score = (C4_Score**)
                   ((gchar*)cell + spair->scheduler->cell_score_offset);
@@ -718,7 +718,7 @@ static void Scheduler_Cell_init(Scheduler_Cell *cell,
 Scheduler_Cell *Scheduler_Cell_create(gint query_pos,
                                       gboolean permit_span_thaw,
                                       Scheduler_Pair *spair){
-    register Scheduler_Cell *cell;
+    Scheduler_Cell *cell;
     cell = RecycleBin_alloc(spair->cell_recycle);
     Scheduler_Cell_init(cell, query_pos, permit_span_thaw, spair);
     return cell;
@@ -734,8 +734,8 @@ static void Scheduler_Cell_shadow_start(C4_Transition *transition,
                               C4_Score *dst_cell, gint shadow_start,
                               gint dst_query_pos, gint dst_target_pos,
                               gpointer user_data){
-    register gint i;
-    register C4_Shadow *shadow;
+    gint i;
+    C4_Shadow *shadow;
     for(i = 0; i < transition->input->src_shadow_list->len; i++){
         shadow = transition->input->src_shadow_list->pdata[i];
         dst_cell[shadow_start+shadow->designation]
@@ -750,8 +750,8 @@ static void Scheduler_Cell_shadow_end(C4_Transition *transition,
                               C4_Score *src_cell, gint shadow_start,
                               gint dst_query_pos, gint dst_target_pos,
                               gpointer user_data){
-    register gint i;
-    register C4_Shadow *shadow;
+    gint i;
+    C4_Shadow *shadow;
     for(i = 0; i < transition->dst_shadow_list->len; i++){
         shadow = transition->dst_shadow_list->pdata[i];
         shadow->end_func(src_cell[shadow_start+shadow->designation],
@@ -766,8 +766,8 @@ void Scheduler_Cell_assign(Scheduler_Pair *spair,
                            C4_Score dst_score, C4_Score max_score,
                            C4_Transition *transition, gint seed_id,
                            gint dst_query_pos, gint dst_target_pos){
-    register C4_Model *model = spair->scheduler->model;
-    register gint i;
+    C4_Model *model = spair->scheduler->model;
+    gint i;
     /*
     g_message("Assign (%d,%d)->(%d,%d) dst_score[%d] seed[%d] [%s]",
             dst_query_pos-transition->advance_query,
@@ -859,14 +859,14 @@ STraceback_Cell *Scheduler_Cell_add_span(STraceback_Cell *prev,
 void Scheduler_Cell_process(Scheduler_Cell *cell,
                             Scheduler_Row *row,
                             Scheduler_Pair *spair){
-    register C4_Transition *transition;
-    register C4_Model *model = spair->scheduler->model;
-    register C4_Score src_score, dst_score, transition_score, max_score;
-    register Scheduler_Row *dst_row;
-    register Scheduler_Cell *dst_cell;
-    register Scheduler_SpanData *span_data;
-    register C4_Span *span;
-    register gint i, j, seed_id = 0,
+    C4_Transition *transition;
+    C4_Model *model = spair->scheduler->model;
+    C4_Score src_score, dst_score, transition_score, max_score;
+    Scheduler_Row *dst_row;
+    Scheduler_Cell *dst_cell;
+    Scheduler_SpanData *span_data;
+    C4_Span *span;
+    gint i, j, seed_id = 0,
                   src_query_pos, src_target_pos,
                   dst_query_pos, dst_target_pos,
                   rel_dst_query_pos, rel_dst_target_pos,
@@ -1068,7 +1068,7 @@ void Scheduler_Cell_process(Scheduler_Cell *cell,
 static void Scheduler_Cell_seed(Scheduler_Cell *cell,
                                 Scheduler_Seed *seed,
                                 Scheduler_Pair *spair){
-    register gboolean seed_state_id = spair->scheduler->is_forward
+    gboolean seed_state_id = spair->scheduler->is_forward
          ?  spair->scheduler->model->start_state->state->id
          :  spair->scheduler->model->end_state->state->id;
     cell->score[seed_state_id][0] = seed->start_score;
@@ -1083,8 +1083,8 @@ static void Scheduler_Cell_seed(Scheduler_Cell *cell,
 
 static void Scheduler_Row_Lookahead_free_func(gpointer data,
                                         gpointer user_data){
-    register Scheduler_Cell *cell = data;
-    register Scheduler_Row *row = user_data;
+    Scheduler_Cell *cell = data;
+    Scheduler_Row *row = user_data;
     g_assert(cell);
     /* Do not destroy cells - just add to the used_list */
     SList_queue(row->used_list, cell);
@@ -1093,7 +1093,7 @@ static void Scheduler_Row_Lookahead_free_func(gpointer data,
 
 Scheduler_Row *Scheduler_Row_create(gint target_pos,
                                     Scheduler_Pair *spair){
-    register Scheduler_Row *row = g_new0(Scheduler_Row, 1);
+    Scheduler_Row *row = g_new0(Scheduler_Row, 1);
     if(spair->scheduler->is_forward){
         g_assert(target_pos >= 0);
     } else {
@@ -1112,8 +1112,8 @@ Scheduler_Row *Scheduler_Row_create(gint target_pos,
 
 static void Scheduler_Row_process(Scheduler_Row *row,
                                   Scheduler_Pair *spair){
-    register Scheduler_Cell *cell, *next_cell;
-    register gint advance;
+    Scheduler_Cell *cell, *next_cell;
+    gint advance;
     g_assert(Scheduler_Pair_is_valid(spair));
     if(spair->scheduler->is_forward)
         SubOpt_Index_set_row(spair->subopt_index,
@@ -1167,14 +1167,14 @@ typedef struct {
 
 static void Scheduler_Row_traverse_cell_destroy(gpointer data,
                                                 gpointer user_data){
-    register Scheduler_Cell *cell = data;
-    register Scheduler_TraverseData *std = user_data;
-    register Scheduler_Pair *spair = std->spair;
-    register gint i, state_id;
-    register Boundary_Row *boundary_row;
-    register C4_Model *model = spair->scheduler->model;
-    register STraceback_Cell *stcell, *prev_stcell;
-    register C4_Span *span;
+    Scheduler_Cell *cell = data;
+    Scheduler_TraverseData *std = user_data;
+    Scheduler_Pair *spair = std->spair;
+    gint i, state_id;
+    Boundary_Row *boundary_row;
+    C4_Model *model = spair->scheduler->model;
+    STraceback_Cell *stcell, *prev_stcell;
+    C4_Span *span;
     if(spair->straceback){
         for(i = 0; i < model->state_list->len; i++){
             stcell = cell->traceback[i];
@@ -1222,7 +1222,7 @@ static void Scheduler_Row_traverse_cell_destroy(gpointer data,
 
 static void Scheduler_Row_destroy(Scheduler_Row *row,
                                   Scheduler_Pair *spair){
-    register Boundary_Row *boundary_row = NULL;
+    Boundary_Row *boundary_row = NULL;
     Scheduler_TraverseData std;
     std.target_pos = row->target_pos;
     std.spair = spair;
@@ -1249,12 +1249,12 @@ static void Scheduler_Row_destroy(Scheduler_Row *row,
 static void Scheduler_Row_add_seed(Scheduler_Row *row,
                                    Scheduler_Pair *spair,
                                    Scheduler_Seed *seed){
-    register Scheduler_Cell *cell
+    Scheduler_Cell *cell
            = Scheduler_Cell_create(seed->query_pos,
                                   (spair->scheduler->is_forward
                                 && spair->scheduler->use_boundary), spair);
-    register Scheduler_Cell *first_cell;
-    register gint advance;
+    Scheduler_Cell *first_cell;
+    gint advance;
     if(row->cell_index->mask){ /* Already have cells */
         /* Add to lookahead when within advance range */
         first_cell = Lookahead_get(row->cell_index, 0);
@@ -1281,7 +1281,7 @@ static void Scheduler_Row_add_seed(Scheduler_Row *row,
     }
 
 static void Scheduler_Row_reset(Scheduler_Row *row){
-    register SList *joined_list;
+    SList *joined_list;
     Lookahead_reset(row->cell_index);
     /* Prepend anything in used onto unused */
     joined_list = SList_join(row->used_list, row->unused_list);
@@ -1291,8 +1291,8 @@ static void Scheduler_Row_reset(Scheduler_Row *row){
     }
 
 static void Scheduler_Row_move(Scheduler_Row *row, gint query_pos){
-    register Scheduler_Cell *cell;
-    register gint advance;
+    Scheduler_Cell *cell;
+    gint advance;
     Lookahead_move(row->cell_index, query_pos);
     /* Move anything in unused list before index onto used list */
     do {
@@ -1322,16 +1322,16 @@ static void Scheduler_Row_move(Scheduler_Row *row, gint query_pos){
 
 static gboolean Scheduler_Row_print_traverse(gpointer data,
                                        gpointer user_data){
-    register Scheduler_Cell *cell = data;
-    register gchar *message = user_data;
+    Scheduler_Cell *cell = data;
+    gchar *message = user_data;
     g_message("  >[%s] CELL [%d](%p)",
               message, cell->query_pos, cell);
     return FALSE;
     }
 
 static void Scheduler_Row_print(Scheduler_Row *row){
-    register gint i;
-    register Scheduler_Cell *cell;
+    gint i;
+    Scheduler_Cell *cell;
     g_print("\n");
     g_message("--[");
     g_message("ROW target_pos [%d] (mask %d) (ma=%d)", row->target_pos,
@@ -1361,8 +1361,8 @@ typedef struct {
 
 static gboolean Scheduler_Row_is_valid_traverse(gpointer data,
                                           gpointer user_data){
-    register Scheduler_Row_Validate *v = user_data;
-    register Scheduler_Cell *cell = data;
+    Scheduler_Row_Validate *v = user_data;
+    Scheduler_Cell *cell = data;
     if(cell->query_pos < v->pos){
         v->is_valid = FALSE;
         }
@@ -1372,8 +1372,8 @@ static gboolean Scheduler_Row_is_valid_traverse(gpointer data,
 
 static gboolean Scheduler_Row_is_valid(Scheduler_Row *row){
     Scheduler_Row_Validate v;
-    register gint i;
-    register Scheduler_Cell *cell;
+    gint i;
+    Scheduler_Cell *cell;
     v.pos = -987654321;
     v.is_valid = TRUE;
     SList_traverse(row->used_list, Scheduler_Row_is_valid_traverse, &v);
@@ -1399,7 +1399,7 @@ static gboolean Scheduler_Row_is_valid(Scheduler_Row *row){
 static void Scheduler_Pair_init(Scheduler_Pair *spair,
                                 Scheduler_Seed *seed){
     /* Load first seed at start of index */
-    register Scheduler_Row *first_row;
+    Scheduler_Row *first_row;
     /* Make first row */
     first_row = Scheduler_Row_create(seed->target_pos, spair);
     Scheduler_Row_add_seed(first_row, spair, seed);
@@ -1411,8 +1411,8 @@ static void Scheduler_Pair_init(Scheduler_Pair *spair,
 
 static void Scheduler_Pair_add_seed(Scheduler_Pair *spair,
                                     Scheduler_Seed *seed){
-    register Scheduler_Row *row, *first_row;
-    register gint advance;
+    Scheduler_Row *row, *first_row;
+    gint advance;
     first_row = Lookahead_get(spair->row_index, 0);
     g_assert(first_row);
     advance = seed->target_pos - first_row->target_pos;
@@ -1430,8 +1430,8 @@ static void Scheduler_Pair_add_seed(Scheduler_Pair *spair,
     }
 
 static void Scheduler_Pair_reset_rows(Scheduler_Pair *spair){
-    register gint i;
-    register Scheduler_Row *row;
+    gint i;
+    Scheduler_Row *row;
     for(i = 0; i <= spair->row_index->max_advance; i++){
         row = Lookahead_get(spair->row_index, i);
         if(row){
@@ -1444,10 +1444,10 @@ static void Scheduler_Pair_reset_rows(Scheduler_Pair *spair){
 
 void Scheduler_Pair_calculate(Scheduler_Pair *spair){
     Scheduler_Seed seed;
-    register Scheduler_Row *row;
-    register gint i;
-    register C4_Calc *calc;
-    register C4_Model *model = spair->scheduler->model;
+    Scheduler_Row *row;
+    gint i;
+    C4_Calc *calc;
+    C4_Model *model = spair->scheduler->model;
     /* Call model init func */
     if(model->init_func)
         model->init_func(spair->region, spair->user_data);
@@ -1501,8 +1501,8 @@ void Scheduler_Pair_calculate(Scheduler_Pair *spair){
 
 static void Scheduler_Lookahead_free_func(gpointer data,
                                           gpointer user_data){
-    register Scheduler_Row *row = data;
-    register Scheduler_Pair *spair = user_data;
+    Scheduler_Row *row = data;
+    Scheduler_Pair *spair = user_data;
     Scheduler_Row_destroy(row, spair);
     return;
     }
@@ -1514,7 +1514,7 @@ Scheduler_Pair *Scheduler_Pair_create(
                            SubOpt *subopt,
                            Boundary *boundary, gint best_seed_id,
                            gpointer seed_data, gpointer user_data){
-    register Scheduler_Pair *spair = g_new(Scheduler_Pair, 1);
+    Scheduler_Pair *spair = g_new(Scheduler_Pair, 1);
     spair->scheduler = scheduler;
     spair->slist_set = SListSet_create();
     spair->region = Region_create(0, 0, query_len, target_len);
@@ -1572,10 +1572,10 @@ void Scheduler_Pair_destroy(Scheduler_Pair *spair){
     }
 
 static void Scheduler_Pair_align_rows(Scheduler_Pair *spair){
-    register gint i;
+    gint i;
     /* Set other rows in row_index to same position as first row */
-    register Scheduler_Row *first_row, *row;
-    register Scheduler_Cell *first_cell;
+    Scheduler_Row *first_row, *row;
+    Scheduler_Cell *first_cell;
     first_row = Lookahead_get(spair->row_index, 0);
     g_assert(first_row);
     first_cell = Lookahead_get(first_row->cell_index, 0);
@@ -1592,8 +1592,8 @@ static void Scheduler_Pair_align_rows(Scheduler_Pair *spair){
     }
 
 static gboolean Scheduler_Pair_is_valid(Scheduler_Pair *spair){
-    register gint i;
-    register Scheduler_Row *row;
+    gint i;
+    Scheduler_Row *row;
     for(i = 0; i <= spair->row_index->max_advance; i++){
         row = Lookahead_get(spair->row_index, i);
         g_assert((!row) || Scheduler_Row_is_valid(row));

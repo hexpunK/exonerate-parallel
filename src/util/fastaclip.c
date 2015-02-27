@@ -23,9 +23,9 @@ FILE *file;
 
 static gboolean fasta_clip_traverse_func(FastaDB_Seq *fdbs,
                                               gpointer user_data){
-    register gint clip_char = GPOINTER_TO_INT(user_data);
-    register gint i, start_clip, end_clip, clip_len;
-    register Sequence *clip_seq;
+    gint clip_char = GPOINTER_TO_INT(user_data);
+    gint i, start_clip, end_clip, clip_len;
+    Sequence *clip_seq;
     for(i = 0; i < fdbs->seq->len; i++)
         if(Sequence_get_symbol(fdbs->seq, i) != clip_char)
             break;
@@ -42,8 +42,8 @@ static gboolean fasta_clip_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *outputFile;
     gchar clip_char;

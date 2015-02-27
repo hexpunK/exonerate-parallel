@@ -19,7 +19,7 @@
 
 OPair *OPair_create(Optimal *optimal, SubOpt *subopt,
                     gint query_length, gint target_length, gpointer user_data){
-    register OPair *opair = g_new(OPair, 1);
+    OPair *opair = g_new(OPair, 1);
     g_assert(optimal);
     g_assert(query_length >= 0);
     g_assert(target_length >= 0);
@@ -40,7 +40,7 @@ void OPair_destroy(OPair *opair){
     }
 
 Alignment *OPair_next_path(OPair *opair, C4_Score threshold){
-    register Alignment *alignment;
+    Alignment *alignment;
     alignment = Optimal_find_path(opair->optimal, opair->region,
                                   opair->user_data, threshold,
                                   opair->subopt);

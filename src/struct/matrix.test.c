@@ -16,9 +16,9 @@
 #include "matrix.h"
 
 int main(void){
-    register gint **m2d, ***m3d;
-    register gshort ***ms3d, ****ms4d;
-    register gint i, j, k, l;
+    gint **m2d, ***m3d;
+    gshort ***ms3d, ****ms4d;
+    gint i, j, k, l;
     g_message("testing 2d matrix routines\n");
     m2d = (gint**)Matrix2d_create(5, 10, sizeof(gint));
     for(i = 0; i < 5; i++){

@@ -21,7 +21,7 @@
 #include "hspset.h"
 
 HSPset_ArgumentSet *HSPset_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static HSPset_ArgumentSet has = {0};
     if(arg){
         as = ArgumentSet_create("HSP creation options");
@@ -144,8 +144,8 @@ void HSP_Param_set_codon_hsp_threshold(HSP_Param *hsp_param,
 /**/
 
 static void HSP_Param_refresh_wordhood(HSP_Param *hsp_param){
-    register WordHood_Alphabet *wha = NULL;
-    register Submat *submat;
+    WordHood_Alphabet *wha = NULL;
+    Submat *submat;
     if(hsp_param->wordhood)
         WordHood_destroy(hsp_param->wordhood);
     if(hsp_param->has->use_wordhood_dropoff && (!hsp_param->wordlimit)){
@@ -236,7 +236,7 @@ void HSP_Param_set_seed_repeat(HSP_Param *hsp_param,
     }
 
 HSP_Param *HSP_Param_create(Match *match, gboolean use_horizon){
-    register HSP_Param *hsp_param = g_new(HSP_Param, 1);
+    HSP_Param *hsp_param = g_new(HSP_Param, 1);
     hsp_param->thread_ref = ThreadRef_create();
     hsp_param->has = HSPset_ArgumentSet_create(NULL);
     hsp_param->match = match;
@@ -310,7 +310,7 @@ HSP_Param *HSP_Param_swap(HSP_Param *hsp_param){
 
 HSPset *HSPset_create(Sequence *query, Sequence *target,
                       HSP_Param *hsp_param){
-    register HSPset *hsp_set = g_new(HSPset, 1);
+    HSPset *hsp_set = g_new(HSPset, 1);
     g_assert(query);
     g_assert(target);
     hsp_set->ref_count = 1;
@@ -356,8 +356,8 @@ HSPset *HSPset_share(HSPset *hsp_set){
     }
 
 void HSPset_destroy(HSPset *hsp_set){
-    register gint i;
-    register HSP *hsp;
+    gint i;
+    HSP *hsp;
     g_assert(hsp_set);
     if(--hsp_set->ref_count)
         return;
@@ -380,9 +380,9 @@ void HSPset_destroy(HSPset *hsp_set){
     }
 
 void HSPset_swap(HSPset *hsp_set, HSP_Param *hsp_param){
-    register Sequence *query;
-    register gint i, query_start;
-    register HSP *hsp;
+    Sequence *query;
+    gint i, query_start;
+    HSP *hsp;
     g_assert(hsp_set->ref_count == 1);
     /* Swap query and target */
     query = hsp_set->query;
@@ -402,10 +402,10 @@ void HSPset_swap(HSPset *hsp_set, HSP_Param *hsp_param){
     }
 
 void HSPset_revcomp(HSPset *hsp_set){
-    register Sequence *rc_query = Sequence_revcomp(hsp_set->query),
+    Sequence *rc_query = Sequence_revcomp(hsp_set->query),
                       *rc_target = Sequence_revcomp(hsp_set->target);
-    register gint i;
-    register HSP *hsp;
+    gint i;
+    HSP *hsp;
     g_assert(hsp_set);
     g_assert(hsp_set->is_finalised);
     g_assert(hsp_set->ref_count == 1);
@@ -424,9 +424,9 @@ void HSPset_revcomp(HSPset *hsp_set){
 
 
 static gint HSP_find_cobs(HSP *hsp){
-    register gint i, query_pos = hsp->query_start,
+    gint i, query_pos = hsp->query_start,
                      target_pos = hsp->target_start;
-    register Match_Score score = 0;
+    Match_Score score = 0;
     /* Find the HSP centre offset by score */
     for(i = 0; i < hsp->length; i++){
         g_assert(HSP_check_positions(hsp->hsp_set,
@@ -469,8 +469,8 @@ typedef struct {
 } HSP_Display;
 
 static HSP_Display *HSP_Display_create(HSP *hsp, gint padding){
-    register HSP_Display *hd = g_new(HSP_Display, 1);
-    register gint approx_length;
+    HSP_Display *hd = g_new(HSP_Display, 1);
+    gint approx_length;
     hd->hsp = hsp;
     hd->padding = padding;
     hd->max_advance = MAX(HSP_query_advance(hsp),
@@ -511,8 +511,8 @@ static void HSP_Display_add(HSP_Display *hd,
 
 static gchar HSP_Display_get_ruler_char(HSP_Display *hd, gint pos,
                                        gint advance){
-    register gint stop;
-    register gint pad_length = 3;
+    gint stop;
+    gint pad_length = 3;
     stop = hd->padding * hd->max_advance;
     if(pos >= stop){
         if(pos < (stop+pad_length)){
@@ -535,7 +535,7 @@ static gchar HSP_Display_get_ruler_char(HSP_Display *hd, gint pos,
 
 static void HSP_Display_print_ruler(HSP_Display *hd, gint width,
                                     gint pos, gboolean is_query){
-    register gint i, adv;
+    gint i, adv;
     if(is_query){
         if(HSP_target_advance(hd->hsp) == 1)
             return; /* opposite padding */
@@ -553,7 +553,7 @@ static void HSP_Display_print_ruler(HSP_Display *hd, gint width,
     }
 
 static void HSP_Display_print(HSP_Display *hd){
-    register gint pos, pause, width = 50;
+    gint pos, pause, width = 50;
     g_assert(hd);
     g_assert(hd->top->len == hd->mid->len);
     g_assert(hd->mid->len == hd->low->len);
@@ -577,10 +577,10 @@ static void HSP_Display_print(HSP_Display *hd){
     }
 
 static void HSP_Display_insert(HSP_Display *hd, gint position){
-    register gint query_pos, target_pos;
-    register gboolean is_padding,
+    gint query_pos, target_pos;
+    gboolean is_padding,
                       query_valid = TRUE, target_valid = TRUE;
-    register Match *match = hd->hsp->hsp_set->param->match;
+    Match *match = hd->hsp->hsp_set->param->match;
     gchar query_str[4] = {0},
           target_str[4] = {0},
           equiv_str[4] = {0};
@@ -646,8 +646,8 @@ static void HSP_Display_insert(HSP_Display *hd, gint position){
     }
 
 static void HSP_print_alignment(HSP *hsp){
-    register HSP_Display *hd = HSP_Display_create(hsp, 10);
-    register gint i;
+    HSP_Display *hd = HSP_Display_create(hsp, 10);
+    gint i;
     for(i = 0; i < hd->padding; i++) /* Pre-padding */
         HSP_Display_insert(hd, i-hd->padding);
     /* Use pad_length == 3 */
@@ -706,8 +706,8 @@ void HSP_print(HSP *hsp, gchar *name){
     }
 
 void HSPset_print(HSPset *hsp_set){
-    register gint i;
-    register gchar *name;
+    gint i;
+    gchar *name;
     g_print("HSPset [%p] contains [%d] hsps\n",
             (gpointer)hsp_set, hsp_set->hsp_list->len);
     g_print("Comparison of [%s] and [%s]\n",
@@ -723,8 +723,8 @@ void HSPset_print(HSPset *hsp_set){
 /**/
 
 static void HSP_init(HSP *nh){
-    register gint i;
-    register gint query_pos, target_pos;
+    gint i;
+    gint query_pos, target_pos;
     g_assert(HSP_check(nh));
     /* Initial hsp score */
     query_pos = nh->query_start;
@@ -746,9 +746,9 @@ static void HSP_init(HSP *nh){
     }
 
 static void HSP_extend(HSP *nh, gboolean forbid_masked){
-    register Match_Score score, maxscore;
-    register gint query_pos, target_pos;
-    register gint extend, maxext;
+    Match_Score score, maxscore;
+    gint query_pos, target_pos;
+    gint extend, maxext;
     g_assert(HSP_check(nh));
     /* extend left */
     maxscore = score = nh->score;
@@ -818,7 +818,7 @@ static void HSP_extend(HSP *nh, gboolean forbid_masked){
  */
 
 static HSP *HSP_create(HSP *nh){
-    register HSP *hsp;
+    HSP *hsp;
 #ifdef USE_PTHREADS
     pthread_mutex_lock(&nh->hsp_set->param->hsp_recycle_lock);
 #endif /* USE_PTHREADS */
@@ -836,7 +836,7 @@ static HSP *HSP_create(HSP *nh){
     }
 
 void HSP_destroy(HSP *hsp){
-    register HSPset *hsp_set = hsp->hsp_set;
+    HSPset *hsp_set = hsp->hsp_set;
 #ifdef USE_PTHREADS
     pthread_mutex_lock(&hsp_set->param->hsp_recycle_lock);
 #endif /* USE_PTHREADS */
@@ -848,8 +848,8 @@ void HSP_destroy(HSP *hsp){
     }
 
 static void HSP_trim_ends(HSP *hsp){
-    register gint i;
-    register gint query_pos, target_pos;
+    gint i;
+    gint query_pos, target_pos;
     /* Trim left to first good match */
     g_assert(HSP_check(hsp));
     for(i = 0; i < hsp->length; i++){
@@ -881,14 +881,14 @@ static void HSP_trim_ends(HSP *hsp){
 
 static gboolean HSP_PQueue_comp_func(gpointer low, gpointer high,
                                      gpointer user_data){
-    register HSP *hsp_low = (HSP*)low, *hsp_high = (HSP*)high;
+    HSP *hsp_low = (HSP*)low, *hsp_high = (HSP*)high;
     return hsp_low->score - hsp_high->score;
     }
 
 static void HSP_store(HSP *nascent_hsp){
-    register HSPset *hsp_set = nascent_hsp->hsp_set;
-    register PQueue *pq;
-    register HSP *hsp = NULL;
+    HSPset *hsp_set = nascent_hsp->hsp_set;
+    PQueue *pq;
+    HSP *hsp = NULL;
     g_assert(nascent_hsp);
     if(nascent_hsp->score < hsp_set->param->threshold)
         return;
@@ -932,14 +932,14 @@ static void HSP_store(HSP *nascent_hsp){
 
 void HSPset_seed_hsp(HSPset *hsp_set,
                      guint query_start, guint target_start){
-    register gint diag_pos
+    gint diag_pos
         = ((target_start * hsp_set->param->match->query->advance)
           -(query_start * hsp_set->param->match->target->advance));
-    register gint query_frame = query_start
+    gint query_frame = query_start
                               % hsp_set->param->match->query->advance,
                   target_frame = target_start
                                % hsp_set->param->match->target->advance;
-    register gint section_pos = (diag_pos + hsp_set->query->len)
+    gint section_pos = (diag_pos + hsp_set->query->len)
                               % hsp_set->query->len;
     HSP nascent_hsp;
     g_assert(!hsp_set->is_finalised);
@@ -1015,14 +1015,14 @@ static void HSPset_seed_hsp_sorted(HSPset *hsp_set,
                      guint query_start, guint target_start,
                      gint ***horizon){
     HSP nascent_hsp;
-    register gint diag_pos
+    gint diag_pos
         = ((target_start * hsp_set->param->match->query->advance)
           -(query_start * hsp_set->param->match->target->advance));
-    register gint query_frame = query_start
+    gint query_frame = query_start
                               % hsp_set->param->match->query->advance,
                   target_frame = target_start
                                % hsp_set->param->match->target->advance;
-    register gint section_pos = (diag_pos + hsp_set->query->len)
+    gint section_pos = (diag_pos + hsp_set->query->len)
                               % hsp_set->query->len;
     g_assert(!hsp_set->is_finalised);
     g_assert(!hsp_set->horizon);
@@ -1078,10 +1078,10 @@ static void HSPset_seed_hsp_sorted(HSPset *hsp_set,
 static HSPset *HSPset_seed_compare_hsp_set = NULL;
 
 static int HSPset_seed_compare(const void *a, const void *b){
-    register guint *seed_a = (guint*)a,
+    guint *seed_a = (guint*)a,
                    *seed_b = (guint*)b;
-    register gint diag_a, diag_b;
-    register HSPset *hsp_set = HSPset_seed_compare_hsp_set;
+    gint diag_a, diag_b;
+    HSPset *hsp_set = HSPset_seed_compare_hsp_set;
     g_assert(hsp_set);
     diag_a = ((seed_a[1] * hsp_set->param->match->query->advance)
            -  (seed_a[0] * hsp_set->param->match->target->advance)),
@@ -1094,8 +1094,8 @@ static int HSPset_seed_compare(const void *a, const void *b){
 
 void HSPset_seed_all_hsps(HSPset *hsp_set,
                           guint *seed_list, guint seed_list_len){
-    register gint i;
-    register gint ***horizon;
+    gint i;
+    gint ***horizon;
     if(seed_list_len > 1){
         HSPset_seed_compare_hsp_set = hsp_set;
         qsort(seed_list, seed_list_len, sizeof(guint) << 1,
@@ -1121,9 +1121,9 @@ void HSPset_seed_all_hsps(HSPset *hsp_set,
 /**/
 
 HSPset *HSPset_finalise(HSPset *hsp_set){
-    register gint i;
-    register HSP *hsp;
-    register PQueue *pq;
+    gint i;
+    HSP *hsp;
+    PQueue *pq;
     g_assert(!hsp_set->is_finalised);
     hsp_set->is_finalised = TRUE;
     if(hsp_set->param->has->filter_threshold && (!hsp_set->is_empty)){
@@ -1153,8 +1153,8 @@ HSPset *HSPset_finalise(HSPset *hsp_set){
 
 static int HSPset_sort_by_diag_then_query_start(const void *a,
                                                 const void *b){
-    register HSP **hsp_a = (HSP**)a, **hsp_b = (HSP**)b;
-    register gint diag_a = HSP_diagonal(*hsp_a),
+    HSP **hsp_a = (HSP**)a, **hsp_b = (HSP**)b;
+    gint diag_a = HSP_diagonal(*hsp_a),
                   diag_b = HSP_diagonal(*hsp_b);
     if(diag_a == diag_b)
         return (*hsp_a)->query_start - (*hsp_b)->query_start;
@@ -1162,8 +1162,8 @@ static int HSPset_sort_by_diag_then_query_start(const void *a,
     }
 
 static Match_Score HSP_score_overlap(HSP *left, HSP *right){
-    register Match_Score score = 0;
-    register gint query_pos, target_pos;
+    Match_Score score = 0;
+    gint query_pos, target_pos;
     g_assert(left->hsp_set == right->hsp_set);
     g_assert(HSP_diagonal(left) == HSP_diagonal(right));
     query_pos = HSP_query_end(left) - HSP_query_advance(left);
@@ -1185,11 +1185,11 @@ static Match_Score HSP_score_overlap(HSP *left, HSP *right){
 /* Returns score for overlapping region of HSPs on same diagonal */
 
 void HSPset_filter_ungapped(HSPset *hsp_set){
-    register GPtrArray *new_hsp_list;
-    register HSP *curr_hsp, *prev_hsp;
-    register gboolean del_prev, del_curr;
-    register gint i;
-    register Match_Score score;
+    GPtrArray *new_hsp_list;
+    HSP *curr_hsp, *prev_hsp;
+    gboolean del_prev, del_curr;
+    gint i;
+    Match_Score score;
     /* Filter strongly overlapping HSPs on same diagonal
      * but different frames (happens with 3:3 HSPs only)
      */
@@ -1248,7 +1248,7 @@ RecycleBin *HSPset_SList_RecycleBin_create(void){
 HSPset_SList_Node *HSPset_SList_append(RecycleBin *recycle_bin,
                                        HSPset_SList_Node *next,
                                        gint query_pos, gint target_pos){
-    register HSPset_SList_Node *node = RecycleBin_alloc(recycle_bin);
+    HSPset_SList_Node *node = RecycleBin_alloc(recycle_bin);
     node->next = next;
     node->query_pos = query_pos;
     node->target_pos = target_pos;
@@ -1267,7 +1267,7 @@ typedef struct {
 
 static HSPset_SeedData *HSPset_SeedData_create(HSP_Param *hsp_param,
                                                gint target_len){
-    register HSPset_SeedData *seed_data = g_new(HSPset_SeedData, 1);
+    HSPset_SeedData *seed_data = g_new(HSPset_SeedData, 1);
     seed_data->page_total = (target_len
                           >> HSPset_SList_PAGE_BIT_WIDTH) + 1;
     seed_data->page_alloc = seed_data->page_total;
@@ -1293,9 +1293,9 @@ static void HSPset_SeedData_destroy(HSPset_SeedData *seed_data){
 
 static void HSPset_SeedData_set_target_len(HSPset_SeedData *seed_data,
                                            HSPset *hsp_set){
-    register gint new_page_total = (hsp_set->target->len
+    gint new_page_total = (hsp_set->target->len
                                     >> HSPset_SList_PAGE_BIT_WIDTH) + 1;
-    register gint i, a, b, c, d;
+    gint i, a, b, c, d;
     seed_data->page_total = new_page_total;
     if(seed_data->page_alloc < new_page_total){
         seed_data->page_alloc = seed_data->page_total;
@@ -1320,25 +1320,25 @@ static void HSPset_SeedData_set_target_len(HSPset_SeedData *seed_data,
 #endif /* 0 */
 
 void HSPset_seed_all_qy_sorted(HSPset *hsp_set, HSPset_SList_Node *seed_list){
-    register gint page_total = (hsp_set->target->len
+    gint page_total = (hsp_set->target->len
                                 >> HSPset_SList_PAGE_BIT_WIDTH) + 1;
-    register HSPset_SList_Node **diag_page_list
+    HSPset_SList_Node **diag_page_list
         = g_new0(HSPset_SList_Node*, page_total);
-    register gint *page_used = g_new(gint, page_total);
-    register gint ****horizon = (gint****)Matrix4d_create(
+    gint *page_used = g_new(gint, page_total);
+    gint ****horizon = (gint****)Matrix4d_create(
                            2 + ((hsp_set->param->seed_repeat > 1)?1:0),
                            HSPset_SList_PAGE_SIZE,
                            hsp_set->param->match->query->advance,
                            hsp_set->param->match->target->advance,
                            sizeof(gint));
     /*
-    register HSPset_SeedData *seed_data = HSPset_SeedData_create(hsp_set->param,
+    HSPset_SeedData *seed_data = HSPset_SeedData_create(hsp_set->param,
                                                            hsp_set->target->len);
     */
-    register gint i, page, diag_pos, query_frame, target_frame,
+    gint i, page, diag_pos, query_frame, target_frame,
                    section_pos, page_pos;
-    register HSPset_SList_Node *seed;
-    register gint page_used_total = 0;
+    HSPset_SList_Node *seed;
+    gint page_used_total = 0;
     HSP nascent_hsp;
     /* g_message("[%s] with [%d]", __FUNCTION__, hsp_set->target->len); */
     /* HSPset_SeedData_set_target_len(seed_data, hsp_set); */

@@ -31,7 +31,7 @@ void Protein2DNA_Data_init(Protein2DNA_Data *p2dd,
 
 Protein2DNA_Data *Protein2DNA_Data_create(
                       Sequence *query, Sequence *target){
-    register Protein2DNA_Data *p2dd = g_new0(Protein2DNA_Data, 1);
+    Protein2DNA_Data *p2dd = g_new0(Protein2DNA_Data, 1);
     Protein2DNA_Data_init(p2dd, query, target);
     return p2dd;
     }
@@ -53,10 +53,10 @@ void Protein2DNA_Data_destroy(Protein2DNA_Data *p2dd){
     }
 
 C4_Model *Protein2DNA_create(Affine_Model_Type type){
-    register gchar *name = g_strdup_printf("protein2dna:%s",
+    gchar *name = g_strdup_printf("protein2dna:%s",
                                            Affine_Model_Type_get_name(type));
-    register C4_Model *model = NULL;
-    register C4_Transition *match_transition;
+    C4_Model *model = NULL;
+    C4_Transition *match_transition;
     model = Affine_create(type, Alphabet_Type_PROTEIN,
                                 Alphabet_Type_DNA, FALSE);
     g_assert(model);

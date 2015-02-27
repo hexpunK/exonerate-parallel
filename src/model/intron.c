@@ -17,7 +17,7 @@
 #include "ungapped.h"
 
 Intron_ArgumentSet *Intron_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Intron_ArgumentSet ias;
     if(arg){
         as = ArgumentSet_create("Intron Modelling Options");
@@ -48,7 +48,7 @@ Intron_ArgumentSet *Intron_ArgumentSet_create(Argument *arg){
 static gchar *Intron_ChainData_get_seq_func(gint start,
                                             gint len,
                                             gpointer user_data){
-    register Sequence *s = user_data;
+    Sequence *s = user_data;
     return Sequence_get_substr(s, start, len);
     }
 
@@ -68,7 +68,7 @@ static void Intron_ChainData_init(Intron_ChainData *icd){
     }
 
 static Intron_ChainData *Intron_ChainData_create(void){
-    register Intron_ChainData *icd = g_new0(Intron_ChainData, 1);
+    Intron_ChainData *icd = g_new0(Intron_ChainData, 1);
     Intron_ChainData_init(icd);
     return icd;
     }
@@ -83,7 +83,7 @@ static void Intron_ChainData_destroy(Intron_ChainData *icd){
 /**/
 
 Intron_Data *Intron_Data_create(void){
-    register Intron_Data *id = g_new0(Intron_Data, 1);
+    Intron_Data *id = g_new0(Intron_Data, 1);
     id->ias = Intron_ArgumentSet_create(NULL);
     id->query_data = Intron_ChainData_create();
     id->target_data = Intron_ChainData_create();
@@ -100,8 +100,8 @@ void Intron_Data_destroy(Intron_Data *id){
 /**/
 
 static void intron_init_func(Region *region, gpointer user_data){
-    register Ungapped_Data *ud = user_data;
-    register Intron_Data *id = Ungapped_Data_get_Intron_Data(ud);
+    Ungapped_Data *ud = user_data;
+    Intron_Data *id = Ungapped_Data_get_Intron_Data(ud);
     if(!id->curr_region){
         id->curr_region = Region_share(region);
         Intron_ChainData_init(id->query_data);
@@ -118,8 +118,8 @@ static gchar *intron_init_macro =
     "    }\n";
 
 static void intron_exit_func(Region *region, gpointer user_data){
-    register Ungapped_Data *ud = user_data;
-    register Intron_Data *id = Ungapped_Data_get_Intron_Data(ud);
+    Ungapped_Data *ud = user_data;
+    Intron_Data *id = Ungapped_Data_get_Intron_Data(ud);
     if(id->curr_region){
         Region_destroy(id->curr_region);
         id->curr_region = NULL;
@@ -138,11 +138,11 @@ static gchar *intron_exit_macro =
 #define Intron_CalcFunc(site, chain, is_pre)                       \
     static C4_Score Intron_calc_##site##_##chain(                  \
         gint query_pos, gint target_pos, gpointer user_data){      \
-        register Ungapped_Data *ud = user_data;                    \
-        register Intron_Data *id                                   \
+        Ungapped_Data *ud = user_data;                    \
+        Intron_Data *id                                   \
                 = Ungapped_Data_get_Intron_Data(ud);               \
-        register C4_Score score = 0;                               \
-        register gint intron_length;                               \
+        C4_Score score = 0;                               \
+        gint intron_length;                               \
         g_assert(id->chain##_data->sps->site);                     \
         g_assert(id->curr_region);                                 \
         if(is_pre){                                                \
@@ -163,11 +163,11 @@ static gchar *intron_exit_macro =
 #define Intron_JointCalcFunc(site, is_pre)                          \
     static C4_Score Intron_joint_calc_##site(                       \
         gint query_pos, gint target_pos, gpointer user_data){       \
-        register Ungapped_Data *ud = user_data;                     \
-        register Intron_Data *id                                    \
+        Ungapped_Data *ud = user_data;                     \
+        Intron_Data *id                                    \
                 = Ungapped_Data_get_Intron_Data(ud);                \
-        register C4_Score score = 0;                                \
-        register gint intron_length;                                \
+        C4_Score score = 0;                                \
+        gint intron_length;                                \
         g_assert(id->query##_data->sps->site);                      \
         g_assert(id->target##_data->sps->site);                     \
         g_assert(id->curr_region);                                  \
@@ -196,20 +196,20 @@ static gchar *intron_exit_macro =
 
 static gchar *Intron_get_calc_macro_splice(gboolean on_query,
                                            gchar *site){
-    register gchar *chain = on_query?"query":"target";
-    register gchar *chain_macro = on_query?"QP":"TP";
+    gchar *chain = on_query?"query":"target";
+    gchar *chain_macro = on_query?"QP":"TP";
     return g_strdup_printf("SplicePrediction_get(id->%s_data->sps->%s, %%%s)",
             chain, site, chain_macro);
     }
 
 static gchar *Intron_get_calc_macro_length(gboolean on_query,
                                            gchar *input_macro){
-    register gchar *chain = on_query?"query":"target";
-    register gchar *chain_macro = on_query?"QP":"TP";
-    register gchar *intron_length = g_strdup_printf(
+    gchar *chain = on_query?"query":"target";
+    gchar *chain_macro = on_query?"QP":"TP";
+    gchar *intron_length = g_strdup_printf(
                     "(%%%s - id->%s_data->curr_intron_start + 2)",
                      chain_macro, chain);
-    register gchar *macro = g_strdup_printf(
+    gchar *macro = g_strdup_printf(
                     "(((%s < id->ias->min_intron)"
                     "||(%s > id->ias->max_intron))"
                     "?C4_IMPOSSIBLY_LOW_SCORE:%s)",
@@ -223,11 +223,11 @@ static gchar *Intron_get_calc_macro(gboolean is_5_prime,
                                     gboolean on_query,
                                     gboolean on_target,
                                     gboolean is_pre){
-    register gchar *macro = NULL;
-    register gchar *site = g_strdup_printf("ss%d_%s", is_5_prime?5:3,
+    gchar *macro = NULL;
+    gchar *site = g_strdup_printf("ss%d_%s", is_5_prime?5:3,
                                       is_forward?"forward":"reverse");
-    register gchar *splice_calc;
-    register gchar *a, *b;
+    gchar *splice_calc;
+    gchar *a, *b;
     if(on_query && on_target){ /* joint */
         a = Intron_get_calc_macro_splice(TRUE, site);
         b = Intron_get_calc_macro_splice(FALSE, site);
@@ -259,8 +259,8 @@ static gchar *Intron_get_calc_macro(gboolean is_5_prime,
 #define Intron_InitFunc(site, chain)                                         \
     static void Intron_init_##site##_##chain(                                \
                              Region *region, gpointer user_data){            \
-        register Ungapped_Data *ud = user_data;                              \
-        register Intron_Data *id = Ungapped_Data_get_Intron_Data(ud);        \
+        Ungapped_Data *ud = user_data;                              \
+        Intron_Data *id = Ungapped_Data_get_Intron_Data(ud);        \
         Intron_ChainData_init_splice_prediction(id->chain##_data, ud->chain, \
                                            id->ias->sps,                     \
                                            SpliceType_##site,                \
@@ -279,10 +279,10 @@ static gchar *Intron_get_calc_macro(gboolean is_5_prime,
 static gchar *Intron_get_strand_init_macro(gboolean is_5_prime,
                                            gboolean is_forward,
                                            gboolean on_query){
-    register gchar *chain = on_query?"query":"target";
-    register gchar *site = g_strdup_printf("ss%d_%s",
+    gchar *chain = on_query?"query":"target";
+    gchar *site = g_strdup_printf("ss%d_%s",
             is_5_prime?5:3, is_forward?"forward":"reverse");
-    register gchar *macro = g_strdup_printf(
+    gchar *macro = g_strdup_printf(
         "Intron_ChainData_init_splice_prediction(id->%s_data, ud->%s, id->ias->sps,"
         "                                        SpliceType_%s,"
         "        ((id->curr_region->%s_start == 0)"
@@ -296,7 +296,7 @@ static gchar *Intron_get_init_macro(gboolean is_5_prime,
                                     gboolean is_forward,
                                     gboolean on_query,
                                     gboolean on_target){
-    register gchar *qy_macro, *tg_macro, *macro;
+    gchar *qy_macro, *tg_macro, *macro;
     if(on_query && on_target){
         qy_macro = Intron_get_strand_init_macro(is_5_prime, is_forward,
                                                 TRUE);
@@ -331,8 +331,8 @@ static gchar *intron_## site ##_## chain ##_init_macro =        \
 #define Intron_ExitFunc(site, chain)                                  \
     static void Intron_exit_##site##_##chain(                         \
                        Region *region, gpointer user_data){           \
-        register Ungapped_Data *ud = user_data;                       \
-        register Intron_Data *id = Ungapped_Data_get_Intron_Data(ud); \
+        Ungapped_Data *ud = user_data;                       \
+        Intron_Data *id = Ungapped_Data_get_Intron_Data(ud); \
         if(id->chain##_data->site){                                   \
             SplicePrediction_destroy(id->chain##_data->site);         \
             id->chain##_data->site = NULL;                            \
@@ -362,8 +362,8 @@ static gchar *intron_##site##_##chain##_exit_macro =                  \
 static gchar *Intron_get_strand_exit_macro(gboolean is_5_prime,
                                            gboolean is_forward,
                                            gboolean on_query){
-    register gchar *chain = on_query?"query":"target";
-    register gchar *site = g_strdup_printf("ss%d_%s",
+    gchar *chain = on_query?"query":"target";
+    gchar *site = g_strdup_printf("ss%d_%s",
             is_5_prime?5:3, is_forward?"forward":"reverse");
     return g_strdup_printf(
         "if(id->%s_data->%s){\n"
@@ -377,7 +377,7 @@ static gchar *Intron_get_exit_macro(gboolean is_5_prime,
                                     gboolean is_forward,
                                     gboolean on_query,
                                     gboolean on_target){
-    register gchar *qy_macro, *tg_macro, *macro;
+    gchar *qy_macro, *tg_macro, *macro;
     if(on_query && on_target){
         qy_macro = Intron_get_strand_exit_macro(is_5_prime, is_forward,
                                                 TRUE);
@@ -468,8 +468,8 @@ static gchar *Intron_##chain##_start_macro   \
 #define Intron_EndFunc(chain)                                     \
 static void Intron_##chain##_end_func(C4_Score score,             \
     gint query_pos, gint target_pos, gpointer user_data){         \
-    register Ungapped_Data *ud = user_data;                       \
-    register Intron_Data *id = Ungapped_Data_get_Intron_Data(ud); \
+    Ungapped_Data *ud = user_data;                       \
+    Intron_Data *id = Ungapped_Data_get_Intron_Data(ud); \
     g_assert(id);                                                 \
     id->chain##_data->curr_intron_start = (gint)score;            \
     return;                                                       \
@@ -499,16 +499,16 @@ static C4_Calc *Intron_add_calc(C4_Model *model,
                                 gboolean use_pre,
                                 gboolean is_forward,
                                 gboolean on_query, gboolean on_target){
-    register gchar *name = g_strconcat(prefix, " ", suffix, NULL);
-    register Intron_ArgumentSet *ias
+    gchar *name = g_strconcat(prefix, " ", suffix, NULL);
+    Intron_ArgumentSet *ias
            = Intron_ArgumentSet_create(NULL);
-    register SplicePredictor *sp;
-    register C4_Calc *calc;
-    register C4_CalcFunc calc_func;
-    register C4_PrepFunc init_func;
-    register gchar *calc_macro, *init_macro;
-    register C4_Score bound = 0;
-    register gboolean is_5_prime = is_forward?(use_pre?TRUE:FALSE)
+    SplicePredictor *sp;
+    C4_Calc *calc;
+    C4_CalcFunc calc_func;
+    C4_PrepFunc init_func;
+    gchar *calc_macro, *init_macro;
+    C4_Score bound = 0;
+    gboolean is_5_prime = is_forward?(use_pre?TRUE:FALSE)
                                              :(use_pre?FALSE:TRUE);
     if(is_forward){
         if(use_pre){
@@ -587,13 +587,13 @@ static C4_Calc *Intron_add_calc(C4_Model *model,
 
 C4_Model *Intron_create(gchar *suffix, gboolean on_query,
                         gboolean on_target, gboolean is_forward){
-    register gchar *name, *pre_name, *post_name;
-    register C4_Model *model;
-    register C4_State *intron_state;
-    register gint qy_splice_advance, tg_splice_advance;
-    register C4_Calc *pre_calc, *post_calc;
-    register C4_Label pre_label, post_label;
-    register Intron_ArgumentSet *ias
+    gchar *name, *pre_name, *post_name;
+    C4_Model *model;
+    C4_State *intron_state;
+    gint qy_splice_advance, tg_splice_advance;
+    C4_Calc *pre_calc, *post_calc;
+    C4_Label pre_label, post_label;
+    Intron_ArgumentSet *ias
            = Intron_ArgumentSet_create(NULL);
     g_assert(on_query || on_target);
     name = g_strconcat("intron ", suffix, NULL);
@@ -691,7 +691,7 @@ C4_Model *Intron_create(gchar *suffix, gboolean on_query,
         intron_init_func, intron_init_macro,
         intron_exit_func, intron_exit_macro);
     C4_Model_append_codegen(model, NULL,
-            "register Intron_Data *id = ud->intron_data;\n", NULL);
+            "Intron_Data *id = ud->intron_data;\n", NULL);
     C4_Model_close(model);
     return model;
     }

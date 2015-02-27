@@ -64,12 +64,12 @@ static void Bootstrapper_destroy(Bootstrapper *bs){
 
 static gint Bootstrapper_model_name_compare(gconstpointer a,
                                             gconstpointer b){
-    register const gchar *id_a = a, *id_b = b;
+    const gchar *id_a = a, *id_b = b;
     return strcmp(id_a, id_b);
     }
 
 static Bootstrapper *Bootstrapper_create(void){
-    register Bootstrapper *bs = g_new(Bootstrapper, 1);
+    Bootstrapper *bs = g_new(Bootstrapper, 1);
     g_message("Starting building bootstrapping components");
     bs->header_path = g_strdup("c4_model_archive.h"),
     bs->lookup_path = g_strdup("c4_model_lookup.c");
@@ -104,10 +104,10 @@ static Bootstrapper *Bootstrapper_create(void){
 
 static void Bootstrapper_add_to_archive(Bootstrapper *bs,
                                         gchar *path){
-    register gchar *option, *command;
-    register gint ret_val;
-    register gchar *key, *tmp;
-    register gchar *ar = "ar",
+    gchar *option, *command;
+    gint ret_val;
+    gchar *key, *tmp;
+    gchar *ar = "ar",
                    *ar_init = "cSq", /* czr for OSF */
                    *ar_append = "Sq"; /* zr for OSF */
     tmp = (gchar*)g_getenv("C4_AR");
@@ -146,8 +146,8 @@ static void Bootstrapper_add_to_archive(Bootstrapper *bs,
     }
 
 static void Bootstrapper_index_archive(Bootstrapper *bs){
-    register gchar *command;
-    register gint ret_val;
+    gchar *command;
+    gint ret_val;
     command = g_strdup_printf("ranlib %s", bs->archive_path);
     g_message("Indexing archive [%s]", bs->archive_path);
     g_print("%s\n", command);
@@ -161,10 +161,10 @@ static void Bootstrapper_index_archive(Bootstrapper *bs){
     }
 
 static void Bootstrapper_close(Bootstrapper *bs){
-    register gchar *command;
-    register gchar *cc_command = "gcc";
-    register gchar *cc_flags = "-O2";
-    register gchar *tmp;
+    gchar *command;
+    gchar *cc_command = "gcc";
+    gchar *cc_flags = "-O2";
+    gchar *tmp;
     fprintf(bs->lookup_fp, "    return NULL;\n");
     fprintf(bs->lookup_fp, "    }\n");
     fclose(bs->header_fp);
@@ -213,9 +213,9 @@ static void Bootstrapper_add_codegen(Bootstrapper *bs,
 
 static void Bootstrapper_process_Optimal(Bootstrapper *bs,
                                          Optimal *optimal){
-    register GPtrArray *codegen_list;
-    register Codegen *codegen;
-    register gint i;
+    GPtrArray *codegen_list;
+    Codegen *codegen;
+    gint i;
     if(!optimal)
         return;
     g_message("Process optimal [%s]", optimal->name);
@@ -232,16 +232,16 @@ static void Bootstrapper_process_Optimal(Bootstrapper *bs,
 static void Bootstrapper_process_C4_Model(Bootstrapper *bs,
                 C4_Model *model, gboolean generate_bsdp_code,
                                  gboolean generate_sdp_code){
-    register gint i;
-    register Optimal *optimal = Optimal_create(model, NULL,
+    gint i;
+    Optimal *optimal = Optimal_create(model, NULL,
                        Optimal_Type_SCORE
                       |Optimal_Type_PATH
                       |Optimal_Type_REDUCED_SPACE,
                       TRUE);
-    register Heuristic *heuristic;
-    register SDP *sdp;
-    register GPtrArray *codegen_list, *optimal_list;
-    register Codegen *codegen;
+    Heuristic *heuristic;
+    SDP *sdp;
+    GPtrArray *codegen_list, *optimal_list;
+    Codegen *codegen;
     g_message("Bootstrapper processing model [%s]", model->name);
     Bootstrapper_process_Optimal(bs, optimal);
     if(generate_bsdp_code){
@@ -267,10 +267,10 @@ static void Bootstrapper_process_C4_Model(Bootstrapper *bs,
     }
 
 static void Bootstrapper_process(Bootstrapper *bs, gchar *models){
-    register gchar **model_list = g_strsplit(models, " ", 1024);
-    register gint i;
-    register Model_Type type;
-    register C4_Model *model;
+    gchar **model_list = g_strsplit(models, " ", 1024);
+    gint i;
+    Model_Type type;
+    C4_Model *model;
     for(i = 0; model_list[i]; i++){
         g_message("Processing model [%s]", model_list[i]);
         type = Model_Type_from_string(model_list[i]);
@@ -410,8 +410,8 @@ static void Bootstrapper_process(Bootstrapper *bs, gchar *models){
     }
 
 int Argument_main(Argument *arg){
-    register Bootstrapper *bs = Bootstrapper_create();
-    register gchar *models = (gchar*)g_getenv("C4_COMPILED_MODELS");
+    Bootstrapper *bs = Bootstrapper_create();
+    gchar *models = (gchar*)g_getenv("C4_COMPILED_MODELS");
     Heuristic_ArgumentSet_create(arg);
     Match_ArgumentSet_create(arg);
     Affine_ArgumentSet_create(arg);

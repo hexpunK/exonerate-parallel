@@ -18,7 +18,7 @@
 /**/
 
 STraceback *STraceback_create(C4_Model *model, gboolean is_forward){
-    register STraceback *straceback = g_new(STraceback, 1);
+    STraceback *straceback = g_new(STraceback, 1);
     straceback->ref_count = 1;
     straceback->is_forward = is_forward;
     straceback->cell_recycle = RecycleBin_create(
@@ -44,7 +44,7 @@ void STraceback_destroy(STraceback *straceback){
 STraceback_Cell *STraceback_add(STraceback *straceback,
                                 C4_Transition *transition, gint length,
                                 STraceback_Cell *prev){
-    register STraceback_Cell *cell
+    STraceback_Cell *cell
            = RecycleBin_alloc(straceback->cell_recycle);
     g_assert(transition);
     cell->ref_count = 1;
@@ -86,8 +86,8 @@ void STraceback_Cell_destroy(STraceback_Cell *cell,
     }
 
 static void straceback_g_ptr_array_reverse(GPtrArray *ptr_array){
-    register gint a, z;
-    register gpointer swap;
+    gint a, z;
+    gpointer swap;
     for(a = 0, z = ptr_array->len-1; a < z; a++, z--){
         swap = ptr_array->pdata[a];
         ptr_array->pdata[a] = ptr_array->pdata[z];
@@ -98,9 +98,9 @@ static void straceback_g_ptr_array_reverse(GPtrArray *ptr_array){
 
 STraceback_List *STraceback_List_create(STraceback *straceback,
                                         STraceback_Cell *prev){
-    register STraceback_List *stlist = g_new(STraceback_List, 1);
-    register STraceback_Cell *cell;
-    register STraceback_Operation *operation;
+    STraceback_List *stlist = g_new(STraceback_List, 1);
+    STraceback_Cell *cell;
+    STraceback_Operation *operation;
     g_assert(prev);
     if(straceback->is_forward){
         g_assert(prev->transition->output
@@ -121,8 +121,8 @@ STraceback_List *STraceback_List_create(STraceback *straceback,
     }
 
 void STraceback_List_destroy(STraceback_List *stlist){
-    register gint i;
-    register STraceback_Operation *operation;
+    gint i;
+    STraceback_Operation *operation;
     for(i = 0; i < stlist->operation_list->len; i++){
         operation = stlist->operation_list->pdata[i];
         g_free(operation);

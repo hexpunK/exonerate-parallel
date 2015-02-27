@@ -23,7 +23,7 @@
 
 BSAM *BSAM_create(Comparison_Param *comparison_param,
                   gint saturate_threshold, gint verbosity){
-    register BSAM *bsam = g_new(BSAM, 1);
+    BSAM *bsam = g_new(BSAM, 1);
     bsam->comparison_param = Comparison_Param_share(comparison_param);
     bsam->saturate_threshold = saturate_threshold;
     bsam->verbosity = verbosity;
@@ -54,9 +54,9 @@ typedef struct {
 
 static gint BSAM_get_expect(BSAM *bsam, Sequence *sequence,
                             gint wordlen){
-    register gint expect;
-    register gdouble expectation;
-    register gint alphabet_size = 0;
+    gint expect;
+    gdouble expectation;
+    gint alphabet_size = 0;
     switch(sequence->alphabet->type){
         case Alphabet_Type_DNA:
             alphabet_size = 4;
@@ -77,7 +77,7 @@ static gint BSAM_get_expect(BSAM *bsam, Sequence *sequence,
 
 static BSAM_SeedSet *BSAM_SeedSet_create(BSAM *bsam,
         Comparison *comparison, HSPset *hspset){
-    register BSAM_SeedSet *seedset = g_new(BSAM_SeedSet, 1);
+    BSAM_SeedSet *seedset = g_new(BSAM_SeedSet, 1);
     seedset->bsam = bsam;
     seedset->query = Sequence_share(comparison->query);
     seedset->target = Sequence_share(comparison->target);
@@ -108,7 +108,7 @@ static void BSAM_SeedSet_destroy(BSAM_SeedSet *seedset){
     }
 
 static void BSAM_SeedSet_empty_current(BSAM_SeedSet *seedset){
-    register gint i, j;
+    gint i, j;
     gint qpos, tpos;
     if(seedset->query_pos_list->len){
         if(seedset->target_pos_list->len){
@@ -142,7 +142,7 @@ static void BSAM_SeedSet_empty_current(BSAM_SeedSet *seedset){
 static void BSAM_DejaVu_traverse(gint first_pos, gint curr_pos,
                                  gint length, gchar *seq, gint len,
                                  gpointer user_data){
-    register BSAM_SeedSet *seedset = user_data;
+    BSAM_SeedSet *seedset = user_data;
     gint tpos;
     /* If first_pos is in target, ignore this word */
     if(first_pos > seedset->partition)
@@ -188,8 +188,8 @@ static void BSAM_DejaVu_traverse(gint first_pos, gint curr_pos,
  */
 
 static guint BSAM_SeedSet_aapos2dnapos(guint pos, gint dna_len){
-    register gint frame, frame_start, codon, aa_len;
-    register guint dna_pos;
+    gint frame, frame_start, codon, aa_len;
+    guint dna_pos;
     aa_len = dna_len / 3;
     if(pos < ((aa_len+1) << 1))
         if(pos < (aa_len+1))
@@ -208,7 +208,7 @@ static guint BSAM_SeedSet_aapos2dnapos(guint pos, gint dna_len){
 
 static void BSAM_SeedSet_build_hspset(BSAM *bsam, BSAM_SeedSet *seedset,
                                       Comparison *comparison){
-    register gint i;
+    gint i;
     guint pos;
     /* Convert query coordinates */
     if(seedset->hspset->param->match->query->is_translated){
@@ -242,8 +242,8 @@ static void BSAM_BigSeq_add_sequence(GString *seq,
                                      Translate *translate,
                                      gboolean is_translated,
                                      guchar *filter){
-    register gint i, j, max_aa_len;
-    register Sequence *aa_seq;
+    gint i, j, max_aa_len;
+    Sequence *aa_seq;
     if(is_translated){
         g_assert(translate);
         max_aa_len = input->len / 3;
@@ -265,8 +265,8 @@ static void BSAM_BigSeq_add_sequence(GString *seq,
 static GString *BSAM_create_BigSeq(BSAM *bsam, Sequence *query,
                                                Sequence *target,
                                                BSAM_SeedSet *seedset){
-    register Match *match = seedset->hspset->param->match;
-    register GString *bigseq = g_string_sized_new(query->len+target->len+1);
+    Match *match = seedset->hspset->param->match;
+    GString *bigseq = g_string_sized_new(query->len+target->len+1);
     if(bsam->verbosity > 1)
         g_message("Preparing BigSeq comparison of [%s] and [%s]",
             query->id, target->id);
@@ -285,11 +285,11 @@ static GString *BSAM_create_BigSeq(BSAM *bsam, Sequence *query,
 
 static void BSAM_build_HSPset(BSAM *bsam, Comparison *comparison,
                               HSPset *hspset){
-    register DejaVu *dejavu;
-    register GString *bigseq;
-    register BSAM_SeedSet *seedset = BSAM_SeedSet_create(bsam,
+    DejaVu *dejavu;
+    GString *bigseq;
+    BSAM_SeedSet *seedset = BSAM_SeedSet_create(bsam,
                                              comparison, hspset);
-    register guchar *filter = Alphabet_get_filter_by_type(
+    guchar *filter = Alphabet_get_filter_by_type(
         seedset->hspset->param->match->comparison_alphabet,
         Alphabet_Filter_Type_NON_AMBIG); /* Will include softmasking */
     bigseq = BSAM_create_BigSeq(bsam, comparison->query,
@@ -316,7 +316,7 @@ static void BSAM_build_HSPset(BSAM *bsam, Comparison *comparison,
     }
 
 Comparison *BSAM_compare(BSAM *bsam, Sequence *query, Sequence *target){
-    register Comparison *comparison
+    Comparison *comparison
            = Comparison_create(bsam->comparison_param, query, target);
     if(bsam->comparison_param->dna_hsp_param)
         BSAM_build_HSPset(bsam, comparison, comparison->dna_hspset);

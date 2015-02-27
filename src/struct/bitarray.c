@@ -41,7 +41,7 @@
 /**/
 
 BitArray *BitArray_create(void){
-    register BitArray *ba = g_new(BitArray, 1);
+    BitArray *ba = g_new(BitArray, 1);
     ba->alloc = 16;
     ba->length = 0;
     ba->data = g_new0(guchar, ba->alloc);
@@ -55,7 +55,7 @@ void BitArray_destroy(BitArray *ba){
     }
 
 void BitArray_info(BitArray *ba){
-    register gint64 i;
+    gint64 i;
     g_print("BitArray length [%d] alloc [%d] data [",
             (gint)ba->length, (gint)ba->alloc);
     for(i = 0; i < ba->length; i++)
@@ -76,7 +76,7 @@ void BitArray_write(BitArray *ba, FILE *fp){
     }
 
 BitArray *BitArray_read(FILE *fp, gsize size){
-    register BitArray *ba = g_new(BitArray, 1);
+    BitArray *ba = g_new(BitArray, 1);
     ba->alloc = size;
     ba->length = size * CHAR_BIT;
     ba->data = g_new(guchar, ba->alloc);
@@ -85,7 +85,7 @@ BitArray *BitArray_read(FILE *fp, gsize size){
     }
 
 void BitArray_append_bit(BitArray *ba, gboolean bit){
-    register gint64 word = ba->length / CHAR_BIT,
+    gint64 word = ba->length / CHAR_BIT,
                     pos = ba->length & (CHAR_BIT-1);
     if(ba->length == (ba->alloc*CHAR_BIT)){
         ba->alloc <<= 1;
@@ -99,8 +99,8 @@ void BitArray_append_bit(BitArray *ba, gboolean bit){
     }
 
 void BitArray_append(BitArray *ba, guint64 data, guchar width){
-    register gint64 word = ba->length/ CHAR_BIT, input;
-    register guchar todo = width,
+    gint64 word = ba->length/ CHAR_BIT, input;
+    guchar todo = width,
                     bit = ba->length & (CHAR_BIT-1),
                     taken = CHAR_BIT-bit,
                     done = 0;
@@ -130,7 +130,7 @@ void BitArray_append(BitArray *ba, guint64 data, guchar width){
 /* Previous slow version */
 #if 0
 void BitArray_append(BitArray *ba, guint64 data, guchar width){
-    register guchar i;
+    guchar i;
     g_assert(width <= (sizeof(guint64)*CHAR_BIT));
     for(i = 0; i < width; i++)
         BitArray_append_bit(ba, GetBit(data, i));
@@ -139,15 +139,15 @@ void BitArray_append(BitArray *ba, guint64 data, guchar width){
 #endif /* 0 */
 
 gboolean BitArray_get_bit(BitArray *ba, guint64 pos){
-    register gint64 word = pos / CHAR_BIT,
+    gint64 word = pos / CHAR_BIT,
                     bit = pos & (CHAR_BIT-1);
     return GetBit(ba->data[word], bit);
     }
 
 guint64 BitArray_get(BitArray *ba, guint64 start, guchar width){
-    register gint64 word = start / CHAR_BIT,
+    gint64 word = start / CHAR_BIT,
                     data = 0;
-    register guchar todo = width,
+    guchar todo = width,
                     bit = start & (CHAR_BIT-1),
                     taken = CHAR_BIT-bit,
                     done = 0;
@@ -169,8 +169,8 @@ guint64 BitArray_get(BitArray *ba, guint64 start, guchar width){
 /* Previous slow version */
 #if 0
 guint64 BitArray_get(BitArray *ba, guint64 start, guchar width){
-    register gint i;
-    register guint64 data = 0;
+    gint i;
+    guint64 data = 0;
     for(i = 0; i < width; i++){
         data |= ((guint64)BitArray_get_bit(ba, start+i) << i);
         }

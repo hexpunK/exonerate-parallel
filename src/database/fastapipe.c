@@ -25,7 +25,7 @@ FastaPipe *FastaPipe_create(FastaDB *query_fdb, FastaDB *target_fdb,
                FastaPipe_NextSeq_Func target_func,
                FastaDB_Mask mask, gboolean translate_both,
                gboolean use_revcomp){
-    register FastaPipe *fasta_pipe = g_new(FastaPipe, 1);
+    FastaPipe *fasta_pipe = g_new(FastaPipe, 1);
     g_assert(init_func);
     g_assert(prep_func);
     g_assert(term_func);
@@ -101,10 +101,16 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
 
     FastaDB_rewind(fdb);
     
-    #pragma omp parallel for
+    #pragma omp parallel for shared(fdbs)
     for (; j < i; j++) {
-        fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
-        next_seq_func(fdbs, user_data);	
+        FastaDB_Seq *tmpSeq;
+      	#pragma omp critical
+        {
+            #pragma omp flush(fdbs)
+            fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
+            tmpSeq = fdbs;
+	}
+        next_seq_func(tmpSeq, user_data);
     }
 
     FastaDB_rewind(fdb);

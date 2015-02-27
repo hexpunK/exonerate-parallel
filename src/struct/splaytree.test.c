@@ -26,9 +26,9 @@ static gboolean traverse_func(gpointer data, gpointer user_data){
     }
 
 int main(void){
-    register SplayTree_Set *sts = SplayTree_Set_create(compare_func,
+    SplayTree_Set *sts = SplayTree_Set_create(compare_func,
                                                        NULL, NULL);
-    register SplayTree *st = NULL;
+    SplayTree *st = NULL;
     int i;
     int num[100] = { 87,  18,  95,  86,  32,  96,  25,  21,  36,  65,
                      42,  78,  72,  29,  85,  66,  22,  13,  61,  53,

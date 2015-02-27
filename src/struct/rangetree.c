@@ -20,7 +20,7 @@
 
 static gint RangeTree_recent_data_compare(gconstpointer a,
                                           gconstpointer b){
-    register RangeTree_Node *rtn_a = (RangeTree_Node*)a,
+    RangeTree_Node *rtn_a = (RangeTree_Node*)a,
                             *rtn_b = (RangeTree_Node*)b;
     if(rtn_a->x == rtn_b->x)
         return rtn_b->y - rtn_a->y;
@@ -28,7 +28,7 @@ static gint RangeTree_recent_data_compare(gconstpointer a,
     }
 
 RangeTree *RangeTree_create(void){
-    register RangeTree *rt = g_new(RangeTree, 1);
+    RangeTree *rt = g_new(RangeTree, 1);
     rt->root = NULL;
     rt->recent_data = NULL;
     rt->node_recycle = RecycleBin_create("RangeTree_Node",
@@ -47,7 +47,7 @@ void RangeTree_destroy(RangeTree *rt, RangeTree_FreeFunc rtff,
     }
 
 void RangeTree_add(RangeTree *rt, gint x, gint y, gpointer info){
-    register RangeTree_Node *rtn = RecycleBin_alloc(rt->node_recycle);
+    RangeTree_Node *rtn = RecycleBin_alloc(rt->node_recycle);
     g_assert(!RangeTree_check_pos(rt, x, y));
     rtn->x = x;
     rtn->y = y;
@@ -100,8 +100,8 @@ static void RangeTree_find_recur(RangeTree_Node *n, gboolean dir,
     }
 
 static void RangeTree_insert(RangeTree *rt, RangeTree_Node *rtn){
-    register RangeTree_Node *n, *parent;
-    register gboolean dir, dim = FALSE;
+    RangeTree_Node *n, *parent;
+    gboolean dir, dim = FALSE;
     if(!rt->root){
         rt->root = rtn;
         return;

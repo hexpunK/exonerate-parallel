@@ -16,8 +16,8 @@
 #include "bitarray.h"
 
 int main(void){
-    register BitArray *ba = BitArray_create();
-    register gint i;
+    BitArray *ba = BitArray_create();
+    gint i;
     for(i = 0; i < 16; i++)
         BitArray_append(ba, i, 4);
     BitArray_info(ba);

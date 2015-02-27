@@ -26,7 +26,7 @@ FILE *file;
 
 static gboolean fasta_remove_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){
-    register GTree *id_tree = user_data;
+    GTree *id_tree = user_data;
     if(!g_tree_lookup(id_tree, fdbs->seq->id))
         FastaDB_Seq_print(fdbs, file, FastaDB_Mask_ID
                                        |FastaDB_Mask_DEF
@@ -36,9 +36,9 @@ static gboolean fasta_remove_traverse_func(FastaDB_Seq *fdbs,
 
 static void id_tree_prepare(FILE *fp, GTree *id_tree,
                             GStringChunk *id_alloc){
-    register gint ch;
-    register GString *id = g_string_sized_new(64);
-    register gchar *temp;
+    gint ch;
+    GString *id = g_string_sized_new(64);
+    gchar *temp;
     while((ch = getc(fp)) != EOF){
         if(ch == '\n'){
             temp = g_string_chunk_insert(id_alloc, id->str);
@@ -58,11 +58,11 @@ static gint id_tree_comp_func(gconstpointer a, gconstpointer b){
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register GTree *id_tree = g_tree_new(id_tree_comp_func);
-    register GStringChunk *id_alloc = g_string_chunk_new(4096);
-    register FILE *remove_fp;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    GTree *id_tree = g_tree_new(id_tree_comp_func);
+    GStringChunk *id_alloc = g_string_chunk_new(4096);
+    FILE *remove_fp;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *remove_path, *outputFile;
     ArgumentSet_add_option(as, 'f', "fasta", "path",

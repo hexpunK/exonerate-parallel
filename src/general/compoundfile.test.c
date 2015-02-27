@@ -22,26 +22,26 @@ FILE *file;
 
 int main(void){
     file = stdout;
-    register gchar *path_a =
+    gchar *path_a =
         g_strconcat(SOURCE_ROOT_DIR, G_DIR_SEPARATOR_S,
                     "src", G_DIR_SEPARATOR_S,
                     "general", G_DIR_SEPARATOR_S,
                     "compoundfile.h", NULL);
-    register gchar *path_b =
+    gchar *path_b =
         g_strconcat(SOURCE_ROOT_DIR, G_DIR_SEPARATOR_S,
                     "src", G_DIR_SEPARATOR_S,
                     "general", G_DIR_SEPARATOR_S,
                     "compoundfile.c", NULL);
-    register gchar *path_c =
+    gchar *path_c =
         g_strconcat(SOURCE_ROOT_DIR, G_DIR_SEPARATOR_S,
                     "src", G_DIR_SEPARATOR_S,
                     "general", G_DIR_SEPARATOR_S,
                     "compoundfile.test.c", NULL);
-    register CompoundFile *cf;
-    register gint ch, total = 0;
-    register GPtrArray *path_list = g_ptr_array_new();
-    register CompoundFile_Pos total_length;
-    register CompoundFile_Location *cfl_start, *cfl_stop;
+    CompoundFile *cf;
+    gint ch, total = 0;
+    GPtrArray *path_list = g_ptr_array_new();
+    CompoundFile_Pos total_length;
+    CompoundFile_Location *cfl_start, *cfl_stop;
     g_ptr_array_add(path_list, path_a);
     g_ptr_array_add(path_list, path_b);
     g_ptr_array_add(path_list, path_c);

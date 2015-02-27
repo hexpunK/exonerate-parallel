@@ -37,8 +37,8 @@ typedef struct {
 
 static HPair_NodeData *HPair_NodeData_create(HPair *hpair,
                              Heuristic_Match *match, gint hsp_id){
-    register HPair_NodeData *hnd = g_new(HPair_NodeData, 1);
-    register HSP *hsp;
+    HPair_NodeData *hnd = g_new(HPair_NodeData, 1);
+    HSP *hsp;
     hnd->match = match;
     hnd->hsp_id = hsp_id;
     hsp = HPair_NodeData_get_hsp(hpair, hnd);
@@ -65,7 +65,7 @@ typedef struct {
 
 static HPair_EdgeData *HPair_EdgeData_create(SAR_Join *sar_join,
                                              SAR_Span *sar_span){
-    register HPair_EdgeData *hed = g_new(HPair_EdgeData, 1);
+    HPair_EdgeData *hed = g_new(HPair_EdgeData, 1);
     g_assert(!(sar_join && sar_span));
     g_assert(sar_join || sar_span);
     hed->sar_join = sar_join;
@@ -88,8 +88,8 @@ static gboolean HPair_SubOpt_check_diagonal(gint query_pos,
                                             gint target_pos,
                                             gint path_id,
                                             gpointer user_data){
-    register HSP *hsp = user_data;
-    register gint diagonal = (target_pos*HSP_query_advance(hsp))
+    HSP *hsp = user_data;
+    gint diagonal = (target_pos*HSP_query_advance(hsp))
                            - (query_pos*HSP_target_advance(hsp));
     if(diagonal == HSP_diagonal(hsp))
         return TRUE;
@@ -126,7 +126,7 @@ static gboolean HPair_SubOpt_check_region_since(gint query_pos,
                                                 gint target_pos,
                                                 gint path_id,
                                                 gpointer user_data){
-    register gint last_updated = GPOINTER_TO_INT(user_data);
+    gint last_updated = GPOINTER_TO_INT(user_data);
     if(path_id >= last_updated)
         return TRUE;
     return FALSE;
@@ -147,12 +147,12 @@ static C4_Score HPair_confirm_edge_func(gpointer src_data,
                                         gpointer edge_data,
                                         gpointer dst_data,
                                         gpointer user_data){
-    register HPair *hpair = user_data;
-    register HPair_EdgeData *hpair_edge_data = edge_data;
-    register C4_Score score;
-    register HPair_NodeData *src_node_data = src_data,
+    HPair *hpair = user_data;
+    HPair_EdgeData *hpair_edge_data = edge_data;
+    C4_Score score;
+    HPair_NodeData *src_node_data = src_data,
                             *dst_node_data = dst_data;
-    register HSP
+    HSP
         *src_hsp = HPair_NodeData_get_hsp(hpair, src_node_data),
         *dst_hsp = HPair_NodeData_get_hsp(hpair, dst_node_data);
     if(hpair_edge_data->sar_join){
@@ -182,11 +182,11 @@ static C4_Score HPair_update_edge_func(gpointer src_data,
                                        gpointer user_data,
                                        C4_Score prev_score,
                                        gint last_updated){
-    register HPair *hpair = user_data;
-    register HPair_EdgeData *hpair_edge_data = edge_data;
-    register HPair_NodeData *src_node_data = src_data,
+    HPair *hpair = user_data;
+    HPair_EdgeData *hpair_edge_data = edge_data;
+    HPair_NodeData *src_node_data = src_data,
                             *dst_node_data = dst_data;
-    register HSP
+    HSP
         *src_hsp = HPair_NodeData_get_hsp(hpair, src_node_data),
         *dst_hsp = HPair_NodeData_get_hsp(hpair, dst_node_data);
     if(hpair_edge_data->sar_join){
@@ -223,9 +223,9 @@ static C4_Score HPair_update_edge_func(gpointer src_data,
 
 static C4_Score HPair_confirm_start_func(gpointer node_data,
                                          gpointer user_data){
-    register HPair *hpair = user_data;
-    register HPair_NodeData *hpair_node_data = node_data;
-    register HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
+    HPair *hpair = user_data;
+    HPair_NodeData *hpair_node_data = node_data;
+    HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
     g_assert(hpair_node_data->sar_start);
     if(HPair_check_exit(hpair, hsp,
                         hpair_node_data->sar_start->region))
@@ -239,9 +239,9 @@ static C4_Score HPair_update_start_func(gpointer node_data,
                                         gpointer user_data,
                                         C4_Score prev_score,
                                         gint last_updated){
-    register HPair *hpair = user_data;
-    register HPair_NodeData *hpair_node_data = node_data;
-    register HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
+    HPair *hpair = user_data;
+    HPair_NodeData *hpair_node_data = node_data;
+    HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
     g_assert(hpair_node_data->sar_start);
     if(HPair_check_exit(hpair, hsp,
                         hpair_node_data->sar_start->region))
@@ -257,9 +257,9 @@ static C4_Score HPair_update_start_func(gpointer node_data,
 
 static C4_Score HPair_confirm_end_func(gpointer node_data,
                                        gpointer user_data){
-    register HPair *hpair = user_data;
-    register HPair_NodeData *hpair_node_data = node_data;
-    register HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
+    HPair *hpair = user_data;
+    HPair_NodeData *hpair_node_data = node_data;
+    HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
     if(HPair_check_entry(hpair, hsp,
                           hpair_node_data->sar_end->region))
         return C4_IMPOSSIBLY_LOW_SCORE;
@@ -273,9 +273,9 @@ static C4_Score HPair_update_end_func(gpointer node_data,
                                       gpointer user_data,
                                       C4_Score prev_score,
                                       gint last_updated){
-    register HPair *hpair = user_data;
-    register HPair_NodeData *hpair_node_data = node_data;
-    register HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
+    HPair *hpair = user_data;
+    HPair_NodeData *hpair_node_data = node_data;
+    HSP *hsp = HPair_NodeData_get_hsp(hpair, hpair_node_data);
     g_assert(hpair_node_data->sar_end);
     if(HPair_check_entry(hpair, hsp,
                           hpair_node_data->sar_end->region))
@@ -292,13 +292,13 @@ static C4_Score HPair_update_end_func(gpointer node_data,
 /**/
 
 static void HPair_destroy_node_data_func(gpointer data){
-    register HPair_NodeData *hnd = data;
+    HPair_NodeData *hnd = data;
     HPair_NodeData_destroy(hnd);
     return;
     }
 
 static void HPair_destroy_edge_data_func(gpointer data){
-    register HPair_EdgeData *hed = data;
+    HPair_EdgeData *hed = data;
     HPair_EdgeData_destroy(hed);
     return;
     }
@@ -308,7 +308,7 @@ static void HPair_destroy_edge_data_func(gpointer data){
 HPair *HPair_create(Heuristic *heuristic, SubOpt *subopt,
                     gint query_length, gint target_length,
                     gint verbosity, gpointer user_data){
-    register HPair *hpair = g_new(HPair, 1);
+    HPair *hpair = g_new(HPair, 1);
     g_assert(heuristic);
     g_assert(query_length >= 0);
     g_assert(target_length >= 0);
@@ -348,8 +348,8 @@ static void HPair_destroy_offset_list(HPair *hpair){
     }
 
 void HPair_destroy(HPair *hpair){
-    register gint i;
-    register HSPset *hspset;
+    gint i;
+    HSPset *hspset;
     for(i = 0; i < hpair->portal_data_list->len; i++){
         hspset= hpair->portal_data_list->pdata[i];
         if(hspset)
@@ -379,14 +379,14 @@ void HPair_add_hspset(HPair *hpair, C4_Portal *portal, HSPset *hsp_set){
 /**/
 
 static void HPair_initialise_bsdp_nodes(HPair *hpair){
-    register gint i, j;
-    register Heuristic_Match *match;
-    register HSPset *hsp_set;
-    register HSP *hsp;
-    register gboolean start_ok, end_ok;
-    register C4_Score start_bound, end_bound;
-    register HPair_NodeData *hpair_node_data;
-    register gint node_id, node_total = 0;
+    gint i, j;
+    Heuristic_Match *match;
+    HSPset *hsp_set;
+    HSP *hsp;
+    gboolean start_ok, end_ok;
+    C4_Score start_bound, end_bound;
+    HPair_NodeData *hpair_node_data;
+    gint node_id, node_total = 0;
     for(i = 0; i < hpair->heuristic->match_total; i++){
         match = hpair->heuristic->match_list[i];
         g_assert(match);
@@ -444,7 +444,7 @@ static gboolean HPair_hsp_pair_is_valid(HSP *src, HSP *dst){
 
 static void HPair_hsp_pair_calc_emit(HPair *hpair, HSP *src, HSP *dst,
                             gint *query_emit, gint *target_emit){
-    register gboolean query_overlapping, target_overlapping;
+    gboolean query_overlapping, target_overlapping;
     g_assert(query_emit);
     g_assert(target_emit);
     (*query_emit) = (*target_emit) = 0;
@@ -489,7 +489,7 @@ static gboolean HPair_Join_is_valid(Heuristic_Join *join,
 static gboolean HPair_Span_is_valid(Heuristic_Span *heuristic_span,
                                     HSP *src, HSP *dst,
                                     gint query_emit, gint target_emit){
-    register gint effective_query_limit, effective_target_limit;
+    gint effective_query_limit, effective_target_limit;
     effective_query_limit = heuristic_span->span->max_query
                           + heuristic_span->src_bound->query_range
                           + heuristic_span->dst_bound->query_range;
@@ -514,12 +514,12 @@ static void HPair_add_candidate_hsp_pair(HPair *hpair,
                               C4_Portal *src_portal,
                               C4_Portal *dst_portal,
                               gint *edge_total){
-    register SAR_Join *sar_join;
-    register SAR_Span *sar_span;
-    register C4_Score bound_score;
-    register HPair_EdgeData *hpair_edge_data;
-    register Heuristic_Span *heuristic_span;
-    register gint i, src_node_id, dst_node_id;
+    SAR_Join *sar_join;
+    SAR_Span *sar_span;
+    C4_Score bound_score;
+    HPair_EdgeData *hpair_edge_data;
+    Heuristic_Span *heuristic_span;
+    gint i, src_node_id, dst_node_id;
     gint query_emit, target_emit;
     if(!HPair_hsp_pair_is_valid(src, dst))
         return;
@@ -577,8 +577,8 @@ typedef struct {
 
 static gboolean HPair_RangeTree_ReportFunc(gint x, gint y,
                                 gpointer info, gpointer user_data){
-    register HPair_RangeTree_Report_Data *hrtrd = user_data;
-    register gint dst_hsp_id = GPOINTER_TO_INT(info);
+    HPair_RangeTree_Report_Data *hrtrd = user_data;
+    gint dst_hsp_id = GPOINTER_TO_INT(info);
     HPair_add_candidate_hsp_pair(hrtrd->hpair, hrtrd->pair,
                       hrtrd->src_hsp,
                       hrtrd->dst_hsp_set->hsp_list->pdata[dst_hsp_id],
@@ -591,20 +591,20 @@ static gboolean HPair_RangeTree_ReportFunc(gint x, gint y,
 static void HPair_find_candidate_hsp_pairs(HPair *hpair,
                                            Heuristic_Pair *pair,
                                            gint *edge_total){
-    register gint src_portal_id = pair->src->portal->id,
+    gint src_portal_id = pair->src->portal->id,
                   dst_portal_id = pair->dst->portal->id;
-    register HSPset
+    HSPset
         *src_hsp_set = hpair->portal_data_list->pdata[src_portal_id],
         *dst_hsp_set = hpair->portal_data_list->pdata[dst_portal_id];
-    register C4_Portal
+    C4_Portal
         *src_portal = hpair->heuristic->model->portal_list->pdata
                                                   [src_portal_id],
         *dst_portal = hpair->heuristic->model->portal_list->pdata
                                                   [dst_portal_id];
-    register HSP *src, *dst;
-    register gint i;
-    register RangeTree *rangetree = RangeTree_create();
-    register HSP *max_dst_cobs_hsp;
+    HSP *src, *dst;
+    gint i;
+    RangeTree *rangetree = RangeTree_create();
+    HSP *max_dst_cobs_hsp;
     g_assert(src_portal == pair->src->portal);
     g_assert(dst_portal == pair->dst->portal);
     gint max_query_join_range, max_target_join_range;
@@ -652,8 +652,8 @@ static void HPair_find_candidate_hsp_pairs(HPair *hpair,
     }
 
 static void HPair_initialise_bsdp_edges(HPair *hpair){
-    register gint i, j;
-    register Heuristic_Pair *pair;
+    gint i, j;
+    Heuristic_Pair *pair;
     gint edge_total = 0;
     for(i = 0; i < hpair->heuristic->match_total; i++){
         for(j = 0; j < hpair->heuristic->match_total; j++){
@@ -684,9 +684,9 @@ void HPair_finalise(HPair *hpair, C4_Score threshold){
 #if 0
 static Alignment *HPair_refine_alignment(HPair *hpair,
                                          Alignment *alignment){
-    register Alignment *refined_alignment = NULL;
-    register Region *region;
-    register gint query_region_start, target_region_start;
+    Alignment *refined_alignment = NULL;
+    Region *region;
+    gint query_region_start, target_region_start;
     g_assert(hpair->heuristic->optimal);
     if(hpair->verbosity > 1)
         g_message("Refining alignment ... (%d)", alignment->score);
@@ -736,14 +736,14 @@ static Alignment *HPair_refine_alignment(HPair *hpair,
 #endif /* 0 */
 
 Alignment *HPair_next_path(HPair *hpair, C4_Score threshold){
-    register Alignment *alignment;
-    register SAR_Alignment *sar_alignment;
-    register BSDP_Path *bsdp_path;
-    register BSDP_Node *first_node, *last_node,
+    Alignment *alignment;
+    SAR_Alignment *sar_alignment;
+    BSDP_Path *bsdp_path;
+    BSDP_Node *first_node, *last_node,
                        *src_node, *dst_node;
-    register gint i;
-    register HPair_EdgeData *hpair_edge_data;
-    register HPair_NodeData *first_node_data, *last_node_data,
+    gint i;
+    HPair_EdgeData *hpair_edge_data;
+    HPair_NodeData *first_node_data, *last_node_data,
                             *src_node_data, *dst_node_data;
     g_assert(hpair->is_finalised);
     bsdp_path = BSDP_next_path(hpair->bsdp, threshold);

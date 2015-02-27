@@ -16,10 +16,10 @@
 #include "recyclebin.h"
 
 int main(void){
-    register RecycleBin *rb = RecycleBin_create("test",
+    RecycleBin *rb = RecycleBin_create("test",
                                      sizeof(gpointer), 3);
-    register gint i;
-    register GPtrArray *list = g_ptr_array_new();
+    gint i;
+    GPtrArray *list = g_ptr_array_new();
     for(i = 0; i < 12; i++)
         g_ptr_array_add(list, RecycleBin_alloc(rb));
     for(i = 0; i < 12; i++)

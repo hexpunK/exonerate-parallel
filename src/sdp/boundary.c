@@ -19,7 +19,7 @@
 
 static Boundary_Interval *Boundary_Interval_create(gint query_pos,
                                                    gint seed_id){
-    register Boundary_Interval *interval = g_new(Boundary_Interval, 1);
+    Boundary_Interval *interval = g_new(Boundary_Interval, 1);
     interval->query_pos = query_pos;
     interval->length = 1;
     interval->seed_id = seed_id;
@@ -33,7 +33,7 @@ static void Boundary_Interval_destroy(Boundary_Interval *interval){
 
 static Boundary_Interval *Boundary_Interval_copy(
                           Boundary_Interval *interval){
-    register Boundary_Interval *new_interval
+    Boundary_Interval *new_interval
            = Boundary_Interval_create(interval->query_pos,
                                       interval->seed_id);
     new_interval->length = interval->length;
@@ -47,15 +47,15 @@ static Boundary_Interval *Boundary_Interval_copy(
 /**/
 
 static Boundary_Row *Boundary_Row_create(gint target_pos){
-    register Boundary_Row *boundary_row = g_new(Boundary_Row, 1);
+    Boundary_Row *boundary_row = g_new(Boundary_Row, 1);
     boundary_row->target_pos = target_pos;
     boundary_row->interval_list = g_ptr_array_new();
     return boundary_row;
     }
 
 static void Boundary_Row_destroy(Boundary_Row *boundary_row){
-    register gint i;
-    register Boundary_Interval *interval;
+    gint i;
+    Boundary_Interval *interval;
     for(i = 0; i < boundary_row->interval_list->len; i++){
         interval = boundary_row->interval_list->pdata[i];
         Boundary_Interval_destroy(interval);
@@ -67,8 +67,8 @@ static void Boundary_Row_destroy(Boundary_Row *boundary_row){
 
 static void Boundary_Row_print_gnuplot(Boundary_Row *boundary_row,
                                        gint colour){
-    register gint i;
-    register Boundary_Interval *interval;
+    gint i;
+    Boundary_Interval *interval;
     for(i = 0; i < boundary_row->interval_list->len; i++){
         interval = boundary_row->interval_list->pdata[i];
         g_print("set arrow from %d,%d to %d,%d heads ls %d\n",
@@ -81,10 +81,10 @@ static void Boundary_Row_print_gnuplot(Boundary_Row *boundary_row,
     }
 
 static Boundary_Row *Boundary_Row_copy(Boundary_Row *boundary_row){
-    register Boundary_Row *new_row = Boundary_Row_create(
+    Boundary_Row *new_row = Boundary_Row_create(
                                            boundary_row->target_pos);
-    register gint i;
-    register Boundary_Interval *interval;
+    gint i;
+    Boundary_Interval *interval;
     g_assert(boundary_row->interval_list->len);
     for(i = 0; i < boundary_row->interval_list->len; i++){
         interval = boundary_row->interval_list->pdata[i];
@@ -95,8 +95,8 @@ static Boundary_Row *Boundary_Row_copy(Boundary_Row *boundary_row){
     }
 
 static void Boundary_Row_reverse(Boundary_Row *boundary_row){
-    register gint a, z;
-    register Boundary_Interval *swap;
+    gint a, z;
+    Boundary_Interval *swap;
     for(a = 0, z = boundary_row->interval_list->len-1; a < z; a++, z--){
         swap = boundary_row->interval_list->pdata[a];
         boundary_row->interval_list->pdata[a]
@@ -108,7 +108,7 @@ static void Boundary_Row_reverse(Boundary_Row *boundary_row){
 
 static void Boundary_Row_add_interval(Boundary_Row *boundary_row,
                           gint query_pos, gint length, gint seed_id){
-    register Boundary_Interval *interval
+    Boundary_Interval *interval
            = Boundary_Interval_create(query_pos, seed_id);
     interval->length = length;
     g_ptr_array_add(boundary_row->interval_list, interval);
@@ -118,8 +118,8 @@ static void Boundary_Row_add_interval(Boundary_Row *boundary_row,
 static void Boundary_Row_select(Boundary_Row *boundary_row,
                                 Boundary_Row *sub_boundary_row,
                                 Region *region){
-    register gint i, query_start, query_end;
-    register Boundary_Interval *interval;
+    gint i, query_start, query_end;
+    Boundary_Interval *interval;
     for(i = 0; i < boundary_row->interval_list->len; i++){
         interval = boundary_row->interval_list->pdata[i];
         if((interval->query_pos+interval->length) < region->query_start)
@@ -139,7 +139,7 @@ static void Boundary_Row_select(Boundary_Row *boundary_row,
 
 static Boundary_Interval *Boundary_Row_get_last_interval(
                           Boundary_Row *boundary_row){
-    register Boundary_Interval *interval;
+    Boundary_Interval *interval;
     g_assert(boundary_row);
     g_assert(boundary_row->interval_list);
     if(!boundary_row->interval_list->len)
@@ -152,7 +152,7 @@ static Boundary_Interval *Boundary_Row_get_last_interval(
 
 void Boundary_Row_prepend(Boundary_Row *boundary_row,
                           gint query_pos, gint seed_id){
-    register Boundary_Interval *interval
+    Boundary_Interval *interval
            = Boundary_Row_get_last_interval(boundary_row);
     if(interval
     && (interval->seed_id == seed_id)
@@ -167,7 +167,7 @@ void Boundary_Row_prepend(Boundary_Row *boundary_row,
 
 static void Boundary_Row_append_interval(Boundary_Row *boundary_row,
                                          Boundary_Interval *interval){
-    register Boundary_Interval *last_interval
+    Boundary_Interval *last_interval
            = Boundary_Row_get_last_interval(boundary_row);
     g_assert(interval->query_pos >= 0);
     g_assert(interval->seed_id >= 0);
@@ -315,8 +315,8 @@ static void Boundary_Row_insert_append(Boundary_Row *boundary_row,
     }
 
 static gboolean Boundary_Row_is_valid(Boundary_Row *boundary_row){
-    register gint i;
-    register Boundary_Interval *interval, *prev;
+    gint i;
+    Boundary_Interval *interval, *prev;
     g_assert(boundary_row->interval_list->len);
     prev = boundary_row->interval_list->pdata[0];
     g_assert(prev->length > 0);
@@ -334,9 +334,9 @@ static gboolean Boundary_Row_is_valid(Boundary_Row *boundary_row){
 
 static void Boundary_Row_insert(Boundary_Row *boundary_row,
                                 Boundary_Row *insert_row){
-    register gint i = 0, j = 0;
-    register Boundary_Interval *boundary_interval, *insert_interval;
-    register Boundary_Row *combined_row
+    gint i = 0, j = 0;
+    Boundary_Interval *boundary_interval, *insert_interval;
+    Boundary_Row *combined_row
            = Boundary_Row_create(boundary_row->target_pos);
     Boundary_Interval boundary_stored = {-1, -1, -1},
                       insert_stored   = {-1, -1, -1};
@@ -405,15 +405,15 @@ static void Boundary_Row_insert(Boundary_Row *boundary_row,
 /**/
 
 Boundary *Boundary_create(void){
-    register Boundary *boundary = g_new(Boundary, 1);
+    Boundary *boundary = g_new(Boundary, 1);
     boundary->row_list = g_ptr_array_new();
     boundary->ref_count = 1;
     return boundary;
     }
 
 void Boundary_destroy(Boundary *boundary){
-    register gint i;
-    register Boundary_Row *boundary_row;
+    gint i;
+    Boundary_Row *boundary_row;
     g_assert(boundary);
     if(--boundary->ref_count)
         return;
@@ -435,7 +435,7 @@ Boundary *Boundary_share(Boundary *boundary){
 /**/
 
 Boundary_Row *Boundary_add_row(Boundary *boundary, gint target_pos){
-    register Boundary_Row *boundary_row;
+    Boundary_Row *boundary_row;
     g_assert(boundary);
     g_assert(boundary->row_list);
     boundary_row = Boundary_Row_create(target_pos);
@@ -444,7 +444,7 @@ Boundary_Row *Boundary_add_row(Boundary *boundary, gint target_pos){
     }
 
 Boundary_Row *Boundary_get_last_row(Boundary *boundary){
-    register Boundary_Row *boundary_row;
+    Boundary_Row *boundary_row;
     g_assert(boundary);
     g_assert(boundary->row_list);
     if(!boundary->row_list->len)
@@ -455,7 +455,7 @@ Boundary_Row *Boundary_get_last_row(Boundary *boundary){
     }
 
 void Boundary_remove_empty_last_row(Boundary *boundary){
-    register Boundary_Row *boundary_row
+    Boundary_Row *boundary_row
            = Boundary_get_last_row(boundary);
     if(!boundary_row)
         return;
@@ -472,8 +472,8 @@ void Boundary_remove_empty_last_row(Boundary *boundary){
 /**/
 
 void Boundary_reverse(Boundary *boundary){
-    register gint a, z;
-    register Boundary_Row *swap;
+    gint a, z;
+    Boundary_Row *swap;
     for(a = 0, z = boundary->row_list->len-1; a < z; a++, z--){
         swap = boundary->row_list->pdata[a];
         boundary->row_list->pdata[a] = boundary->row_list->pdata[z];
@@ -490,9 +490,9 @@ void Boundary_reverse(Boundary *boundary){
 /* Reverse order of the rows and intervals */
 
 Boundary *Boundary_select(Boundary *boundary, Region *region){
-    register Boundary *sub_boundary = Boundary_create();
-    register Boundary_Row *boundary_row, *sub_boundary_row;
-    register gint i;
+    Boundary *sub_boundary = Boundary_create();
+    Boundary_Row *boundary_row, *sub_boundary_row;
+    gint i;
     g_assert(boundary);
     for(i = 0; i < boundary->row_list->len; i++){
         boundary_row = boundary->row_list->pdata[i];
@@ -511,8 +511,8 @@ Boundary *Boundary_select(Boundary *boundary, Region *region){
  */
 
 static gboolean Boundary_is_valid(Boundary *boundary){
-    register gint i;
-    register Boundary_Row *prev_row, *row;
+    gint i;
+    Boundary_Row *prev_row, *row;
     g_assert(boundary);
     g_assert(boundary->row_list->len);
     prev_row = boundary->row_list->pdata[0];
@@ -529,10 +529,10 @@ static gboolean Boundary_is_valid(Boundary *boundary){
     }
 
 void Boundary_insert(Boundary *boundary, Boundary *insert){
-    register gint i = 0, j = 0;
-    register Boundary_Row *boundary_row, *insert_row,
+    gint i = 0, j = 0;
+    Boundary_Row *boundary_row, *insert_row,
                           *last_boundary_row;
-    register GPtrArray *combined_row_list = g_ptr_array_new();
+    GPtrArray *combined_row_list = g_ptr_array_new();
     do {
         if(i == insert->row_list->len)
             break;
@@ -589,10 +589,10 @@ void Boundary_insert(Boundary *boundary, Boundary *insert){
 /**/
 
 static Region *Boundary_find_bounding_region(Boundary *boundary){
-    register Region *region = Region_create_blank();
-    register gint i, qmin, qmax;
-    register Boundary_Row *boundary_row;
-    register Boundary_Interval *interval;
+    Region *region = Region_create_blank();
+    gint i, qmin, qmax;
+    Boundary_Row *boundary_row;
+    Boundary_Interval *interval;
     g_assert(boundary->row_list->len);
     /* take first row */
     boundary_row = boundary->row_list->pdata[0];
@@ -626,10 +626,10 @@ static Region *Boundary_find_bounding_region(Boundary *boundary){
     }
 
 void Boundary_print_gnuplot(Boundary *boundary, gint colour){
-    register gint i;
-    register Boundary_Row *boundary_row;
+    gint i;
+    Boundary_Row *boundary_row;
     /* Find bounding region */
-    register Region *region = Boundary_find_bounding_region(boundary);
+    Region *region = Boundary_find_bounding_region(boundary);
     g_print("# Begin gnuplot commands\n");
     g_print("set xrange [%d:%d]\n",
            region->query_start, Region_query_end(region));

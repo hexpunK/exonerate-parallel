@@ -25,7 +25,7 @@
 
 static Sequence_Annotation *Sequence_Annotation_create(gchar *id,
         Sequence_Strand strand, gint cds_start, gint cds_length){
-    register Sequence_Annotation *annotation
+    Sequence_Annotation *annotation
      = g_new(Sequence_Annotation, 1);
     annotation->id = g_strdup(id);
     annotation->strand = strand;
@@ -43,19 +43,19 @@ static void Sequence_Annotation_destroy(
 
 static gint Sequence_Annotation_compare(gconstpointer a,
                                         gconstpointer b){
-    register gchar *id_a = (gchar*)a,
+    gchar *id_a = (gchar*)a,
                    *id_b = (gchar*)b;
     return strcmp(id_a, id_b);
     }
 
 static GTree *Sequence_create_annotation_tree(gchar *path){
     void *tree = NULL;
-    register FILE *fp = fopen(path, "r");
-    register LineParse *lp;
-    register gchar *id, strand_char;
-    register gint cds_start = 0, cds_length = 0;
-    register Sequence_Strand strand;
-    register Sequence_Annotation *annotation;
+    FILE *fp = fopen(path, "r");
+    LineParse *lp;
+    gchar *id, strand_char;
+    gint cds_start = 0, cds_length = 0;
+    Sequence_Strand strand;
+    Sequence_Annotation *annotation;
     /**/
     if(!fp)
         g_error("Could not open annotation file [%s]", path);
@@ -96,7 +96,7 @@ static void Sequence_destroy_annotation_tree(void *tree){
     }
 
 static void Sequence_Argument_cleanup(gpointer user_data){
-    register Sequence_ArgumentSet *sas = user_data;
+    Sequence_ArgumentSet *sas = user_data;
     if(sas->annotation_tree){
         Sequence_destroy_annotation_tree(sas->annotation_tree);
         sas->annotation_tree = NULL;
@@ -105,7 +105,7 @@ static void Sequence_Argument_cleanup(gpointer user_data){
     }
 
 Sequence_ArgumentSet *Sequence_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Sequence_ArgumentSet sas = {NULL};
     if(arg){
         as = ArgumentSet_create("Sequence Options");
@@ -127,7 +127,7 @@ Sequence_ArgumentSet *Sequence_ArgumentSet_create(Argument *arg){
 /**/
 
 static gboolean Sequence_is_valid(Sequence *seq){
-    register gint i, ch;
+    gint i, ch;
     g_assert(seq);
     g_assert(seq->id);
     if(seq->alphabet->type == Alphabet_Type_PROTEIN){
@@ -153,14 +153,14 @@ static void Sequence_IntMemory_data_destroy(gpointer data){
     }
 
 static gint Sequence_IntMemory_get_symbol(gpointer data, gint pos){
-    register gchar *seq = data;
+    gchar *seq = data;
     return seq[pos];
     }
 
 static Sequence *Sequence_create_internal(gchar *id, gchar *def, guint len,
                           Sequence_Strand strand, Alphabet *alphabet){
-    register Sequence *s = g_new0(Sequence, 1);
-    register Sequence_ArgumentSet *sas
+    Sequence *s = g_new0(Sequence, 1);
+    Sequence_ArgumentSet *sas
            = Sequence_ArgumentSet_create(NULL);
     void *tree_node;
     s->ref_count = 1;
@@ -184,19 +184,19 @@ static Sequence *Sequence_create_internal(gchar *id, gchar *def, guint len,
     }
 
 static void Sequence_ExtMemory_data_destroy(gpointer data){
-    register SparseCache *cache = data;
+    SparseCache *cache = data;
     SparseCache_destroy(cache);
     return;
     }
 
 static gint Sequence_ExtMemory_get_symbol(gpointer data, gint pos){
-    register SparseCache *cache = data;
+    SparseCache *cache = data;
     return GPOINTER_TO_INT(SparseCache_get(cache, pos));
     }
 
 Sequence *Sequence_create(gchar *id, gchar *def, gchar *seq, guint len,
                           Sequence_Strand strand, Alphabet *alphabet){
-    register Sequence *s = Sequence_create_internal(id, def, len,
+    Sequence *s = Sequence_create_internal(id, def, len,
                                                     strand, alphabet);
     s->type = Sequence_Type_INTMEM;
     s->get_symbol = Sequence_IntMemory_get_symbol;
@@ -215,7 +215,7 @@ Sequence *Sequence_create(gchar *id, gchar *def, gchar *seq, guint len,
 Sequence *Sequence_create_extmem(gchar *id, gchar *def, guint len,
                           Sequence_Strand strand, Alphabet *alphabet,
                           SparseCache *cache){
-    register Sequence *s = Sequence_create_internal(id, def, len,
+    Sequence *s = Sequence_create_internal(id, def, len,
                                                     strand, alphabet);
     s->type = Sequence_Type_EXTMEM;
     s->get_symbol = Sequence_ExtMemory_get_symbol;
@@ -225,7 +225,7 @@ Sequence *Sequence_create_extmem(gchar *id, gchar *def, guint len,
     }
 
 void Sequence_preload_extmem(Sequence *s){
-    register gint i;
+    gint i;
     if(s->type != Sequence_Type_EXTMEM)
         return;
     for(i = 0; i < s->len; i += SparseCache_PAGE_SIZE)
@@ -248,20 +248,20 @@ typedef struct {
 } Sequence_Subseq;
 
 static void Sequence_Subseq_data_destroy(gpointer data){
-    register Sequence_Subseq *subseq = data;
+    Sequence_Subseq *subseq = data;
     Sequence_destroy(subseq->sequence);
     g_free(subseq);
     return;
     }
 
 static gint Sequence_Subseq_get_symbol(gpointer data, gint pos){
-    register Sequence_Subseq *subseq = data;
+    Sequence_Subseq *subseq = data;
     return Sequence_get_symbol(subseq->sequence, subseq->start+pos);
     }
 
 Sequence *Sequence_subseq(Sequence *s, guint start, guint length){
-    register Sequence *ns;
-    register Sequence_Subseq *subseq;
+    Sequence *ns;
+    Sequence_Subseq *subseq;
     g_assert(s);
     g_assert(s->data);
     g_assert(s->len);
@@ -285,7 +285,7 @@ Sequence *Sequence_subseq(Sequence *s, guint start, guint length){
 /**/
 
 gint Sequence_print_fasta_block(Sequence *s, FILE *fp){
-    register gint i, pos = 0, pause, width = 70, total = s->len;
+    gint i, pos = 0, pause, width = 70, total = s->len;
     if(s->len){
         pos = 0;
         pause = pos+s->len-width;
@@ -303,7 +303,7 @@ gint Sequence_print_fasta_block(Sequence *s, FILE *fp){
         }
 #if 0
     /* FIXME: optimisation: use this for Sequence_Mode_IntMemory */
-    register gchar *ptr, *pause;
+    gchar *ptr, *pause;
     /**/
     if(s->seq){
         ptr = s->seq;
@@ -343,14 +343,14 @@ void Sequence_print_fasta(Sequence *s, FILE *fp, gboolean show_info){
     }
 
 static void Sequence_revcomp_data_destroy(gpointer data){
-    register Sequence *sequence = data;
+    Sequence *sequence = data;
     Sequence_destroy(sequence);
     return;
     }
 
 static gint Sequence_revcomp_get_symbol(gpointer data, gint pos){
-    register Sequence *sequence = data;
-    register gint ch = Sequence_get_symbol(sequence, sequence->len-pos-1);
+    Sequence *sequence = data;
+    gint ch = Sequence_get_symbol(sequence, sequence->len-pos-1);
     return sequence->alphabet->complement[ch];
     }
 
@@ -363,11 +363,11 @@ Sequence_Strand Sequence_Strand_revcomp(Sequence_Strand strand){
     }
 
 void Sequence_revcomp_in_place(gchar *seq, guint length){
-    register guchar *a, *z, swap;
-    register gint pos;
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    guchar *a, *z, swap;
+    gint pos;
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register guchar *complement
+    guchar *complement
         = Alphabet_get_filter_by_type(alphabet,
                                       Alphabet_Filter_Type_COMPLEMENT);
     for(a = (guchar*)seq, z = (guchar*)seq+length-1; a < z; a++, z--){
@@ -385,7 +385,7 @@ void Sequence_revcomp_in_place(gchar *seq, guint length){
 /* FIXME: optimisation: should avoid repeated creation of alphabet. */
 
 void Sequence_reverse_in_place(gchar *seq, guint length){
-    register guchar *a, *z, swap;
+    guchar *a, *z, swap;
     for(a = (guchar*)seq, z = (guchar*)seq+length-1; a < z; a++, z--){
         swap = *a;
         *a = *z;
@@ -395,8 +395,8 @@ void Sequence_reverse_in_place(gchar *seq, guint length){
     }
 
 Sequence *Sequence_revcomp(Sequence *s){
-    register Sequence *ns;
-    register Sequence_Strand strand;
+    Sequence *ns;
+    Sequence_Strand strand;
     /* Prevent creation of revcomp(revcomp(seq)) */
     if(s->type == Sequence_Type_REVCOMP)
         return Sequence_share((Sequence*)s->data);
@@ -419,8 +419,8 @@ Sequence *Sequence_revcomp(Sequence *s){
 void Sequence_filter_in_place(gchar *seq, guint length,
                               Alphabet *alphabet,
                               Alphabet_Filter_Type filter_type){
-    register gint i;
-    register const guchar *filter
+    gint i;
+    const guchar *filter
                          = Alphabet_get_filter_by_type(alphabet,
                                                        filter_type);
     g_assert(filter);
@@ -438,23 +438,23 @@ typedef struct {
 } Sequence_Filter;
 
 static void Sequence_Filter_data_destroy(gpointer data){
-    register Sequence_Filter *sequence_filter = data;
+    Sequence_Filter *sequence_filter = data;
     Sequence_destroy(sequence_filter->sequence);
     g_free(sequence_filter);
     return;
     }
 
 static gint Sequence_Filter_get_symbol(gpointer data, gint pos){
-    register Sequence_Filter *sequence_filter = data;
+    Sequence_Filter *sequence_filter = data;
     return sequence_filter->filter
           [Sequence_get_symbol(sequence_filter->sequence, pos)];
     }
 
 Sequence *Sequence_filter(Sequence *s,
                           Alphabet_Filter_Type filter_type){
-    register Sequence *ns = Sequence_create(s->id, s->def, NULL,
+    Sequence *ns = Sequence_create(s->id, s->def, NULL,
                                         s->len, s->strand, s->alphabet);
-    register Sequence_Filter *sequence_filter = g_new(Sequence_Filter, 1);
+    Sequence_Filter *sequence_filter = g_new(Sequence_Filter, 1);
     g_assert(Alphabet_get_filter_by_type(s->alphabet, filter_type));
     g_free(ns->id);
     ns->id = g_strdup_printf("%s:filter(%s)", s->id,
@@ -473,9 +473,9 @@ Sequence *Sequence_filter(Sequence *s,
  */
 
 gint Sequence_checksum(Sequence *s){
-    register guint64 check = 0;
-    register gint i, ch;
-    register gchar *index =
+    guint64 check = 0;
+    gint i, ch;
+    gchar *index =
     "--------------------------------------&---*---.-----------------"
     "@ABCDEFGHIJKLMNOPQRSTUVWXYZ------ABCDEFGHIJKLMNOPQRSTUVWXYZ---~-"
     "----------------------------------------------------------------"
@@ -497,7 +497,7 @@ typedef struct {
 } Sequence_Translation;
 
 static void Sequence_Translation_data_destroy(gpointer data){
-    register Sequence_Translation *translation = data;
+    Sequence_Translation *translation = data;
     Sequence_destroy(translation->sequence);
     Translate_destroy(translation->translate);
     g_free(translation);
@@ -505,8 +505,8 @@ static void Sequence_Translation_data_destroy(gpointer data){
     }
 
 static gint Sequence_translate_get_symbol(gpointer data, gint pos){
-    register Sequence_Translation *translation = data;
-    register gint p = (pos*3)+(translation->frame-1);
+    Sequence_Translation *translation = data;
+    gint p = (pos*3)+(translation->frame-1);
     return Translate_base(translation->translate,
                      Sequence_get_symbol(translation->sequence, p),
                      Sequence_get_symbol(translation->sequence, p+1),
@@ -514,12 +514,12 @@ static gint Sequence_translate_get_symbol(gpointer data, gint pos){
     }
 
 Sequence *Sequence_translate(Sequence *s, Translate *translate, gint frame){
-    register Alphabet *protein_alphabet
+    Alphabet *protein_alphabet
            = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
-    register Sequence *ts = Sequence_create(s->id, s->def, NULL, 0,
+    Sequence *ts = Sequence_create(s->id, s->def, NULL, 0,
                                             Sequence_Strand_UNKNOWN,
                                             protein_alphabet);
-    register Sequence_Translation *translation
+    Sequence_Translation *translation
            = g_new(Sequence_Translation, 1);
     g_assert((frame >= 1) && (frame <= 3));
     if(ts->def){
@@ -543,10 +543,10 @@ Sequence *Sequence_translate(Sequence *s, Translate *translate, gint frame){
 
 #if 0
 static void Sequence_print_type(Sequence *s){
-    register Sequence_Subseq *subseq;
-    register Sequence *revcomp;
-    register Sequence_Filter *filter;
-    register Sequence_Translation *translation;
+    Sequence_Subseq *subseq;
+    Sequence *revcomp;
+    Sequence_Filter *filter;
+    Sequence_Translation *translation;
     switch(s->type){
         case Sequence_Type_INTMEM:
             g_print("intmem");
@@ -586,10 +586,10 @@ static void Sequence_print_type(Sequence *s){
 
 
 void Sequence_strncpy(Sequence *s, gint start, gint length, gchar *dst){
-    register gint i;
-    register gchar *str;
-    register Sequence_Subseq *subseq;
-    register SparseCache *cache;
+    gint i;
+    gchar *str;
+    Sequence_Subseq *subseq;
+    SparseCache *cache;
     g_assert(start >= 0);
     g_assert(s->len > 0);
     g_assert(start < s->len);
@@ -634,7 +634,7 @@ void Sequence_strcpy(Sequence *s, gchar *dst){
     }
 
 gchar *Sequence_get_substr(Sequence *s, gint start, gint length){
-    register gchar *str = g_new(gchar, length+1);
+    gchar *str = g_new(gchar, length+1);
     Sequence_strncpy(s, start, length, str);
     str[length] = '\0';
     return str;
@@ -701,13 +701,13 @@ void Sequence_destroy(Sequence *s){
     }
 
 Sequence *Sequence_mask(Sequence *s){
-    register gboolean ok = TRUE;
-    register Sequence *curr_seq = s, *new_seq, *prev_seq;
-    register gint i;
-    register GPtrArray *seq_list = g_ptr_array_new();
-    register Sequence_Subseq *seq_subseq;
-    register Sequence_Filter *seq_filter;
-    register Sequence_Translation *seq_translation;
+    gboolean ok = TRUE;
+    Sequence *curr_seq = s, *new_seq, *prev_seq;
+    gint i;
+    GPtrArray *seq_list = g_ptr_array_new();
+    Sequence_Subseq *seq_subseq;
+    Sequence_Filter *seq_filter;
+    Sequence_Translation *seq_translation;
     /* Find the base sequence */
     do {
         switch(curr_seq->type){
@@ -780,8 +780,8 @@ Sequence *Sequence_mask(Sequence *s){
     }
 
 gsize Sequence_memory_usage(Sequence *s){
-    register SparseCache *cache;
-    register gsize data_memory = 0;
+    SparseCache *cache;
+    gsize data_memory = 0;
     switch(s->type){
         case Sequence_Type_INTMEM:
             data_memory = sizeof(gchar)*s->len;
@@ -803,10 +803,10 @@ gsize Sequence_memory_usage(Sequence *s){
 
 
 void Sequence_lock(Sequence *s){
-    register Sequence_Subseq *subseq;
-    register Sequence_Filter *filter;
-    register Sequence_Translation *translation;
-    register Sequence *revcomp;
+    Sequence_Subseq *subseq;
+    Sequence_Filter *filter;
+    Sequence_Translation *translation;
+    Sequence *revcomp;
     g_assert(s);
 #ifdef USE_PTHREADS
     pthread_mutex_lock(&s->seq_lock);
@@ -842,10 +842,10 @@ void Sequence_lock(Sequence *s){
     }
 
 void Sequence_unlock(Sequence *s){
-    register Sequence_Subseq *subseq;
-    register Sequence_Filter *filter;
-    register Sequence_Translation *translation;
-    register Sequence *revcomp;
+    Sequence_Subseq *subseq;
+    Sequence_Filter *filter;
+    Sequence_Translation *translation;
+    Sequence *revcomp;
     g_assert(s);
 #ifdef USE_PTHREADS
     pthread_mutex_unlock(&s->seq_lock);

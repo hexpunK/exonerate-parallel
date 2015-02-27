@@ -23,7 +23,7 @@ FILE *file;
 static void fasta_translate_seq(FastaDB_Seq *fdbs,
                                 Translate *translate, gint frame,
                                 Alphabet *protein_alphabet){
-    register Sequence *rc_seq, *aa_seq;
+    Sequence *rc_seq, *aa_seq;
     if(!frame){
         fasta_translate_seq(fdbs, translate, -3, protein_alphabet);
         fasta_translate_seq(fdbs, translate, -2, protein_alphabet);
@@ -47,14 +47,14 @@ static void fasta_translate_seq(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register FastaDB_Seq *fdbs;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    FastaDB_Seq *fdbs;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    register Translate *translate;
-    register Alphabet *dna_alphabet
+    Translate *translate;
+    Alphabet *dna_alphabet
            = Alphabet_create(Alphabet_Type_DNA, FALSE);
-    register Alphabet *protein_alphabet
+    Alphabet *protein_alphabet
            = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
     gchar *query_path, *outputFile;
     gint frame;

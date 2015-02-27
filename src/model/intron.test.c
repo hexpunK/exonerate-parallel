@@ -16,7 +16,7 @@
 #include "intron.h"
 
 int Argument_main(Argument *arg){
-    register C4_Model *intron = Intron_create("test", TRUE, FALSE,
+    C4_Model *intron = Intron_create("test", TRUE, FALSE,
                                               TRUE);
     g_warning("test does nothing");
     C4_Model_destroy(intron);

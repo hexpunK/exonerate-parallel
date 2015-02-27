@@ -18,7 +18,7 @@
 
 static gpointer test_merge_Func(gpointer a, gpointer b,
                                 gpointer user_data){
-    register gint ia = GPOINTER_TO_INT(a),
+    gint ia = GPOINTER_TO_INT(a),
                   ib = GPOINTER_TO_INT(b);
     g_assert(a);
     g_assert(b);
@@ -28,7 +28,7 @@ static gpointer test_merge_Func(gpointer a, gpointer b,
 static void test_traverse_Func(guint seq_pos,
                                gpointer node_data,
                                gpointer user_data){
-    register gint node_count = GPOINTER_TO_INT(node_data),
+    gint node_count = GPOINTER_TO_INT(node_data),
                  *total      = (gint*)user_data;
     *total += node_count;
     return;
@@ -36,7 +36,7 @@ static void test_traverse_Func(guint seq_pos,
 
 int main(void){
     gint count = 0;
-    register FSM *f = FSM_create("abcdefghijklmnopqrstuvwxyz",
+    FSM *f = FSM_create("abcdefghijklmnopqrstuvwxyz",
                       test_merge_Func, test_merge_Func, NULL);
 #define TESTSETSIZE 32
     char *testset[TESTSETSIZE] = { /* C KEYWORDS */
@@ -44,14 +44,14 @@ int main(void){
         "const",    "continue", "default",  "do",
         "double",   "else",     "enum",     "extern",
         "float",    "for",      "goto",     "if",
-        "int",      "long",     "register", "return",
+        "int",      "long",     "", "return",
         "short",    "signed",   "sizeof",   "static",
         "struct",   "switch",   "typedef",  "union",
         "unsigned", "void",     "volatile", "while"  };
     char *testsen = "-unSIGNed--switCHAR---DOUBLElse--sizeoFOR";
 /*        Total=9            2       1 1    1   1  1       1 1 */
-    register gint i;
-    register guchar *tolower_filter = (guchar*)
+    gint i;
+    guchar *tolower_filter = (guchar*)
     "----------------------------------------------------------------"
     "-abcdefghijklmnopqrstuvwxyz------abcdefghijklmnopqrstuvwxyz-----"
     "----------------------------------------------------------------"

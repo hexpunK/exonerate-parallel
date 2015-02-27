@@ -31,7 +31,7 @@ static int RecycleBin_compare(const void *a,
 
 RecycleBin *RecycleBin_create(gchar *name, gsize node_size,
                               gint nodes_per_chunk){
-    register RecycleBin *recycle_bin = g_new(RecycleBin, 1);
+    RecycleBin *recycle_bin = g_new(RecycleBin, 1);
     g_assert(name);
     g_assert(node_size >= sizeof(gpointer));
     recycle_bin->ref_count = 1;
@@ -47,7 +47,7 @@ RecycleBin *RecycleBin_create(gchar *name, gsize node_size,
     }
 
 void RecycleBin_destroy(RecycleBin *recycle_bin){
-    register gint i;
+    gint i;
     if(--recycle_bin->ref_count)
         return;
     g_assert(global_recycle_bin_tree);
@@ -76,8 +76,8 @@ gsize RecycleBin_memory_usage(RecycleBin *recycle_bin){
     }
 
 gpointer RecycleBin_alloc(RecycleBin *recycle_bin){
-    register RecycleBin_Node *node;
-    register gchar *chunk;
+    RecycleBin_Node *node;
+    gchar *chunk;
     g_assert(recycle_bin);
     if(recycle_bin->recycle){
         node = (gpointer)recycle_bin->recycle;
@@ -102,13 +102,13 @@ gpointer RecycleBin_alloc(RecycleBin *recycle_bin){
     }
 
 gpointer RecycleBin_alloc_blank(RecycleBin *recycle_bin){
-    register gpointer data = RecycleBin_alloc(recycle_bin);
+    gpointer data = RecycleBin_alloc(recycle_bin);
     memset(data, 0, recycle_bin->node_size);
     return data;
     }
 
 void RecycleBin_recycle(RecycleBin *recycle_bin, gpointer data){
-    register RecycleBin_Node *node = data;
+    RecycleBin_Node *node = data;
     g_assert(node != recycle_bin->recycle);
     node->next = recycle_bin->recycle;
     recycle_bin->recycle = node;

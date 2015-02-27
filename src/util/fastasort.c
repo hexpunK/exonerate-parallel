@@ -44,7 +44,7 @@ typedef struct {
 
 static Sort_Data *Sort_Data_create(FastaDB_Seq *fdbs,
                                    Sort_KeyMask sort_key_mask){
-    register Sort_Data *sd = g_new(Sort_Data, 1);
+    Sort_Data *sd = g_new(Sort_Data, 1);
     if(sort_key_mask & Sort_KeyMask_ID){
         sd->key_data.id = g_strdup(fdbs->seq->id);
     } else if(sort_key_mask & Sort_KeyMask_LEN){
@@ -71,9 +71,9 @@ static void Sort_Data_destroy(Sort_Data *sd,
 typedef int (*FastaSort_CompFunc)(const void *a, const void *b);
 
 static int FastaSort_compare_id_forward(const void *a, const void *b){
-    register Sort_Data **sd_a = (Sort_Data**)a,
+    Sort_Data **sd_a = (Sort_Data**)a,
                        **sd_b = (Sort_Data**)b;
-    register gint ret_val = strcmp((*sd_a)->key_data.id,
+    gint ret_val = strcmp((*sd_a)->key_data.id,
                                    (*sd_b)->key_data.id);
     if(!ret_val)
         g_error("Duplicate key [%s]", (*sd_a)->key_data.id);
@@ -85,7 +85,7 @@ static int FastaSort_compare_id_reverse(const void *a, const void *b){
     }
 
 static int FastaSort_compare_len_forward(const void *a, const void *b){
-    register Sort_Data **sd_a = (Sort_Data**)a,
+    Sort_Data **sd_a = (Sort_Data**)a,
                        **sd_b = (Sort_Data**)b;
     return (*sd_a)->key_data.len - (*sd_b)->key_data.len;
     }
@@ -95,12 +95,12 @@ static int FastaSort_compare_len_reverse(const void *a, const void *b){
     }
 
 static int FastaSort_compare_seq_forward(const void *a, const void *b){
-    register Sort_Data **sd_a = (Sort_Data**)a,
+    Sort_Data **sd_a = (Sort_Data**)a,
                        **sd_b = (Sort_Data**)b;
-    register gint ret_val = strcmp((*sd_a)->key_data.seq_prefix,
+    gint ret_val = strcmp((*sd_a)->key_data.seq_prefix,
                                    (*sd_b)->key_data.seq_prefix);
-    register FastaDB_Seq *fdbs_a, *fdbs_b;
-    register gchar *seq_a, *seq_b;
+    FastaDB_Seq *fdbs_a, *fdbs_b;
+    gchar *seq_a, *seq_b;
     if(!ret_val){
         fdbs_a = FastaDB_Key_get_seq((*sd_a)->key, FastaDB_Mask_SEQ);
         fdbs_b = FastaDB_Key_get_seq((*sd_b)->key, FastaDB_Mask_SEQ);
@@ -125,7 +125,7 @@ static int FastaSort_compare_seq_reverse(const void *a, const void *b){
 
 static Sort_KeyMask SortKey_Mask_create(gchar *sort_key,
                                         gboolean reverse_order){
-    register Sort_KeyMask mask = 0;
+    Sort_KeyMask mask = 0;
     if(reverse_order)
         mask |= Sort_KeyMask_REVERSE;
     else
@@ -181,8 +181,8 @@ typedef struct {
 
 static gboolean fasta_sort_check_traverse_func(FastaDB_Seq *fdbs,
                                                gpointer user_data){
-    register Sort_Check_Info *sci = user_data;
-    register gint ret_val;
+    Sort_Check_Info *sci = user_data;
+    gint ret_val;
     Sort_Data *sd = Sort_Data_create(fdbs, sci->sort_key_mask);
     if(sci->prev_sd){
         ret_val = sci->comp_func(&sci->prev_sd, &sd);
@@ -231,18 +231,18 @@ typedef struct {
 
 static gboolean fasta_sort_traverse_func(FastaDB_Seq *fdbs,
                                          gpointer user_data){
-    register Sort_Info *si = user_data;
-    register Sort_Data *sd = Sort_Data_create(fdbs, si->sort_key_mask);
+    Sort_Info *si = user_data;
+    Sort_Data *sd = Sort_Data_create(fdbs, si->sort_key_mask);
     g_ptr_array_add(si->sort_data_list, sd);
     return FALSE;
     }
 
 static void fasta_sort_sort_data(FastaDB *fdb,
                                  Sort_KeyMask sort_key_mask){
-    register gint i;
-    register FastaDB_Seq *fdbs;
-    register Sort_Data *sd;
-    register FastaSort_CompFunc comp_func
+    gint i;
+    FastaDB_Seq *fdbs;
+    Sort_Data *sd;
+    FastaSort_CompFunc comp_func
              = fasta_sort_get_compare_func(sort_key_mask);
     Sort_Info si;
     si.sort_data_list = g_ptr_array_new();
@@ -268,12 +268,12 @@ static void fasta_sort_sort_data(FastaDB *fdb,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *sort_key, *outputFile;
     gboolean check_order, reverse_order;
-    register Sort_KeyMask sort_key_mask;
+    Sort_KeyMask sort_key_mask;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
         Argument_parse_string, &query_path);

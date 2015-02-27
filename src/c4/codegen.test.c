@@ -17,14 +17,14 @@
 #include "codegen.h"
 
 gint Argument_main(Argument *arg){
-    register gchar *module = "testmodule";
-    register Codegen *c = Codegen_create(NULL, module);
+    gchar *module = "testmodule";
+    Codegen *c = Codegen_create(NULL, module);
     Codegen_printf(c, "%s\n\n%s\n",
           "#include <stdio.h>",
           "int test_func(){");
     Codegen_indent(c, 1);
     Codegen_printf(c, "%s\n%s\n%s\n%s",
-          "register int total = 1+2+3+4;",
+          "int total = 1+2+3+4;",
           "printf(\"testing C4 plugin [%d]\\n\", total);",
           "return total;",
           "}");

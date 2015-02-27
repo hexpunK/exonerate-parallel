@@ -32,7 +32,7 @@ typedef struct {
 } Exonerate_Server;
 
 static void Exonerate_Server_memory_usage(Exonerate_Server *exonerate_server){
-    register guint64 dataset_memory, index_memory;
+    guint64 dataset_memory, index_memory;
     dataset_memory = Dataset_memory_usage(exonerate_server->dataset),
     index_memory = exonerate_server->index
                  ? (Index_memory_usage(exonerate_server->index) - dataset_memory)
@@ -48,7 +48,7 @@ static void Exonerate_Server_memory_usage(Exonerate_Server *exonerate_server){
 static Exonerate_Server *Exonerate_Server_create(gchar *input_path,
                                                  gboolean preload,
                                                  gint verbosity){
-    register Exonerate_Server *exonerate_server
+    Exonerate_Server *exonerate_server
      = g_new0(Exonerate_Server, 1);
     if(verbosity > 0)
         g_message("Starting server ...");
@@ -111,9 +111,9 @@ typedef struct {
 } Exonerate_Server_Connection;
 
 static Exonerate_Server_Connection *Exonerate_Server_Connection_create(void){
-    register Exonerate_Server_Connection *connection
+    Exonerate_Server_Connection *connection
      = g_new(Exonerate_Server_Connection, 1);
-    register HSPset_ArgumentSet *has = HSPset_ArgumentSet_create(NULL);
+    HSPset_ArgumentSet *has = HSPset_ArgumentSet_create(NULL);
     connection->query = NULL;
     connection->hsp_param = NULL;
     connection->query_alphabet = NULL;
@@ -160,7 +160,7 @@ static gpointer Exonerate_Server_Connection_open(gpointer user_data){
 
 static void Exonerate_Server_Connection_close(gpointer connection_data,
                                               gpointer user_data){
-    register Exonerate_Server_Connection *server_connection
+    Exonerate_Server_Connection *server_connection
         = connection_data;
     Exonerate_Server_Connection_destroy(server_connection);
     return;
@@ -168,7 +168,7 @@ static void Exonerate_Server_Connection_close(gpointer connection_data,
 
 static void Exonerate_Server_Connection_revcomp_query(
             Exonerate_Server_Connection *connection){
-    register Sequence *rc_seq;
+    Sequence *rc_seq;
     g_assert(connection->query);
     rc_seq = Sequence_revcomp(connection->query);
     Sequence_destroy(connection->query);
@@ -184,8 +184,8 @@ static void Exonerate_Server_Connection_revcomp_target(
     }
 
 static GPtrArray *Exonerate_Server_get_word_list(gchar *msg){
-    register GPtrArray *word_list = g_ptr_array_new();
-    register gchar *prev, *ptr;
+    GPtrArray *word_list = g_ptr_array_new();
+    gchar *prev, *ptr;
     for(ptr = msg; isspace(*ptr); ptr++); /* skip start */
     prev = ptr;
     while(*ptr){
@@ -249,9 +249,9 @@ static gchar *Exonerate_Server_help(void){
     }
 
 static gchar *Exonerate_Server_get_info(Dataset *dataset, gint num){
-    register Dataset_Sequence *ds;
-    register Sequence *seq;
-    register gchar *reply;
+    Dataset_Sequence *ds;
+    Sequence *seq;
+    gchar *reply;
     if((num >= 0) && (num < dataset->seq_list->len)){
         ds = dataset->seq_list->pdata[num];
         seq = Dataset_get_sequence(dataset, num);
@@ -269,9 +269,9 @@ static gchar *Exonerate_Server_get_info(Dataset *dataset, gint num){
     }
 
 static gchar *Exonerate_Server_get_seq(Dataset *dataset, gint num){
-    register Dataset_Sequence *ds;
-    register Sequence *seq;
-    register gchar *str, *reply;
+    Dataset_Sequence *ds;
+    Sequence *seq;
+    gchar *str, *reply;
     if((num >= 0) && (num < dataset->seq_list->len)){
         ds = dataset->seq_list->pdata[num];
         seq = Dataset_get_sequence(dataset, num);
@@ -287,9 +287,9 @@ static gchar *Exonerate_Server_get_seq(Dataset *dataset, gint num){
 
 static gchar *Exonerate_Server_get_subseq(Dataset *dataset, gint num,
                                           gint start, gint len){
-    register gchar *reply, *str;
-    register Dataset_Sequence *ds;
-    register Sequence *seq, *subseq;
+    gchar *reply, *str;
+    Dataset_Sequence *ds;
+    Sequence *seq, *subseq;
     if((num >= 0) && (num < dataset->seq_list->len)){
         ds = dataset->seq_list->pdata[num];
         if(len <= 0){
@@ -314,10 +314,10 @@ static gchar *Exonerate_Server_get_subseq(Dataset *dataset, gint num,
 
 static gchar *Exonerate_Server_get_hsps(Exonerate_Server *exonerate_server,
                                         Exonerate_Server_Connection *connection){
-    register GPtrArray *index_hsp_set_list;
-    register Index_HSPset *index_hsp_set;
+    GPtrArray *index_hsp_set_list;
+    Index_HSPset *index_hsp_set;
     char *reply;
-    register HSP *hsp;
+    HSP *hsp;
     g_assert(connection->hsp_param);
     g_assert(connection->query);
     if(connection->revcomp_target
@@ -379,9 +379,9 @@ static gchar *Exonerate_Server_get_hsps(Exonerate_Server *exonerate_server,
 
 static Sequence *Exonerate_Server_get_query(Index *index,
                  Exonerate_Server_Connection *connection, gchar *query){
-    register Alphabet_Type alphabet_type;
-    register Match_Type match_type;
-    register Match *match;
+    Alphabet_Type alphabet_type;
+    Match_Type match_type;
+    Match *match;
     if(!connection->query_alphabet){
         if (connection->query_type != Alphabet_Type_UNKNOWN)
             alphabet_type = connection->query_type; /* client-specified type */
@@ -453,7 +453,7 @@ static gchar *Exonerate_Server_set_param_querytype(
     }
 static gchar *Exonerate_Server_set_param_seedrepeat(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint seed_repeat = atoi(word_list->pdata[3]);
+    gint seed_repeat = atoi(word_list->pdata[3]);
     if(seed_repeat < 1)
         return g_strdup_printf("error: seedrepeat must be > 0\n");
     connection->seed_repeat = seed_repeat;
@@ -466,7 +466,7 @@ static gchar *Exonerate_Server_set_param_seedrepeat(
 
 static gchar *Exonerate_Server_set_param_dnahspthreshold(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint dnahspthreshold = atoi(word_list->pdata[3]);
+    gint dnahspthreshold = atoi(word_list->pdata[3]);
     if(dnahspthreshold < 1)
         return g_strdup_printf("error: dnahspthreshold must be > 0\n");
     connection->dna_hsp_threshold = dnahspthreshold;
@@ -477,7 +477,7 @@ static gchar *Exonerate_Server_set_param_dnahspthreshold(
 
 static gchar *Exonerate_Server_set_param_proteinhspthreshold(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint proteinhspthreshold = atoi(word_list->pdata[3]);
+    gint proteinhspthreshold = atoi(word_list->pdata[3]);
     if(proteinhspthreshold < 1)
         return g_strdup_printf("error: proteinhspthreshold must be > 0\n");
     connection->protein_hsp_threshold = proteinhspthreshold;
@@ -489,7 +489,7 @@ static gchar *Exonerate_Server_set_param_proteinhspthreshold(
 
 static gchar *Exonerate_Server_set_param_codonhspthreshold(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint codonhspthreshold = atoi(word_list->pdata[3]);
+    gint codonhspthreshold = atoi(word_list->pdata[3]);
     if(codonhspthreshold < 1)
         return g_strdup_printf("error: codonhspthreshold must be > 0\n");
     connection->codon_hsp_threshold = codonhspthreshold;
@@ -503,7 +503,7 @@ static gchar *Exonerate_Server_set_param_codonhspthreshold(
 
 static gchar *Exonerate_Server_set_param_dnawordlimit(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint dnawordlimit = atoi(word_list->pdata[3]);
+    gint dnawordlimit = atoi(word_list->pdata[3]);
     if(dnawordlimit < 0)
         return g_strdup_printf("error: dnawordlimit must be >= 0\n");
     connection->dna_word_limit = dnawordlimit;
@@ -514,7 +514,7 @@ static gchar *Exonerate_Server_set_param_dnawordlimit(
 
 static gchar *Exonerate_Server_set_param_proteinwordlimit(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint proteinwordlimit = atoi(word_list->pdata[3]);
+    gint proteinwordlimit = atoi(word_list->pdata[3]);
     if(proteinwordlimit < 0)
         return g_strdup_printf("error: proteinwordlimit must be >= 0\n");
     connection->protein_word_limit = proteinwordlimit;
@@ -526,7 +526,7 @@ static gchar *Exonerate_Server_set_param_proteinwordlimit(
 
 static gchar *Exonerate_Server_set_param_codonwordlimit(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint codonwordlimit = atoi(word_list->pdata[3]);
+    gint codonwordlimit = atoi(word_list->pdata[3]);
     if(codonwordlimit < 0)
         return g_strdup_printf("error: codonwordlimit must be >= 0\n");
     connection->codon_word_limit = codonwordlimit;
@@ -540,7 +540,7 @@ static gchar *Exonerate_Server_set_param_codonwordlimit(
 
 static gchar *Exonerate_Server_set_param_dnahspdropoff(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint dnahspdropoff = atoi(word_list->pdata[3]);
+    gint dnahspdropoff = atoi(word_list->pdata[3]);
     if(dnahspdropoff < 0)
         return g_strdup_printf("error: dnahspdropoff must be >= 0\n");
     connection->dna_hsp_dropoff = dnahspdropoff;
@@ -551,7 +551,7 @@ static gchar *Exonerate_Server_set_param_dnahspdropoff(
 
 static gchar *Exonerate_Server_set_param_proteinhspdropoff(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint proteinhspdropoff = atoi(word_list->pdata[3]);
+    gint proteinhspdropoff = atoi(word_list->pdata[3]);
     if(proteinhspdropoff < 0)
         return g_strdup_printf("error: proteinhspdropoff must be >= 0\n");
     connection->protein_hsp_dropoff = proteinhspdropoff;
@@ -563,7 +563,7 @@ static gchar *Exonerate_Server_set_param_proteinhspdropoff(
 
 static gchar *Exonerate_Server_set_param_codonhspdropoff(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint codonhspdropoff = atoi(word_list->pdata[3]);
+    gint codonhspdropoff = atoi(word_list->pdata[3]);
     if(codonhspdropoff < 0)
         return g_strdup_printf("error: codonhspdropoff must be >= 0\n");
     connection->codon_hsp_dropoff = codonhspdropoff;
@@ -577,7 +577,7 @@ static gchar *Exonerate_Server_set_param_codonhspdropoff(
 
 static gchar *Exonerate_Server_set_param_geneseedthreshold(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint geneseed_threshold = atoi(word_list->pdata[3]);
+    gint geneseed_threshold = atoi(word_list->pdata[3]);
     if(geneseed_threshold < 0)
         return g_strdup_printf("error: geneseed_threshold must be >= 0\n");
     connection->geneseed_threshold = geneseed_threshold;
@@ -586,7 +586,7 @@ static gchar *Exonerate_Server_set_param_geneseedthreshold(
 
 static gchar *Exonerate_Server_set_param_geneseedrepeat(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint geneseed_repeat = atoi(word_list->pdata[3]);
+    gint geneseed_repeat = atoi(word_list->pdata[3]);
     if(geneseed_repeat <= 1)
         return g_strdup_printf("error: geneseed_repeat must be > 1\n");
     connection->geneseed_repeat = geneseed_repeat;
@@ -595,7 +595,7 @@ static gchar *Exonerate_Server_set_param_geneseedrepeat(
 
 static gchar *Exonerate_Server_set_param_max_query_span(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint max_query_span= atoi(word_list->pdata[3]);
+    gint max_query_span= atoi(word_list->pdata[3]);
     if(max_query_span < 0)
         return g_strdup_printf("error: max_query_span must be >= 0\n");
     connection->max_query_span = max_query_span;
@@ -604,7 +604,7 @@ static gchar *Exonerate_Server_set_param_max_query_span(
 
 static gchar *Exonerate_Server_set_param_max_target_span(
               Exonerate_Server_Connection *connection, GPtrArray *word_list){
-    register gint max_target_span= atoi(word_list->pdata[3]);
+    gint max_target_span= atoi(word_list->pdata[3]);
     if(max_target_span < 0)
         return g_strdup_printf("error: max_target_span must be >= 0\n");
     connection->max_target_span = max_target_span;
@@ -613,8 +613,8 @@ static gchar *Exonerate_Server_set_param_max_target_span(
 
 static gchar *Exonerate_Server_set_param(Exonerate_Server_Connection *connection,
                                          GPtrArray *word_list){
-    register gchar *reply = NULL;
-    register gchar *name = word_list->pdata[2];
+    gchar *reply = NULL;
+    gchar *name = word_list->pdata[2];
     if (!strcmp(name, "querytype")){
         reply = Exonerate_Server_set_param_querytype(connection, word_list);
     } else if(!strcmp(name, "seedrepeat")){
@@ -669,13 +669,13 @@ static gchar *Exonerate_Server_set_param(Exonerate_Server_Connection *connection
 static gboolean Exonerate_Server_process(gchar *msg, gchar **reply,
                                          gpointer connection_data,
                                          gpointer user_data){
-    register gint msg_len = strlen(msg);
-    register gboolean keep_connection = TRUE;
-    register Exonerate_Server *server = user_data;
-    register GPtrArray *word_list;
-    register gchar *word, *id, *item, *query;
-    register gint start, len, num;
-    register Exonerate_Server_Connection *connection = connection_data;
+    gint msg_len = strlen(msg);
+    gboolean keep_connection = TRUE;
+    Exonerate_Server *server = user_data;
+    GPtrArray *word_list;
+    gchar *word, *id, *item, *query;
+    gint start, len, num;
+    Exonerate_Server_Connection *connection = connection_data;
     g_assert(msg);
     if(server->verbosity >= 3)
         g_print("Message: server received command [%s]\n", msg);
@@ -842,9 +842,9 @@ static gboolean Exonerate_Server_process(gchar *msg, gchar **reply,
 
 static void run_server(gint port, gchar *input_path, gboolean preload,
                        gint max_connections, gint verbosity){
-    register Exonerate_Server *exonerate_server
+    Exonerate_Server *exonerate_server
            = Exonerate_Server_create(input_path, preload, verbosity);
-    register SocketServer *ss = SocketServer_create(port, max_connections,
+    SocketServer *ss = SocketServer_create(port, max_connections,
                        Exonerate_Server_process,
                        Exonerate_Server_Connection_open,
                        Exonerate_Server_Connection_close,
@@ -862,7 +862,7 @@ int Argument_main(Argument *arg){
     gint port, max_connections, verbosity;
     gchar *input_path;
     gboolean preload;
-    register ArgumentSet *as = ArgumentSet_create("Exonerate Server options");
+    ArgumentSet *as = ArgumentSet_create("Exonerate Server options");
     ArgumentSet_add_option(as, '\0', "port", "port",
             "Port number to run server on", "12886",
             Argument_parse_int, &port);

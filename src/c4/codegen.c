@@ -23,7 +23,7 @@
 #include "codegen.h"
 
 Codegen_ArgumentSet *Codegen_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Codegen_ArgumentSet cas = {TRUE};
     if(arg){
         as = ArgumentSet_create("Code generation options");
@@ -38,9 +38,9 @@ Codegen_ArgumentSet *Codegen_ArgumentSet_create(Argument *arg){
 /**/
 
 gchar *Codegen_clean_path_component(gchar *name){
-    register gint i;
-    register GString *file_name_str = g_string_sized_new(strlen(name));
-    register gchar *file_name, *tmp;
+    gint i;
+    GString *file_name_str = g_string_sized_new(strlen(name));
+    gchar *file_name, *tmp;
     g_assert(name);
     for(i = 0; name[i]; i++){
         if(isalnum(name[i]) || (name[i] == '_')){
@@ -73,7 +73,7 @@ gboolean Codegen_file_exists(gchar *path){
     }
 
 static void Codegen_directory_create(gchar *path){
-    register mode_t mode = S_IRUSR|S_IWUSR|S_IXUSR
+    mode_t mode = S_IRUSR|S_IWUSR|S_IXUSR
                          | S_IRGRP|S_IXGRP
                          | S_IROTH|S_IXOTH;
     g_warning("Creating codegen directory [%s]", path);
@@ -85,7 +85,7 @@ static void Codegen_directory_create(gchar *path){
     }
 
 static gchar *Codegen_get_code_dir(gchar *directory){
-    register gchar *platform_directory, *clean_hosttype
+    gchar *platform_directory, *clean_hosttype
         = Codegen_clean_path_component(HOSTTYPE);
     char code_dir[_XOPEN_PATH_MAX];
     if(!directory){
@@ -109,8 +109,8 @@ static gchar *Codegen_get_code_dir(gchar *directory){
     }
 
 Codegen *Codegen_create(gchar *directory, gchar *name){
-    register Codegen *c = g_new(Codegen, 1);
-    register gchar *code_dir = Codegen_get_code_dir(directory);
+    Codegen *c = g_new(Codegen, 1);
+    gchar *code_dir = Codegen_get_code_dir(directory);
     c->name = Codegen_clean_path_component(name);
     c->code_path = g_strconcat(code_dir, G_DIR_SEPARATOR_S,
                                c->name, ".c", NULL);
@@ -138,9 +138,9 @@ void Codegen_destroy(Codegen *c){
     }
 
 static gchar *Codegen_expand_format(Codegen *c, gchar *format){
-    register GString *str = g_string_sized_new(strlen(format));
-    register gint i, j;
-    register gchar *expanded_format;
+    GString *str = g_string_sized_new(strlen(format));
+    gint i, j;
+    gchar *expanded_format;
     for(i = 0; format[i]; i++){
         g_string_append_c(str, format[i]);
         if((format[i] == '\n')     /* If there is a newline */
@@ -158,7 +158,7 @@ static gchar *Codegen_expand_format(Codegen *c, gchar *format){
 
 void Codegen_printf(Codegen *c, gchar *format, ...){
     va_list args;
-    register gchar *code;
+    gchar *code;
     format = Codegen_expand_format(c, format);
     /* Reuse expanded format to stop compiler complaining */
     va_start(args, format);
@@ -181,14 +181,14 @@ void Codegen_indent(Codegen *c, gint indent_change){
 
 void Codegen_compile(Codegen *c,
                     gchar *add_ccflags, gchar *add_ldflags){
-    register gchar *cc_command = "gcc";
+    gchar *cc_command = "gcc";
 /* Optimisation is turned off when assertions
  * are on for faster compilation
  */
 #ifdef G_DISABLE_ASSERT
-    register gchar *cc_flags   = "-O2 -Wall";
+    gchar *cc_flags   = "-O2 -Wall";
 #else /* G_DISABLE_ASSERT */
-    register gchar *cc_flags   = "-g -Wall";
+    gchar *cc_flags   = "-g -Wall";
 #endif /* G_DISABLE_ASSERT */
     /* FIXME: optimisation
      *        try some more aggressive compiler optimisations
@@ -197,7 +197,7 @@ void Codegen_compile(Codegen *c,
      *        -O3 -tpp6 -xK
      */
     gchar *compile_command;
-    register gchar *tmp;
+    gchar *tmp;
     /* Allow customistation of compilation with environment variables */
     g_assert(c->indent == 0);
     fclose(c->fp);

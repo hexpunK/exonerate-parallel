@@ -27,7 +27,7 @@
 
 static Dataset_Header *Dataset_Header_create(Alphabet_Type alphabet_type,
                                              gboolean softmask_input){
-    register Dataset_Header *header = g_new0(Dataset_Header, 1);
+    Dataset_Header *header = g_new0(Dataset_Header, 1);
     header->magic = DATASET_HEADER_MAGIC;
     header->version = DATASET_HEADER_VERSION;
     header->type = ((alphabet_type == Alphabet_Type_DNA)?1:0)
@@ -107,7 +107,7 @@ static void Dataset_Header_write(Dataset_Header *header, FILE *fp){
     }
 
 static Dataset_Header *Dataset_Header_read(FILE *fp){
-    register Dataset_Header *header = g_new(Dataset_Header, 1);
+    Dataset_Header *header = g_new(Dataset_Header, 1);
     /**/
     header->magic = BitArray_read_int(fp);
     if(header->magic != DATASET_HEADER_MAGIC)
@@ -138,7 +138,7 @@ static Dataset_Header *Dataset_Header_read(FILE *fp){
 /**/
 
 static Dataset_Sequence *Dataset_Sequence_create(FastaDB_Seq *fdbs){
-    register Dataset_Sequence *seq = g_new0(Dataset_Sequence, 1);
+    Dataset_Sequence *seq = g_new0(Dataset_Sequence, 1);
     seq->key = FastaDB_Seq_get_key(fdbs);
     seq->gcg_checksum = Sequence_checksum(fdbs->seq);
     seq->id = g_strdup(fdbs->seq->id);
@@ -168,9 +168,9 @@ static gsize Dataset_Sequence_memory_usage(Dataset_Sequence *ds){
 
 static int Dataset_Sequence_compare_by_id_uniq(const void *a,
                                           const void *b){
-    register Dataset_Sequence **seq_a = (Dataset_Sequence**)a,
+    Dataset_Sequence **seq_a = (Dataset_Sequence**)a,
                               **seq_b = (Dataset_Sequence**)b;
-    register gint retval = strcmp((*seq_a)->id, (*seq_b)->id);
+    gint retval = strcmp((*seq_a)->id, (*seq_b)->id);
     if(!retval)
         g_error("Dataset has duplicate sequence id: [%s]",
                 (*seq_a)->id);
@@ -179,17 +179,17 @@ static int Dataset_Sequence_compare_by_id_uniq(const void *a,
 
 static int Dataset_Sequence_compare_by_id(const void *a,
                                           const void *b){
-    register Dataset_Sequence **seq_a = (Dataset_Sequence**)a,
+    Dataset_Sequence **seq_a = (Dataset_Sequence**)a,
                               **seq_b = (Dataset_Sequence**)b;
-    register gint retval = strcmp((*seq_a)->id, (*seq_b)->id);
+    gint retval = strcmp((*seq_a)->id, (*seq_b)->id);
     return retval;
     }
 
 /**/
 
 static Dataset_Width *Dataset_Width_create(Dataset_Header *header){
-    register Dataset_Width *width = g_new0(Dataset_Width, 1);
-    register guint64 n;
+    Dataset_Width *width = g_new0(Dataset_Width, 1);
+    guint64 n;
     for(n = header->number_of_dbs; n; n >>= 1)
         width->num_db_width++;
     for(n = header->max_db_len; n; n >>= 1)
@@ -213,12 +213,12 @@ static void Dataset_Width_destroy(Dataset_Width *width){
 
 Dataset *Dataset_create(GPtrArray *path_list,
                         Alphabet_Type alphabet_type, gboolean softmask_input){
-    register Dataset *dataset = g_new(Dataset, 1);
-    register FastaDB_Seq *fdbs;
-    register Dataset_Sequence *ds;
-    register gint i;
-    register gsize path_data_size, seq_info_size, seq_data_size;
-    register gchar *path;
+    Dataset *dataset = g_new(Dataset, 1);
+    FastaDB_Seq *fdbs;
+    Dataset_Sequence *ds;
+    gint i;
+    gsize path_data_size, seq_info_size, seq_data_size;
+    gchar *path;
     dataset->ref_count = 1;
     if(alphabet_type == Alphabet_Type_UNKNOWN){
         alphabet_type = FastaDB_guess_type((gchar*)path_list->pdata[0]);
@@ -285,9 +285,9 @@ Dataset *Dataset_share(Dataset *dataset){
     }
 
 gsize Dataset_memory_usage(Dataset *dataset){
-    register gint i;
-    register gsize dataset_sequence_memory = 0;
-    register Dataset_Sequence *ds;
+    gint i;
+    gsize dataset_sequence_memory = 0;
+    Dataset_Sequence *ds;
     for(i = 0; i < dataset->seq_list->len; i++){
         ds = dataset->seq_list->pdata[i];
         dataset_sequence_memory += Dataset_Sequence_memory_usage(ds);
@@ -321,8 +321,8 @@ void Dataset_info(Dataset *dataset){
     }
 
 void Dataset_destroy(Dataset *dataset){
-    register gint i;
-    register Dataset_Sequence *seq;
+    gint i;
+    Dataset_Sequence *seq;
     if(--dataset->ref_count)
         return;
     for(i = 0; i < dataset->seq_list->len; i++){
@@ -343,8 +343,8 @@ void Dataset_destroy(Dataset *dataset){
     }
 
 gboolean Dataset_check_filetype(gchar *path){
-    register FILE *fp = fopen(path, "r");
-    register guint64 magic;
+    FILE *fp = fopen(path, "r");
+    guint64 magic;
     if(!fp)
         g_error("Could not open file [%s]", path);
     magic = BitArray_read_int(fp);
@@ -353,8 +353,8 @@ gboolean Dataset_check_filetype(gchar *path){
     }
 
 static void Dataset_write_path_data(Dataset *dataset, FILE *fp){
-    register gint i;
-    register CompoundFile_Element *cfe;
+    gint i;
+    CompoundFile_Element *cfe;
     for(i = 0; i < dataset->fdb->cf->element_list->len; i++){
         cfe = dataset->fdb->cf->element_list->pdata[i];
         fprintf(fp, "%s\n", cfe->path);
@@ -363,10 +363,10 @@ static void Dataset_write_path_data(Dataset *dataset, FILE *fp){
     }
 
 static void Dataset_read_path_data(Dataset *dataset, FILE *fp){
-    register gint i;
+    gint i;
     gchar buf[1024];
-    register GPtrArray *path_list = g_ptr_array_new();
-    register gchar *path;
+    GPtrArray *path_list = g_ptr_array_new();
+    gchar *path;
     for(i = 0; i < dataset->header->number_of_dbs; i++){
         if(!fgets(buf, 1024, fp))
             g_error("Problem parsing file data");
@@ -384,8 +384,8 @@ static void Dataset_read_path_data(Dataset *dataset, FILE *fp){
     }
 
 static void Dataset_write_seq_data(Dataset *dataset, FILE *fp){
-    register gint i;
-    register Dataset_Sequence *ds;
+    gint i;
+    Dataset_Sequence *ds;
     for(i = 0; i < dataset->seq_list->len; i++){
         ds = dataset->seq_list->pdata[i];
         fprintf(fp, "%s%s%s\n",
@@ -397,11 +397,11 @@ static void Dataset_write_seq_data(Dataset *dataset, FILE *fp){
     }
 
 static void Dataset_read_seq_data(Dataset *dataset, FILE *fp){
-    register gint64 i, j = 0, ipos, dpos;
-    register Dataset_Sequence *ds;
-    register guint64 len = dataset->header->seq_info_offset
+    gint64 i, j = 0, ipos, dpos;
+    Dataset_Sequence *ds;
+    guint64 len = dataset->header->seq_info_offset
                          - dataset->header->seq_data_offset;
-    register gchar *buf = g_new(gchar, len+1);
+    gchar *buf = g_new(gchar, len+1);
     if(!fread(buf, sizeof(gchar), len, fp))
         g_error("Problem reading seq data");
     for(i = 0; i < dataset->header->number_of_seqs; i++){
@@ -431,9 +431,9 @@ static void Dataset_read_seq_data(Dataset *dataset, FILE *fp){
     }
 
 static void Dataset_write_seq_info(Dataset *dataset, FILE *fp){
-    register gint i;
-    register Dataset_Sequence *sequence;
-    register BitArray *ba = BitArray_create();
+    gint i;
+    Dataset_Sequence *sequence;
+    BitArray *ba = BitArray_create();
     for(i = 0; i < dataset->seq_list->len; i++){
         sequence = dataset->seq_list->pdata[i];
         /**/
@@ -452,15 +452,15 @@ static void Dataset_write_seq_info(Dataset *dataset, FILE *fp){
     }
 
 static void Dataset_read_seq_info(Dataset *dataset, FILE *fp){
-    register gint i, start, element_id, length, seq_offset;
-    register Dataset_Sequence *ds;
-    register BitArray *ba;
-    register CompoundFile_Pos offset;
-    register Sequence_Strand strand
+    gint i, start, element_id, length, seq_offset;
+    Dataset_Sequence *ds;
+    BitArray *ba;
+    CompoundFile_Pos offset;
+    Sequence_Strand strand
         = (dataset->alphabet->type == Alphabet_Type_DNA)
         ? Sequence_Strand_FORWARD
         : Sequence_Strand_UNKNOWN;
-    register CompoundFile_Location *location;
+    CompoundFile_Location *location;
     for(i = 0; i < dataset->seq_list->len; i++){
         ds = dataset->seq_list->pdata[i];
         ba = BitArray_read(fp, dataset->width->seq_data_item_size);
@@ -487,7 +487,7 @@ static void Dataset_read_seq_info(Dataset *dataset, FILE *fp){
     }
 
 void Dataset_write(Dataset *dataset, gchar *path){
-    register FILE *fp = fopen(path, "r");
+    FILE *fp = fopen(path, "r");
     if(fp)
         g_error("Output file [%s] already exists", path);
     fp = fopen(path, "w");
@@ -500,8 +500,8 @@ void Dataset_write(Dataset *dataset, gchar *path){
     }
 
 Dataset *Dataset_read(gchar *path){
-    register Dataset *dataset = g_new(Dataset, 1);
-    register FILE *fp = fopen(path, "r");
+    Dataset *dataset = g_new(Dataset, 1);
+    FILE *fp = fopen(path, "r");
     if(!fp)
         g_error("Could not open esd file [%s]", path);
     dataset->ref_count = 1;
@@ -524,7 +524,7 @@ Dataset *Dataset_read(gchar *path){
     }
 
 gint Dataset_lookup_id(Dataset *dataset, gchar *id){
-    register Dataset_Sequence *result, **result_ptr;
+    Dataset_Sequence *result, **result_ptr;
     Dataset_Sequence key_seq, *key_ptr;
     key_seq.id = id;
     key_ptr = &key_seq;
@@ -538,11 +538,11 @@ gint Dataset_lookup_id(Dataset *dataset, gchar *id){
     }
 
 Sequence *Dataset_get_sequence(Dataset *dataset, gint dataset_pos){
-    register Sequence *seq = NULL;
-    register Dataset_Sequence *ds;
-    register gchar *def;
-    register SparseCache *cache;
-    register Sequence_Strand strand;
+    Sequence *seq = NULL;
+    Dataset_Sequence *ds;
+    gchar *def;
+    SparseCache *cache;
+    Sequence_Strand strand;
     g_assert(dataset_pos >= 0);
     g_assert(dataset_pos < dataset->seq_list->len);
     ds = dataset->seq_list->pdata[dataset_pos];
@@ -575,7 +575,7 @@ Sequence *Dataset_get_sequence(Dataset *dataset, gint dataset_pos){
  */
 
 static int Dataset_Sequence_preload_compare(const void *a, const void *b){
-    register Dataset_Sequence **ds_a = (Dataset_Sequence**)a,
+    Dataset_Sequence **ds_a = (Dataset_Sequence**)a,
                               **ds_b = (Dataset_Sequence**)b;
     g_assert(*ds_a);
     g_assert(*ds_b);
@@ -590,9 +590,9 @@ static int Dataset_Sequence_preload_compare(const void *a, const void *b){
     }
 
 void Dataset_preload_seqs(Dataset *dataset){
-    register gint i;
-    register Dataset_Sequence *ds;
-    register Dataset_Sequence **ds_list = g_new(Dataset_Sequence*,
+    gint i;
+    Dataset_Sequence *ds;
+    Dataset_Sequence **ds_list = g_new(Dataset_Sequence*,
                                                 dataset->header->number_of_seqs);
     for(i = 0; i < dataset->header->number_of_seqs; i++){
         ds = dataset->seq_list->pdata[i];

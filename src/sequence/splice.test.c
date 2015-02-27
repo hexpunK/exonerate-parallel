@@ -19,8 +19,8 @@
 static void check_splice_prediction(SplicePredictor *sp, gchar *seq,
                                     gint crib){
     gfloat score;
-    register gint len = strlen(seq);
-    register gint pos = SplicePredictor_predict(sp, seq, len, 0, len, &score);
+    gint len = strlen(seq);
+    gint pos = SplicePredictor_predict(sp, seq, len, 0, len, &score);
     g_message("pos [%d] crib [%d] score [%f]", pos, crib, score);
     g_assert(pos == crib);
     g_assert(score > 0);
@@ -28,7 +28,7 @@ static void check_splice_prediction(SplicePredictor *sp, gchar *seq,
     }
 
 gint Argument_main(Argument *arg){
-    register SplicePredictorSet *sps = SplicePredictorSet_create();
+    SplicePredictorSet *sps = SplicePredictorSet_create();
     g_message("Checking splice site predition [%f,%f,%f,%f]",
             SplicePredictor_get_max_score(sps->ss5_forward),
             SplicePredictor_get_max_score(sps->ss5_reverse),

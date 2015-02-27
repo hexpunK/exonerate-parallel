@@ -26,7 +26,7 @@
 FILE *file;
 
 static gint fasta_index_seek_to_char(FILE *fp, gchar c){
-    register gint ch;
+    gint ch;
     while((ch = getc(fp)) != EOF){
         if(ch == c)
             break;
@@ -35,7 +35,7 @@ static gint fasta_index_seek_to_char(FILE *fp, gchar c){
     }
 
 static gint fasta_index_read_to_char(FILE *fp, gchar c, GString *str){
-    register gint ch;
+    gint ch;
     g_string_truncate(str, 0);
     while((ch = getc(fp)) != EOF){
         if(ch == c)
@@ -47,10 +47,10 @@ static gint fasta_index_read_to_char(FILE *fp, gchar c, GString *str){
 
 static CompoundFile_Pos fasta_index_lookup(FastaDB *fdb, FILE *index_fp,
                                            gchar *id){
-    register long left, right, pos;
+    long left, right, pos;
     CompoundFile_Pos_scan_type result = -1;
-    register GString *curr = g_string_sized_new(100);
-    register gint cond;
+    GString *curr = g_string_sized_new(100);
+    gint cond;
     left = 0;
     fseek(index_fp, 0, SEEK_END);
     right = ftell(index_fp);
@@ -92,9 +92,9 @@ static CompoundFile_Pos fasta_index_lookup(FastaDB *fdb, FILE *index_fp,
 static FastaDB_Seq *fasta_index_fetch(FastaDB *fdb, FILE *index_fp,
                                FastaDB_Mask mask, gchar *id,
                                gboolean be_silent){
-    register CompoundFile_Pos pos = fasta_index_lookup(fdb,
+    CompoundFile_Pos pos = fasta_index_lookup(fdb,
                                                        index_fp, id);
-    register FastaDB_Seq *fdbs;
+    FastaDB_Seq *fdbs;
     if(pos == -1){
         if(be_silent)
             return NULL;
@@ -109,7 +109,7 @@ static FastaDB_Seq *fasta_index_fetch(FastaDB *fdb, FILE *index_fp,
 /**/
 
 static gboolean read_next_line(FILE *fp, GString *s){
-    register gint ch;
+    gint ch;
     g_string_truncate(s, 0);
     while((ch = getc(fp)) != EOF){
         if(ch == '\n'){
@@ -122,9 +122,9 @@ static gboolean read_next_line(FILE *fp, GString *s){
     }
 
 static GPtrArray *get_query_list(gchar *query, gboolean use_fosn){
-    register GPtrArray *query_list = g_ptr_array_new();
-    register FILE *fp = NULL;
-    register GString *id;
+    GPtrArray *query_list = g_ptr_array_new();
+    FILE *fp = NULL;
+    GString *id;
     if(!strcasecmp(query, "stdin")){
         fp = stdin;
     } else {
@@ -146,12 +146,12 @@ static GPtrArray *get_query_list(gchar *query, gboolean use_fosn){
 static void fetch_sequences(gchar *fasta_path, gchar *index_path,
                             gboolean use_fosn, gboolean be_silent,
                             gchar *query){
-    register GPtrArray *query_list = get_query_list(query, use_fosn);
-    register gint i;
-    register FastaDB *fdb = FastaDB_open(fasta_path, NULL);
-    register FILE *index_fp = fopen(index_path, "r");
-    register FastaDB_Seq *fdbs;
-    register FastaDB_Mask mask = FastaDB_Mask_ID
+    GPtrArray *query_list = get_query_list(query, use_fosn);
+    gint i;
+    FastaDB *fdb = FastaDB_open(fasta_path, NULL);
+    FILE *index_fp = fopen(index_path, "r");
+    FastaDB_Seq *fdbs;
+    FastaDB_Mask mask = FastaDB_Mask_ID
                                | FastaDB_Mask_DEF
                                | FastaDB_Mask_SEQ;
     if(!index_fp) {
@@ -175,7 +175,7 @@ static void fetch_sequences(gchar *fasta_path, gchar *index_path,
     }
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *fasta_path, *index_path, *query, *outputFile;
     gboolean use_fosn, be_silent;

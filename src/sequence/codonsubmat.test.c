@@ -17,10 +17,10 @@
 #include "codonsubmat.h"
 
 gint Argument_main(Argument *arg){
-    register CodonSubmat *cs = CodonSubmat_create();
-    register guchar *alphabet = (guchar*)"ACGTN";
-    register gint a, b, c, d, e, f;
-    register gint max;
+    CodonSubmat *cs = CodonSubmat_create();
+    guchar *alphabet = (guchar*)"ACGTN";
+    gint a, b, c, d, e, f;
+    gint max;
     guchar codon_a[4], codon_b[4];
     codon_a[3] = codon_b[3] = '\0';
     for(a = 0; a < 5; a++){

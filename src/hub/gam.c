@@ -33,9 +33,9 @@ static GAM *_gam; /* file-scope variable for passing to twalk() */
 static gchar *GAM_Argument_parse_Model_Type(gchar *arg_string,
                                             gpointer data){
     gchar *type_str;
-    register gchar *ret_val = Argument_parse_string(arg_string,
+    gchar *ret_val = Argument_parse_string(arg_string,
                                                     &type_str);
-    register Model_Type *model_type = (Model_Type*)data;
+    Model_Type *model_type = (Model_Type*)data;
     if(ret_val)
         return ret_val;
     (*model_type) = Model_Type_from_string(type_str);
@@ -45,7 +45,7 @@ static gchar *GAM_Argument_parse_Model_Type(gchar *arg_string,
 /**/
 
 static gchar *GAM_Refinement_to_string(GAM_Refinement refinement){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     switch(refinement){
         case GAM_Refinement_NONE:
             name = "none";
@@ -70,7 +70,7 @@ static GAM_Refinement GAM_Refinement_from_string(gchar *str){
        {GAM_Refinement_NONE,
         GAM_Refinement_FULL,
         GAM_Refinement_REGION};
-    register gint i;
+    gint i;
     for(i = 0; i < GAM_Refinement_TOTAL; i++)
         if(!strcasecmp(name[i], str))
             return refinement[i];
@@ -80,10 +80,10 @@ static GAM_Refinement GAM_Refinement_from_string(gchar *str){
 
 static gchar *GAM_Argument_parse_refinement(gchar *arg_string,
                                                   gpointer data){
-    register GAM_Refinement *refinement
+    GAM_Refinement *refinement
           = (GAM_Refinement*)data;
     gchar *refine_str;
-    register gchar *ret_val = Argument_parse_string(arg_string,
+    gchar *ret_val = Argument_parse_string(arg_string,
                                                     &refine_str);
     if(ret_val)
         return ret_val;
@@ -94,7 +94,7 @@ static gchar *GAM_Argument_parse_refinement(gchar *arg_string,
 /**/
 
 GAM_ArgumentSet *GAM_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static GAM_ArgumentSet gas;
     if(arg){
         as = ArgumentSet_create("Gapped Alignment Options");
@@ -162,7 +162,7 @@ GAM_ArgumentSet *GAM_ArgumentSet_create(Argument *arg){
 static gboolean GAM_StoredResult_compare(gpointer low,
                                          gpointer high,
                                          gpointer user_data){
-    register GAM_StoredResult *gsr_low = (GAM_StoredResult*)low,
+    GAM_StoredResult *gsr_low = (GAM_StoredResult*)low,
                               *gsr_high = (GAM_StoredResult*)high;
     return gsr_low->score < gsr_high->score;
     }
@@ -176,7 +176,7 @@ static GAM_StoredResult *GAM_StoredResult_create(GAM *gam,
                          Sequence *query, Sequence *target,
                          Alignment *alignment,
                          gpointer user_data, gpointer self_data){
-    register GAM_StoredResult *gsr = g_new(GAM_StoredResult, 1);
+    GAM_StoredResult *gsr = g_new(GAM_StoredResult, 1);
     gsr->score = alignment->score;
     gsr->pos = ftell(gam->bestn_tmp_file);
     GAM_display_alignment(gam, alignment, query, target,
@@ -196,8 +196,8 @@ static void GAM_StoredResult_destroy(GAM_StoredResult *gsr){
 
 static void GAM_StoredResult_display(GAM_StoredResult *gsr,
                                      GAM *gam, gint rank){
-    register gint i, ch, tag_pos = 0;
-    register gchar *rank_tag = "%_EXONERATE_BESTN_RANK_%";
+    gint i, ch, tag_pos = 0;
+    gchar *rank_tag = "%_EXONERATE_BESTN_RANK_%";
     if(fseek(gam->bestn_tmp_file, gsr->pos, SEEK_SET))
         g_error("Could not seek in tmp file");
     for(i = 0; i < gsr->len; i++){
@@ -230,7 +230,7 @@ static int GAM_compare_id(const void *gqr1, const void *gqr2){
 
 static GAM_QueryResult *GAM_QueryResult_create(GAM *gam,
                                                gchar *query_id){
-    register GAM_QueryResult *gqr = g_new(GAM_QueryResult, 1);
+    GAM_QueryResult *gqr = g_new(GAM_QueryResult, 1);
     gqr->pq = PQueue_create(gam->pqueue_set,
                             GAM_StoredResult_compare, NULL);
     gqr->query_id = g_strdup(query_id);
@@ -241,7 +241,7 @@ static GAM_QueryResult *GAM_QueryResult_create(GAM *gam,
 
 static void GAM_QueryResult_pqueue_destroy_GAM_Result(gpointer data,
                                                  gpointer user_data){
-    register GAM_StoredResult *gsr = data;
+    GAM_StoredResult *gsr = data;
     GAM_StoredResult_destroy(gsr);
     return;
     }
@@ -257,7 +257,7 @@ static void GAM_QueryResult_destroy(GAM_QueryResult *gqr){
 static void GAM_QueryResult_push(GAM_QueryResult *gqr,
                                  GAM_Result *gam_result,
                                  Alignment *alignment){
-    register GAM_StoredResult *gsr = GAM_StoredResult_create(gam_result->gam,
+    GAM_StoredResult *gsr = GAM_StoredResult_create(gam_result->gam,
                                           gam_result->query,
                                           gam_result->target,
                                           alignment,
@@ -269,10 +269,10 @@ static void GAM_QueryResult_push(GAM_QueryResult *gqr,
 
 static void GAM_QueryResult_submit(GAM_QueryResult *gqr,
                                    GAM_Result *gam_result){
-    register GAM_StoredResult *gsr;
-    register Alignment *alignment;
-    register gint i;
-    register GPtrArray *tie_list = g_ptr_array_new();
+    GAM_StoredResult *gsr;
+    Alignment *alignment;
+    gint i;
+    GPtrArray *tie_list = g_ptr_array_new();
     g_assert(!strcmp(gqr->query_id, gam_result->query->id));
     for(i = 0; i < gam_result->alignment_list->len; i++){
         alignment = gam_result->alignment_list->pdata[i];
@@ -332,23 +332,23 @@ static void GAM_QueryResult_submit(GAM_QueryResult *gqr,
 
 static gboolean GAM_QueryResult_report_traverse_func(gpointer data,
                                                      gpointer user_data){
-    register GAM_StoredResult *gsr = data;
-    register GPtrArray *result_list = user_data;
+    GAM_StoredResult *gsr = data;
+    GPtrArray *result_list = user_data;
     g_ptr_array_add(result_list, gsr);
     return FALSE;
     }
 
 static int GAM_QueryResult_report_sort_func(const void *a,
                                             const void *b){
-    register GAM_StoredResult **gsr_a = (GAM_StoredResult**)a,
+    GAM_StoredResult **gsr_a = (GAM_StoredResult**)a,
                               **gsr_b = (GAM_StoredResult**)b;
     return (*gsr_a)->score - (*gsr_b)->score;
     }
 
 static void GAM_QueryResult_report(GAM_QueryResult *gqr, GAM *gam){
-    register GPtrArray *result_list = g_ptr_array_new();
-    register gint i;
-    register GAM_StoredResult *gsr;
+    GPtrArray *result_list = g_ptr_array_new();
+    gint i;
+    GAM_StoredResult *gsr;
     if(gam->verbosity > 2)
         g_message("Reporting [%d/%d] results for query [%s]",
               PQueue_total(gqr->pq), gam->gas->best_n,
@@ -370,13 +370,13 @@ static void GAM_QueryResult_report(GAM_QueryResult *gqr, GAM *gam){
 #define Combined_Alphabet_Type(qt,tt) ((qt) << 8 | (tt))
 
 static GPtrArray *GAM_build_match_list(C4_Model *model){
-    register GPtrArray *match_list = g_ptr_array_new();
+    GPtrArray *match_list = g_ptr_array_new();
     Match *match_array[Match_Type_TOTAL] = {0};
-    register GPtrArray *match_transition_list
+    GPtrArray *match_transition_list
         = C4_Model_select_transitions(model, C4_Label_MATCH);
-    register gint i;
-    register C4_Transition *transition;
-    register Match *match;
+    gint i;
+    C4_Transition *transition;
+    Match *match;
     for(i = 0; i < match_transition_list->len; i++){
         transition = match_transition_list->pdata[i];
         g_assert(transition->label == C4_Label_MATCH);
@@ -396,9 +396,9 @@ GAM *GAM_create(Alphabet_Type query_type, Alphabet_Type target_type,
                 Submat *dna_submat, Submat *protein_submat,
                 Translate *translate, gboolean use_exhaustive,
                 gint verbosity){
-    register GAM *gam = g_new0(GAM, 1);
-    register gint i;
-    register C4_Span *span;
+    GAM *gam = g_new0(GAM, 1);
+    gint i;
+    C4_Span *span;
     gam->thread_ref = ThreadRef_create();
     gam->dna_submat = Submat_share(dna_submat);
     gam->protein_submat = Submat_share(protein_submat);
@@ -467,10 +467,10 @@ GAM *GAM_share(GAM *gam){
 /**/
 
 static GAM_QueryInfo *GAM_QueryInfo_create(Sequence *query, GAM *gam){
-    register GAM_QueryInfo *gqi = g_new(GAM_QueryInfo, 1);
-    register gint i, j;
-    register Match *match;
-    register Match_Score th;
+    GAM_QueryInfo *gqi = g_new(GAM_QueryInfo, 1);
+    gint i, j;
+    Match *match;
+    Match_Score th;
     gqi->query_id = g_strdup(query->id);
     gqi->threshold = 0;
     /* Calculate best threshold for each query match */
@@ -562,9 +562,9 @@ void GAM_report(GAM *gam){
 
 static C4_Portal *GAM_Pair_find_portal(C4_Model *model,
                                        HSPset *hspset){
-    register gint i;
-    register C4_Portal *portal = NULL;
-    register C4_Transition *transition;
+    gint i;
+    C4_Portal *portal = NULL;
+    C4_Transition *transition;
     for(i = 0; i < model->portal_list->len; i++){
         g_assert(model->portal_list);
         portal = model->portal_list->pdata[i];
@@ -586,7 +586,7 @@ static C4_Portal *GAM_Pair_find_portal(C4_Model *model,
 static GAM_Result *GAM_Result_create(GAM *gam,
                                      Sequence *query,
                                      Sequence *target){
-    register GAM_Result *gam_result = g_new(GAM_Result, 1);
+    GAM_Result *gam_result = g_new(GAM_Result, 1);
     g_assert(gam);
     g_assert(query);
     g_assert(target);
@@ -607,9 +607,9 @@ static GAM_Result *GAM_Result_create(GAM *gam,
 
 static Alignment *GAM_Result_refine_alignment(GAM_Result *gam_result,
                                               Alignment *alignment){
-    register Alignment *refined_alignment = NULL;
-    register Region *region;
-    register gint query_region_start, target_region_start;
+    Alignment *refined_alignment = NULL;
+    Region *region;
+    gint query_region_start, target_region_start;
     g_assert(gam_result->gam->optimal);
     if(gam_result->gam->verbosity > 1)
         g_message("Refining alignment ... (%d)", alignment->score);
@@ -660,7 +660,7 @@ static Alignment *GAM_Result_refine_alignment(GAM_Result *gam_result,
 static void GAM_Result_add_alignment(GAM_Result *gam_result,
                                      Alignment *alignment,
                                      C4_Score threshold){
-    register Alignment *refined_alignment;
+    Alignment *refined_alignment;
     if(!gam_result->alignment_list)
         gam_result->alignment_list = g_ptr_array_new();
     if(gam_result->gam->gas->refinement != GAM_Refinement_NONE){
@@ -678,9 +678,9 @@ static void GAM_Result_add_alignment(GAM_Result *gam_result,
     }
 
 static C4_Score GAM_get_query_threshold(GAM *gam, Sequence *query){
-    register GAM_QueryResult *gqr;
-    register GAM_StoredResult *gsr;
-    register GAM_QueryInfo *gqi;
+    GAM_QueryResult *gqr;
+    GAM_StoredResult *gsr;
+    GAM_QueryInfo *gqi;
     GAM_QueryResult gq_lookup = {.query_id = query->id};
     void *tree_node;
     if(gam->gas->best_n){
@@ -709,7 +709,7 @@ static C4_Score GAM_get_query_threshold(GAM *gam, Sequence *query){
 
 static int GAM_Result_ungapped_create_sort_func(const void *a,
                                                 const void *b){
-    register Alignment **alignment_a = (Alignment**)a,
+    Alignment **alignment_a = (Alignment**)a,
                        **alignment_b = (Alignment**)b;
     return (*alignment_b)->score - (*alignment_a)->score;
     }
@@ -717,10 +717,10 @@ static int GAM_Result_ungapped_create_sort_func(const void *a,
 static void GAM_Result_ungapped_add_HSPset(GAM_Result *gam_result,
                                            C4_Model *model,
                                            HSPset *hspset){
-    register gint i;
-    register C4_Score threshold;
-    register Alignment *alignment;
-    register HSP *hsp;
+    gint i;
+    C4_Score threshold;
+    Alignment *alignment;
+    HSP *hsp;
     HSPset_filter_ungapped(hspset);
     for(i = 0; i < hspset->hsp_list->len; i++){
         hsp = hspset->hsp_list->pdata[i];
@@ -738,7 +738,7 @@ static void GAM_Result_ungapped_add_HSPset(GAM_Result *gam_result,
 
 GAM_Result *GAM_Result_ungapped_create(GAM *gam,
                                        Comparison *comparison){
-    register GAM_Result *gam_result;
+    GAM_Result *gam_result;
     g_assert(comparison);
     if(!Comparison_has_hsps(comparison))
         return NULL;
@@ -770,7 +770,7 @@ GAM_Result *GAM_Result_ungapped_create(GAM *gam,
 
 static void GAM_Result_BSDP_add_HSPset(HSPset *hspset, GAM *gam,
                                        HPair *hpair){
-    register C4_Portal *portal;
+    C4_Portal *portal;
     portal = GAM_Pair_find_portal(gam->model, hspset);
     HPair_add_hspset(hpair, portal, hspset);
     if(gam->verbosity > 2)
@@ -780,7 +780,7 @@ static void GAM_Result_BSDP_add_HSPset(HSPset *hspset, GAM *gam,
     }
 
 static gboolean GAM_Result_is_full(GAM_Result *gam_result){
-    register Alignment *penult, *last;
+    Alignment *penult, *last;
     if((gam_result->gam->gas->best_n)
     && (gam_result->alignment_list->len >= gam_result->gam->gas->best_n)
     && (gam_result->alignment_list->len > 1)){
@@ -799,11 +799,11 @@ static gboolean GAM_Result_is_full(GAM_Result *gam_result){
 
 static GAM_Result *GAM_Result_BSDP_create(GAM *gam,
                                           Comparison *comparison){
-    register HPair *hpair;
-    register Alignment *alignment;
-    register C4_Score threshold
+    HPair *hpair;
+    Alignment *alignment;
+    C4_Score threshold
              = GAM_get_query_threshold(gam, comparison->query);
-    register GAM_Result *gam_result = GAM_Result_create(gam,
+    GAM_Result *gam_result = GAM_Result_create(gam,
                                         comparison->query,
                                         comparison->target);
     g_assert(gam->heuristic);
@@ -854,10 +854,10 @@ static GAM_Result *GAM_Result_BSDP_create(GAM *gam,
 
 static GAM_Result *GAM_Result_SDP_create(GAM *gam,
                                          Comparison *comparison){
-    register SDP_Pair *sdp_pair;
-    register Alignment *alignment;
-    register C4_Score threshold;
-    register GAM_Result *gam_result = GAM_Result_create(gam,
+    SDP_Pair *sdp_pair;
+    Alignment *alignment;
+    C4_Score threshold;
+    GAM_Result *gam_result = GAM_Result_create(gam,
                                         comparison->query,
                                         comparison->target);
     if(gam->verbosity > 2)
@@ -902,8 +902,8 @@ typedef struct {
 } GAM_Geneseed_Data;
 
 static void GAM_Result_geneseed_add(HSPset *hspset, GAM_Geneseed_Data *gsd){
-    register gint i;
-    register HSP *hsp;
+    gint i;
+    HSP *hsp;
     if(!hspset)
         return;
     for(i = 0; i < hspset->hsp_list->len; i++){
@@ -927,24 +927,24 @@ static void GAM_Result_geneseed_visit_hsp_rev(GAM_Geneseed_Data *gsd,
 
 static gboolean GAM_Result_geneseed_report_fwd_func(gint x, gint y,
                           gpointer info, gpointer user_data){
-    register GAM_Geneseed_Data *gsd = user_data;
-    register gint hsp_id = GPOINTER_TO_INT(info);
+    GAM_Geneseed_Data *gsd = user_data;
+    gint hsp_id = GPOINTER_TO_INT(info);
     GAM_Result_geneseed_visit_hsp_fwd(gsd, hsp_id);
     return FALSE;
     }
 
 static gboolean GAM_Result_geneseed_report_rev_func(gint x, gint y,
                           gpointer info, gpointer user_data){
-    register GAM_Geneseed_Data *gsd = user_data;
-    register gint hsp_id = GPOINTER_TO_INT(info);
+    GAM_Geneseed_Data *gsd = user_data;
+    gint hsp_id = GPOINTER_TO_INT(info);
     GAM_Result_geneseed_visit_hsp_rev(gsd, hsp_id);
     return FALSE;
     }
 
 static void GAM_Result_geneseed_visit_hsp_fwd(GAM_Geneseed_Data *gsd,
                                               gint hsp_id){
-    register HSP *hsp;
-    register gint query_range, target_range;
+    HSP *hsp;
+    gint query_range, target_range;
     g_assert(hsp_id < gsd->hsp_list->len);
     if(!gsd->fwd_keep[hsp_id]){
         gsd->fwd_keep[hsp_id] = TRUE;
@@ -981,8 +981,8 @@ static void GAM_Result_geneseed_visit_hsp_fwd(GAM_Geneseed_Data *gsd,
 
 static void GAM_Result_geneseed_visit_hsp_rev(GAM_Geneseed_Data *gsd,
                                               gint hsp_id){
-    register HSP *hsp;
-    register gint query_range, target_range;
+    HSP *hsp;
+    gint query_range, target_range;
     g_assert(hsp_id < gsd->hsp_list->len);
     if(!gsd->rev_keep[hsp_id]){
         gsd->rev_keep[hsp_id] = TRUE;
@@ -1021,9 +1021,9 @@ static gint GAM_Result_geneseed_select(HSPset *hspset,
                                        gboolean *fwd_keep,
                                        gboolean *rev_keep,
                                        gint hsp_id){
-    register gint i;
-    register GPtrArray *keep_list = g_ptr_array_new();
-    register HSP *hsp;
+    gint i;
+    GPtrArray *keep_list = g_ptr_array_new();
+    HSP *hsp;
     if(!hspset)
         return hsp_id;
     for(i = 0; i < hspset->hsp_list->len; i++){
@@ -1045,8 +1045,8 @@ static gint GAM_Result_geneseed_select(HSPset *hspset,
     }
 
 static void GAM_Result_geneseed_filter(GAM *gam, Comparison *comparison){
-    register gint i, hsp_id = 0;
-    register HSP *hsp;
+    gint i, hsp_id = 0;
+    HSP *hsp;
     GAM_Geneseed_Data gsd;
     gsd.hsp_list = g_ptr_array_new();
     gsd.rangetree = RangeTree_create();
@@ -1109,8 +1109,8 @@ static void GAM_Result_geneseed_filter(GAM *gam, Comparison *comparison){
 
 GAM_Result *GAM_Result_heuristic_create(GAM *gam,
                                         Comparison *comparison){
-    register GAM_Result *gam_result;
-    register HSPset_ArgumentSet *has
+    GAM_Result *gam_result;
+    HSPset_ArgumentSet *has
         = Comparison_Param_get_HSPSet_Argument_Set(comparison->param);
     if(has->geneseed_threshold){
         /* Raise score threshold to geneseed
@@ -1143,10 +1143,10 @@ GAM_Result *GAM_Result_heuristic_create(GAM *gam,
 GAM_Result *GAM_Result_exhaustive_create(GAM *gam,
                                          Sequence *query,
                                          Sequence *target){
-    register Alignment *alignment;
-    register C4_Score threshold;
-    register GAM_Result *gam_result;
-    register OPair *opair;
+    Alignment *alignment;
+    C4_Score threshold;
+    GAM_Result *gam_result;
+    OPair *opair;
     g_assert(gam->optimal);
     GAM_lock(gam);
     Sequence_lock(query);
@@ -1188,7 +1188,7 @@ GAM_Result *GAM_Result_share(GAM_Result *gam_result){
     }
 
 void GAM_Result_destroy(GAM_Result *gam_result){
-    register gint i;
+    gint i;
     if(--gam_result->ref_count)
         return;
     if(gam_result->alignment_list){
@@ -1240,8 +1240,8 @@ static void GAM_display_alignment(GAM *gam, Alignment *alignment,
     }
 
 static void GAM_Result_display(GAM_Result *gam_result){
-    register gint i;
-    register Alignment *alignment;
+    gint i;
+    Alignment *alignment;
     g_assert(gam_result);
     for(i = 0; i < gam_result->alignment_list->len; i++){
         alignment = gam_result->alignment_list->pdata[i];
@@ -1253,7 +1253,7 @@ static void GAM_Result_display(GAM_Result *gam_result){
     }
 
 void GAM_Result_submit(GAM_Result *gam_result){
-    register GAM_QueryResult *gqr;
+    GAM_QueryResult *gqr;
     g_assert(gam_result);
     GAM_lock(gam_result->gam);
     if(gam_result->gam->gas->best_n){

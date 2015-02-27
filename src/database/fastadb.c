@@ -32,7 +32,7 @@
 #define FASTADB_OUT_BUFFER_CHUNK_SIZE (BUFSIZ * 64)
 
 FastaDB_ArgumentSet *FastaDB_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static FastaDB_ArgumentSet fas = {NULL};
     if(arg){
         as = ArgumentSet_create("Fasta Database Options");
@@ -52,9 +52,9 @@ static gboolean FastaDB_file_is_directory(gchar *path){
     }
 
 static GPtrArray *FastaDB_get_dir_contents(gchar *path){
-    register GPtrArray *list = g_ptr_array_new();
-    register DIR *dir = opendir(path);
-    register struct dirent *entry;
+    GPtrArray *list = g_ptr_array_new();
+    DIR *dir = opendir(path);
+    struct dirent *entry;
     if(!dir)
         g_error("Could not open directory [%s]", path);
     readdir(dir); /* Skip '.' */
@@ -67,9 +67,9 @@ static GPtrArray *FastaDB_get_dir_contents(gchar *path){
 
 static void FastaDB_expand_path_list_recur(GPtrArray *path_list,
                gchar *path, gchar *suffix_filter, gboolean is_subdir){
-    register GPtrArray *dir_content;
-    register gchar *name, *full_path;
-    register gint i;
+    GPtrArray *dir_content;
+    gchar *name, *full_path;
+    gint i;
     if(FastaDB_file_is_directory(path)){
         dir_content = FastaDB_get_dir_contents(path);
         for(i = 0; i < dir_content->len; i++){
@@ -97,9 +97,9 @@ static void FastaDB_expand_path_list_recur(GPtrArray *path_list,
 
 static GPtrArray *FastaDB_expand_path_list(GPtrArray *path_list,
                                            gchar *suffix_filter){
-    register GPtrArray *expanded_path_list = g_ptr_array_new();
-    register gchar *path;
-    register gint i;
+    GPtrArray *expanded_path_list = g_ptr_array_new();
+    gchar *path;
+    gint i;
     if(suffix_filter && (suffix_filter[0] == '.'))
         suffix_filter++; /* Skip any leading dot on suffix_filter */
     for(i = 0; i < path_list->len; i++){
@@ -116,12 +116,12 @@ static GPtrArray *FastaDB_expand_path_list(GPtrArray *path_list,
     }
 
 FastaDB *FastaDB_open_list(GPtrArray *path_list, Alphabet *alphabet){
-    register FastaDB *fdb = g_new(FastaDB, 1);
-    register FastaDB_ArgumentSet *fas
+    FastaDB *fdb = g_new(FastaDB, 1);
+    FastaDB_ArgumentSet *fas
            = FastaDB_ArgumentSet_create(NULL);
-    register gint i;
-    register gchar *path;
-    register GPtrArray *full_path_list;
+    gint i;
+    gchar *path;
+    GPtrArray *full_path_list;
     g_assert(path_list);
     fdb->ref_count = 1;
     if(alphabet)
@@ -144,9 +144,9 @@ FastaDB *FastaDB_open_list(GPtrArray *path_list, Alphabet *alphabet){
 
 FastaDB *FastaDB_open_list_with_limit(GPtrArray *path_list,
              Alphabet *alphabet, gint chunk_id, gint chunk_total){
-    register FastaDB *fdb = FastaDB_open_list(path_list, alphabet);
-    register CompoundFile_Pos start, stop, total_length, chunk_size;
-    register CompoundFile_Location *start_cfl, *stop_cfl;
+    FastaDB *fdb = FastaDB_open_list(path_list, alphabet);
+    CompoundFile_Pos start, stop, total_length, chunk_size;
+    CompoundFile_Location *start_cfl, *stop_cfl;
     if(chunk_total){
         g_assert(chunk_id);
         if(chunk_total < 1)
@@ -174,8 +174,8 @@ FastaDB *FastaDB_open_list_with_limit(GPtrArray *path_list,
     }
 
 FastaDB *FastaDB_open(gchar *path, Alphabet *alphabet){
-    register FastaDB *fdb;
-    register GPtrArray *path_list = g_ptr_array_new();
+    FastaDB *fdb;
+    GPtrArray *path_list = g_ptr_array_new();
     g_ptr_array_add(path_list, path);
     fdb = FastaDB_open_list(path_list, alphabet);
     g_ptr_array_free(path_list, TRUE);
@@ -203,7 +203,7 @@ FastaDB *FastaDB_share(FastaDB *fdb){
     }
 
 FastaDB *FastaDB_dup(FastaDB *fdb){
-    register FastaDB *nfdb = g_new(FastaDB, 1);
+    FastaDB *nfdb = g_new(FastaDB, 1);
     nfdb->ref_count = 1;
     nfdb->alphabet = Alphabet_create(fdb->alphabet->type,
                                      fdb->alphabet->is_soft_masked);
@@ -227,7 +227,7 @@ void FastaDB_close(FastaDB *fdb){
     }
 
 void FastaDB_rewind(FastaDB *fdb){
-    register gint ch, prev = '\n';
+    gint ch, prev = '\n';
     g_assert(fdb);
     CompoundFile_rewind(fdb->cf);
     while((ch = CompoundFile_getc(fdb->cf)) != EOF){
@@ -240,7 +240,7 @@ void FastaDB_rewind(FastaDB *fdb){
 
 CompoundFile_Pos FastaDB_find_next_start(FastaDB *fdb,
                                          CompoundFile_Pos pos){
-    register gint ch, prev = '\n';
+    gint ch, prev = '\n';
     g_assert(fdb->cf->element_list->len == 1);
     CompoundFile_seek(fdb->cf, pos);
     while((ch = CompoundFile_getc(fdb->cf)) != EOF){
@@ -252,9 +252,9 @@ CompoundFile_Pos FastaDB_find_next_start(FastaDB *fdb,
     }
 
 gboolean FastaDB_file_is_fasta(gchar *path){
-    register FILE *fp = fopen(path, "r");
-    register gint ch;
-    register gboolean result = FALSE;
+    FILE *fp = fopen(path, "r");
+    gint ch;
+    gboolean result = FALSE;
     if(!fp)
         g_error("Could not open file [%s]", path);
     while(((ch = getc(fp)) != EOF)){
@@ -282,7 +282,7 @@ gboolean FastaDB_is_finished(FastaDB *fdb){
 
 void FastaDB_traverse(FastaDB *fdb, FastaDB_Mask mask,
                       FastaDB_TraverseFunc fdtf, gpointer user_data){
-    register FastaDB_Seq *fdbs;
+    FastaDB_Seq *fdbs;
     g_assert(fdb);
     g_assert(fdtf);
     while((fdbs = FastaDB_next(fdb, mask))){
@@ -306,7 +306,7 @@ gsize FastaDB_memory_usage(FastaDB *fdb){
 
 static FastaDB_Seq *FastaDB_Seq_create(FastaDB *fdb, Sequence *seq,
                                        CompoundFile_Location *cfl){
-    register FastaDB_Seq *fdbs = g_new0(FastaDB_Seq, 1);
+    FastaDB_Seq *fdbs = g_new0(FastaDB_Seq, 1);
     fdbs->ref_count = 1;
     fdbs->source = FastaDB_share(fdb);
     fdbs->location = CompoundFile_Location_share(cfl);
@@ -332,7 +332,7 @@ void FastaDB_Seq_destroy(FastaDB_Seq *fdbs){
     }
 
 FastaDB_Seq *FastaDB_Seq_revcomp(FastaDB_Seq *fdbs){
-    register FastaDB_Seq *revcomp_fdbs;
+    FastaDB_Seq *revcomp_fdbs;
     g_assert(fdbs);
     revcomp_fdbs = FastaDB_Seq_create(fdbs->source,
                                       fdbs->seq, fdbs->location);
@@ -344,13 +344,13 @@ FastaDB_Seq *FastaDB_Seq_revcomp(FastaDB_Seq *fdbs){
 /**/
 
 FastaDB_Seq *FastaDB_next(FastaDB *fdb, FastaDB_Mask mask){
-    register FastaDB_Seq *fdbs;
-    register gint ch;
-    register gint id_pos = -1, def_pos = -1, seq_pos = -1,
+    FastaDB_Seq *fdbs;
+    gint ch;
+    gint id_pos = -1, def_pos = -1, seq_pos = -1,
                   seq_len = -1;
-    register gint prev_len = -1, curr_length, line_start_seq_pos;
-    register Sequence *seq;
-    register CompoundFile_Location *location
+    gint prev_len = -1, curr_length, line_start_seq_pos;
+    Sequence *seq;
+    CompoundFile_Location *location
            = CompoundFile_Location_tell(fdb->cf);
     fdb->out_buffer_pos = 0; /* Clear output buffer */
     if(mask & FastaDB_Mask_ID){ /* Record ID */
@@ -468,7 +468,7 @@ FastaDB_Key *FastaDB_Key_create(FastaDB *source,
                                 CompoundFile_Location *location,
                                 Sequence_Strand strand,
                                 gint seq_offset, gint length){
-    register FastaDB_Key *fdbk = g_new(FastaDB_Key, 1);
+    FastaDB_Key *fdbk = g_new(FastaDB_Key, 1);
     g_assert(source);
     fdbk->source = FastaDB_share(source);
     fdbk->location = CompoundFile_Location_share(location);
@@ -487,8 +487,8 @@ void FastaDB_Key_destroy(FastaDB_Key *fdbk){
     }
 
 FastaDB_Key *FastaDB_Seq_get_key(FastaDB_Seq *fdbs){
-    register FastaDB_Key *fdbk;
-    register gint seq_offset = strlen(fdbs->seq->id) + 2
+    FastaDB_Key *fdbk;
+    gint seq_offset = strlen(fdbs->seq->id) + 2
                              + (fdbs->seq->def ? (strlen(fdbs->seq->def)+1) : 0);
     g_assert(fdbs);
     fdbk = FastaDB_Key_create(fdbs->source, fdbs->location,
@@ -499,8 +499,8 @@ FastaDB_Key *FastaDB_Seq_get_key(FastaDB_Seq *fdbs){
 
 FastaDB_Seq *FastaDB_fetch(FastaDB *fdb, FastaDB_Mask mask,
                            CompoundFile_Pos pos){
-    register FastaDB_Seq *fdbs = NULL;
-    register CompoundFile_Pos orig_pos = CompoundFile_ftell(fdb->cf);
+    FastaDB_Seq *fdbs = NULL;
+    CompoundFile_Pos orig_pos = CompoundFile_ftell(fdb->cf);
     g_assert(fdb);
     g_assert(fdb->cf->element_list->len == 1);
     CompoundFile_seek(fdb->cf, pos);
@@ -510,9 +510,9 @@ FastaDB_Seq *FastaDB_fetch(FastaDB *fdb, FastaDB_Mask mask,
     }
 
 FastaDB_Seq *FastaDB_Key_get_seq(FastaDB_Key *fdbk, FastaDB_Mask mask){
-    register FastaDB_Seq *fdbs;
-    register CompoundFile_Location *orig;
-    register Sequence *revcomp_sequence;
+    FastaDB_Seq *fdbs;
+    CompoundFile_Location *orig;
+    Sequence *revcomp_sequence;
     g_assert(fdbk);
     orig = CompoundFile_Location_tell(fdbk->source->cf);
     CompoundFile_Location_seek(fdbk->location);
@@ -531,9 +531,9 @@ FastaDB_Seq *FastaDB_Key_get_seq(FastaDB_Key *fdbk, FastaDB_Mask mask){
     }
 
 gchar *FastaDB_Key_get_def(FastaDB_Key *fdbk){
-    register gint ch;
-    register gchar *def = NULL;
-    register GString *s;
+    gint ch;
+    gchar *def = NULL;
+    GString *s;
 #ifdef USE_PTHREADS
     pthread_mutex_lock(&fdbk->source->cf->compoundfile_mutex);
 #endif /* USE_PTHREADS */
@@ -571,8 +571,8 @@ static gpointer FastaDB_SparseCache_get_func_8_BIT(gint pos, gpointer page_data,
 static gint FastaDB_SparseCache_copy_func_8_BIT(gint start, gint length,
                                                 gchar *dst, gpointer page_data,
                                                 gpointer user_data){
-    register gint i;
-    register gchar *str = page_data;
+    gint i;
+    gchar *str = page_data;
     for(i = 0; i < length; i++)
         dst[i] = str[start+i];
     return length;
@@ -587,7 +587,7 @@ static gpointer FastaDB_SparseCache_get_func_0_BIT_LC(gint pos,
 static gint FastaDB_SparseCache_copy_func_0_BIT_LC(gint start, gint length,
                                                    gchar *dst, gpointer page_data,
                                                    gpointer user_data){
-    register gint i;
+    gint i;
     for(i = 0; i < length; i++)
         dst[i] = 'n';
     return length;
@@ -602,7 +602,7 @@ static gpointer FastaDB_SparseCache_get_func_0_BIT_UC(gint pos,
 static gint FastaDB_SparseCache_copy_func_0_BIT_UC(gint start, gint length,
                                                    gchar *dst, gpointer page_data,
                                                    gpointer user_data){
-    register gint i;
+    gint i;
     for(i = 0; i < length; i++)
         dst[i] = 'N';
     return length;
@@ -618,7 +618,7 @@ typedef enum {
 } FastaDB_SparseCache_Mask;
 
 static void FastaDB_SparseCache_fill_mask(FastaDB_SparseCache_Mask *mask_index){
-    register gint i;
+    gint i;
     for(i = 0; i < ALPHABET_SIZE; i++)
         mask_index[i] = (1 << FastaDB_SparseCache_Mask_8_BIT);
     mask_index['N'] = (1 << FastaDB_SparseCache_Mask_0_BIT_UC);
@@ -637,7 +637,7 @@ static void FastaDB_SparseCache_fill_mask(FastaDB_SparseCache_Mask *mask_index){
 /**/
 
 static void FastaDB_SparseCache_fill_index(gint *index, gchar *alphabet){
-    register gint i;
+    gint i;
     for(i = 0; i < ALPHABET_SIZE; i++)
         index[i] = -1;
     for(i = 0; alphabet[i]; i++)
@@ -648,7 +648,7 @@ static void FastaDB_SparseCache_fill_index(gint *index, gchar *alphabet){
 static gpointer FastaDB_SparseCache_get_func_4_BIT(gint pos,
                                                    gpointer page_data,
                                                    gpointer user_data){
-    register gint ch = ((gchar*)page_data)[(pos >> 1)],
+    gint ch = ((gchar*)page_data)[(pos >> 1)],
                   num = (ch >> ((pos & 1) << 2)) & 15;
     static gchar *alphabet = "ACGTNacgtn------";
     return GINT_TO_POINTER((gint)alphabet[num]);
@@ -658,10 +658,10 @@ static gint FastaDB_SparseCache_copy_func_4_BIT(gint start, gint length,
                                                 gchar *dst, gpointer page_data,
                                                 gpointer user_data){
 #ifndef G_DISABLE_ASSERT
-    register gint i;
+    gint i;
 #endif /* G_DISABLE_ASSERT */
-    register gint pos = 0, end = length;
-    register gchar *str = page_data, *word;
+    gint pos = 0, end = length;
+    gchar *str = page_data, *word;
     static gchar *table[256] = {
         "AA", "CA", "GA", "TA", "NA", "aA", "cA", "gA",
         "tA", "nA", "-A", "-A", "-A", "-A", "-A", "-A",
@@ -726,8 +726,8 @@ static gint FastaDB_SparseCache_copy_func_4_BIT(gint start, gint length,
 
 static void FastaDB_SparseCache_compress_4bit(SparseCache_Page *page,
                                               gint len){
-    register gint i;
-    register gchar *seq =  page->data;
+    gint i;
+    gchar *seq =  page->data;
     static gint index[ALPHABET_SIZE];
     static gboolean index_is_filled = FALSE;
     if(!index_is_filled){
@@ -750,7 +750,7 @@ static void FastaDB_SparseCache_compress_4bit(SparseCache_Page *page,
 static gpointer FastaDB_SparseCache_get_func_2_BIT_LC(gint pos,
                                                       gpointer page_data,
                                                       gpointer user_data){
-    register gint ch = ((gchar*)page_data)[(pos >> 2)],
+    gint ch = ((gchar*)page_data)[(pos >> 2)],
                   num = (ch >> ((pos & 3) << 1)) & 3;
     static gchar *alphabet = "acgt";
     return GINT_TO_POINTER((gint)alphabet[num]);
@@ -760,10 +760,10 @@ static gint FastaDB_SparseCache_copy_func_2_BIT_LC(gint start, gint length,
                                                    gchar *dst, gpointer page_data,
                                                    gpointer user_data){
 #ifndef G_DISABLE_ASSERT
-    register gint i;
+    gint i;
 #endif /* G_DISABLE_ASSERT */
-    register gint pos = 0, end = length;
-    register gchar *str = page_data, *word;
+    gint pos = 0, end = length;
+    gchar *str = page_data, *word;
     gchar *table[256] = {
         "aaaa", "caaa", "gaaa", "taaa", "acaa", "ccaa", "gcaa", "tcaa",
         "agaa", "cgaa", "ggaa", "tgaa", "ataa", "ctaa", "gtaa", "ttaa",
@@ -830,8 +830,8 @@ static gint FastaDB_SparseCache_copy_func_2_BIT_LC(gint start, gint length,
 
 static void FastaDB_SparseCache_compress_2bit_lc(SparseCache_Page *page,
                                                  gint len){
-    register gint i;
-    register gchar *seq =  page->data;
+    gint i;
+    gchar *seq =  page->data;
     static gint index[ALPHABET_SIZE];
     static gboolean index_is_filled = FALSE;
     if(!index_is_filled){
@@ -851,7 +851,7 @@ static void FastaDB_SparseCache_compress_2bit_lc(SparseCache_Page *page,
 static gpointer FastaDB_SparseCache_get_func_2_BIT_UC(gint pos,
                                                       gpointer page_data,
                                                       gpointer user_data){
-    register gint ch = ((gchar*)page_data)[(pos >> 2)],
+    gint ch = ((gchar*)page_data)[(pos >> 2)],
                   num = (ch >> ((pos & 3) << 1)) & 3;
     static gchar *alphabet = "ACGT";
     return GINT_TO_POINTER((gint)alphabet[num]);
@@ -861,10 +861,10 @@ static gint FastaDB_SparseCache_copy_func_2_BIT_UC(gint start, gint length,
                                                    gchar *dst, gpointer page_data,
                                                    gpointer user_data){
 #ifndef G_DISABLE_ASSERT
-    register gint i;
+    gint i;
 #endif /* G_DISABLE_ASSERT */
-    register gint pos = 0, end = length;
-    register gchar *str = page_data, *word;
+    gint pos = 0, end = length;
+    gchar *str = page_data, *word;
     gchar *table[256] = {
         "AAAA", "CAAA", "GAAA", "TAAA", "ACAA", "CCAA", "GCAA", "TCAA",
         "AGAA", "CGAA", "GGAA", "TGAA", "ATAA", "CTAA", "GTAA", "TTAA",
@@ -931,8 +931,8 @@ static gint FastaDB_SparseCache_copy_func_2_BIT_UC(gint start, gint length,
 
 static void FastaDB_SparseCache_compress_2bit_uc(SparseCache_Page *page,
                                                  gint len){
-    register gint i;
-    register gchar *seq =  page->data;
+    gint i;
+    gchar *seq =  page->data;
     static gint index[ALPHABET_SIZE];
     static gboolean index_is_filled = FALSE;
     if(!index_is_filled){
@@ -952,8 +952,8 @@ static void FastaDB_SparseCache_compress_2bit_uc(SparseCache_Page *page,
 /**/
 
 void FastaDB_SparseCache_compress(SparseCache_Page *page, gint len){
-    register gint i, mask = 0;
-    register gchar *seq =  page->data;
+    gint i, mask = 0;
+    gchar *seq =  page->data;
     static FastaDB_SparseCache_Mask mask_index[ALPHABET_SIZE];
     static gboolean mask_is_filled = FALSE;
     if(!mask_is_filled){
@@ -1000,10 +1000,10 @@ void FastaDB_SparseCache_compress(SparseCache_Page *page, gint len){
 
 static SparseCache_Page *FastaDB_SparseCache_fill_func(gint start,
                                                        gpointer user_data){
-    register SparseCache_Page *page = g_new(SparseCache_Page, 1);
-    register FastaDB_Key *fdbk = user_data;
-    register gint ch, pos = 0, len;
-    register gint db_start;
+    SparseCache_Page *page = g_new(SparseCache_Page, 1);
+    FastaDB_Key *fdbk = user_data;
+    gint ch, pos = 0, len;
+    gint db_start;
     if(fdbk->source->line_length < 1)
         g_error("Unknown or irregular fasta line length");
     db_start = fdbk->seq_offset
@@ -1039,7 +1039,7 @@ static SparseCache_Page *FastaDB_SparseCache_fill_func(gint start,
 /* FIXME add suppport for compressed pages etc */
 
 SparseCache *FastaDB_Key_get_SparseCache(FastaDB_Key *fdbk){
-    register SparseCache *cache = SparseCache_create(fdbk->length,
+    SparseCache *cache = SparseCache_create(fdbk->length,
                   FastaDB_SparseCache_fill_func, NULL, NULL, fdbk);
     return cache;
     }
@@ -1048,10 +1048,10 @@ SparseCache *FastaDB_Key_get_SparseCache(FastaDB_Key *fdbk){
 
 FastaDB_Seq **FastaDB_all(gchar *path, Alphabet *alphabet,
                           FastaDB_Mask mask, guint *total){
-    register FastaDB *fdb = FastaDB_open(path, alphabet);
-    register GPtrArray *ptra = g_ptr_array_new();
-    register FastaDB_Seq *fdbs, **fdbsa;
-    register guint numseqs = 0;
+    FastaDB *fdb = FastaDB_open(path, alphabet);
+    GPtrArray *ptra = g_ptr_array_new();
+    FastaDB_Seq *fdbs, **fdbsa;
+    guint numseqs = 0;
     while((fdbs = FastaDB_next(fdb, mask))){
         g_ptr_array_add(ptra, fdbs);
         numseqs++;
@@ -1066,7 +1066,7 @@ FastaDB_Seq **FastaDB_all(gchar *path, Alphabet *alphabet,
     }
 
 void FastaDB_Seq_all_destroy(FastaDB_Seq **fdbs){
-    register gint i;
+    gint i;
     g_assert(fdbs);
     for(i = 0; fdbs[i]; i++)
         FastaDB_Seq_destroy(fdbs[i]);
@@ -1075,7 +1075,7 @@ void FastaDB_Seq_all_destroy(FastaDB_Seq **fdbs){
     }
 
 gint FastaDB_Seq_print(FastaDB_Seq *fdbs, FILE *fp, FastaDB_Mask mask){
-    register gint written = 0;
+    gint written = 0;
     if(mask & (FastaDB_Mask_ID|FastaDB_Mask_DEF|FastaDB_Mask_LEN)){
         written += fprintf(fp, ">%s", (mask & FastaDB_Mask_ID)
                              ?fdbs->seq->id:"[unknown]");
@@ -1092,15 +1092,15 @@ gint FastaDB_Seq_print(FastaDB_Seq *fdbs, FILE *fp, FastaDB_Mask mask){
 
 gint FastaDB_Seq_all_print(FastaDB_Seq **fdbs, FILE *fp,
                           FastaDB_Mask mask){
-    register int i, written = 0;
+    int i, written = 0;
     for(i = 0; fdbs[i]; i++)
         written += FastaDB_Seq_print(fdbs[i], fp, mask);
     return written;
     }
 
 FastaDB_Seq *FastaDB_get_single(gchar *path, Alphabet *alphabet){
-    register FastaDB *fdb = FastaDB_open(path, alphabet);
-    register FastaDB_Seq *fdbs = FastaDB_next(fdb, FastaDB_Mask_ALL);
+    FastaDB *fdb = FastaDB_open(path, alphabet);
+    FastaDB_Seq *fdbs = FastaDB_next(fdb, FastaDB_Mask_ALL);
     if(!fdbs)
         g_error("No sequences found in [%s]\n", path);
     FastaDB_close(fdb);
@@ -1108,11 +1108,11 @@ FastaDB_Seq *FastaDB_get_single(gchar *path, Alphabet *alphabet){
     }
 
 Alphabet_Type FastaDB_guess_type(gchar *path){
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_UNKNOWN,
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_UNKNOWN,
                                                   FALSE);
-    register FastaDB_Seq *fdbs = FastaDB_get_single(path, alphabet);
-    register gchar *str = Sequence_get_str(fdbs->seq);
-    register Alphabet_Type type = Alphabet_Type_guess(str);
+    FastaDB_Seq *fdbs = FastaDB_get_single(path, alphabet);
+    gchar *str = Sequence_get_str(fdbs->seq);
+    Alphabet_Type type = Alphabet_Type_guess(str);
     g_free(str);
     FastaDB_Seq_destroy(fdbs);
     Alphabet_destroy(alphabet);

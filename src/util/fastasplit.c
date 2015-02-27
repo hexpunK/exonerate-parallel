@@ -23,8 +23,8 @@
 
 static void fasta_chunk_write(FastaDB *fdb, CompoundFile_Pos start,
                               CompoundFile_Pos stop, gchar *path){
-    register FILE *fp;
-    register CompoundFile_Pos pos;
+    FILE *fp;
+    CompoundFile_Pos pos;
     if(start == stop) /* Don't write an empty file */
         return;
     fp = fopen(path, "w");
@@ -45,13 +45,13 @@ static CompoundFile_Pos fasta_split_get_file_size(FILE *fp){
 
 static void fasta_split(FastaDB *fdb, gchar *output_stem,
                         gint num_chunks){
-    register CompoundFile_Pos total
+    CompoundFile_Pos total
         = fasta_split_get_file_size(fdb->cf->fp),
         chunk_size = total/num_chunks;
-    register CompoundFile_Pos *position = g_new(CompoundFile_Pos,
+    CompoundFile_Pos *position = g_new(CompoundFile_Pos,
                                                 num_chunks+1);
-    register guint i;
-    register gchar *chunk_path;
+    guint i;
+    gchar *chunk_path;
     for(i = 1; i < num_chunks; i++)
         position[i] = FastaDB_find_next_start(fdb, i*chunk_size);
     position[0] = 0;
@@ -67,12 +67,12 @@ static void fasta_split(FastaDB *fdb, gchar *output_stem,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *output_dir;
     gint num_chunks;
-    register gchar *output_stem;
+    gchar *output_stem;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,
         Argument_parse_string, &query_path);

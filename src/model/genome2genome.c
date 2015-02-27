@@ -17,7 +17,7 @@
 
 Genome2Genome_Data *Genome2Genome_Data_create(
                          Sequence *query, Sequence *target){
-    register Genome2Genome_Data *g2gd = g_new0(Genome2Genome_Data, 1);
+    Genome2Genome_Data *g2gd = g_new0(Genome2Genome_Data, 1);
     g_assert(query->alphabet->type == Alphabet_Type_DNA);
     g_assert(target->alphabet->type == Alphabet_Type_DNA);
     CDNA2Genome_Data_init(&g2gd->cd2gd, query, target);
@@ -33,14 +33,14 @@ void Genome2Genome_Data_destroy(Genome2Genome_Data *g2gd){
 /**/
 
 C4_Model *Genome2Genome_create(void){
-    register C4_Model *model = C4_Model_create("genome2genome");
-    register C4_Model *cdna2genome = CDNA2Genome_create();
-    register GPtrArray *transition_list;
-    register gint i;
-    register C4_Transition *transition;
-    register C4_Model *query_intron_model, *joint_intron_model,
+    C4_Model *model = C4_Model_create("genome2genome");
+    C4_Model *cdna2genome = CDNA2Genome_create();
+    GPtrArray *transition_list;
+    gint i;
+    C4_Transition *transition;
+    C4_Model *query_intron_model, *joint_intron_model,
                       *query_phase_model, *joint_phase_model;
-    register Match *codon_match;
+    Match *codon_match;
     C4_Model_insert(model, cdna2genome, NULL, NULL);
     C4_Model_destroy(cdna2genome);
     /**/

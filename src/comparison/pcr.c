@@ -24,7 +24,7 @@
 /**/
 
 static PCR_Match *PCR_Match_allocate(PCR *pcr){
-    register PCR_Match *pcr_match;
+    PCR_Match *pcr_match;
     if(pcr->match_recycle){
         pcr_match = pcr->match_recycle;
         /* pcr_match->pcr_probe is used as the next pointer */
@@ -37,8 +37,8 @@ static PCR_Match *PCR_Match_allocate(PCR *pcr){
 
 static PCR_Match *PCR_Match_create(PCR_Probe *pcr_probe, gint position,
                                    gint mismatch){
-    register PCR *pcr = pcr_probe->pcr_primer->pcr_experiment->pcr;
-    register PCR_Match *pcr_match = PCR_Match_allocate(pcr);
+    PCR *pcr = pcr_probe->pcr_primer->pcr_experiment->pcr;
+    PCR_Match *pcr_match = PCR_Match_allocate(pcr);
     pcr_match->pcr_probe = pcr_probe;
     pcr_match->position = position;
     pcr_match->mismatch = mismatch;
@@ -46,7 +46,7 @@ static PCR_Match *PCR_Match_create(PCR_Probe *pcr_probe, gint position,
     }
 
 static void PCR_Match_destroy(PCR_Match *pcr_match){
-    register PCR *pcr
+    PCR *pcr
         = pcr_match->pcr_probe->pcr_primer->pcr_experiment->pcr;
     pcr_match->pcr_probe = (PCR_Probe*)pcr->match_recycle;
     pcr->match_recycle = pcr_match;
@@ -66,14 +66,14 @@ static PCR_Probe *PCR_Probe_create(PCR_Primer *pcr_primer,
 
 static void PCR_Probe_register_hit(PCR_Probe *pcr_probe,
                                    Sequence *sequence, guint seq_pos){
-    register PCR_Match *pcr_match, *prev_match;
-    register PCR_Primer *pcr_primer = pcr_probe->pcr_primer;
-    register PCR_Experiment *pcr_experiment
+    PCR_Match *pcr_match, *prev_match;
+    PCR_Primer *pcr_primer = pcr_probe->pcr_primer;
+    PCR_Experiment *pcr_experiment
                            = pcr_primer->pcr_experiment;
-    register PCR *pcr = pcr_experiment->pcr;
-    register gint i, product_length, mismatch = pcr_probe->mismatch;
-    register SListNode *node;
-    register gint match_start;
+    PCR *pcr = pcr_experiment->pcr;
+    gint i, product_length, mismatch = pcr_probe->mismatch;
+    SListNode *node;
+    gint match_start;
     if(pcr_probe->strand == Sequence_Strand_FORWARD){
         match_start = seq_pos - pcr_primer->probe_len + 1;
     } else {
@@ -155,7 +155,7 @@ static PCR_Sensor *PCR_Sensor_create(PCR *pcr){
     }
 
 static void PCR_Sensor_destroy(PCR_Sensor *pcr_sensor, PCR *pcr){
-    register PCR_Probe *pcr_probe;
+    PCR_Probe *pcr_probe;
     if(pcr_sensor->owned_probe_list){ /* Maybe removed in merge */
         while(!SList_isempty(pcr_sensor->owned_probe_list)){
             pcr_probe = SList_pop(pcr_sensor->owned_probe_list);
@@ -171,8 +171,8 @@ static void PCR_Sensor_destroy(PCR_Sensor *pcr_sensor, PCR *pcr){
 
 static gpointer PCR_FSM_merge_PCR_Sensor(gpointer a, gpointer b,
                                            gpointer user_data){
-    register PCR *pcr = user_data;
-    register PCR_Sensor *ps_a = a, *ps_b = b;
+    PCR *pcr = user_data;
+    PCR_Sensor *ps_a = a, *ps_b = b;
     g_assert(ps_a);
     g_assert(ps_b);
     g_assert(SList_isempty(ps_a->borrowed_sensor_list));
@@ -188,7 +188,7 @@ static gpointer PCR_FSM_merge_PCR_Sensor(gpointer a, gpointer b,
 
 static gpointer PCR_FSM_combine_PCR_Sensor(gpointer a, gpointer b,
                                              gpointer user_data){
-    register PCR_Sensor *ps_a = a, *ps_b = b;
+    PCR_Sensor *ps_a = a, *ps_b = b;
     g_assert(ps_a);
     g_assert(ps_b);
     /**/
@@ -201,9 +201,9 @@ static gpointer PCR_FSM_combine_PCR_Sensor(gpointer a, gpointer b,
 
 static void PCR_Primer_add_probe(PCR_Primer *pcr_primer,
         Sequence_Strand strand, gchar *primer, gint mismatch){
-    register PCR_Probe *pcr_probe = PCR_Probe_create(pcr_primer,
+    PCR_Probe *pcr_probe = PCR_Probe_create(pcr_primer,
               strand, primer, mismatch);
-    register PCR_Sensor *pcr_sensor = PCR_Sensor_create(
+    PCR_Sensor *pcr_sensor = PCR_Sensor_create(
                            pcr_primer->pcr_experiment->pcr);
     SList_queue(pcr_sensor->owned_probe_list, pcr_probe);
     g_ptr_array_add(pcr_primer->probe_list, pcr_probe);
@@ -214,8 +214,8 @@ static void PCR_Primer_add_probe(PCR_Primer *pcr_primer,
 
 static gboolean PCR_Primer_Wordhood_traverse_func(gchar *word,
                     gint score, gpointer user_data){
-    register PCR_Primer *pcr_primer = user_data;
-    register gint mismatch = pcr_primer->probe_len-score;
+    PCR_Primer *pcr_primer = user_data;
+    gint mismatch = pcr_primer->probe_len-score;
     PCR_Primer_add_probe(pcr_primer, Sequence_Strand_FORWARD,
         word, mismatch);
     Sequence_revcomp_in_place(word, pcr_primer->probe_len);
@@ -252,7 +252,7 @@ static PCR_Primer *PCR_Primer_create(PCR_Experiment *pcr_experiment,
     }
 
 static void PCR_Primer_destroy(PCR_Primer *pcr_primer){
-    register gint i;
+    gint i;
     for(i = 0; i < pcr_primer->probe_list->len; i++)
         free(pcr_primer->probe_list->pdata[i]);
     free(pcr_primer->forward);
@@ -262,7 +262,7 @@ static void PCR_Primer_destroy(PCR_Primer *pcr_primer){
     }
 
 static gsize PCR_Primer_memory_usage(PCR_Primer *pcr_primer){
-    register gsize primer_size = sizeof(gchar) * pcr_primer->length;
+    gsize primer_size = sizeof(gchar) * pcr_primer->length;
     return sizeof(PCR_Primer)
          + (primer_size * 2)
          + (pcr_primer->probe_list->len
@@ -298,7 +298,7 @@ static PCR_Experiment *PCR_Experiment_create(PCR *pcr, gchar *id,
     }
 
 static void PCR_Experiment_clear(PCR_Experiment *pcr_experiment){
-    register PCR_Match *pcr_match;
+    PCR_Match *pcr_match;
     while(!SList_isempty(pcr_experiment->match_list)){
         pcr_match = SList_pop(pcr_experiment->match_list);
         PCR_Match_destroy(pcr_match);
@@ -330,8 +330,8 @@ static gsize PCR_Experiment_memory_usage(
 PCR *PCR_create(PCR_ReportFunc report_func, gpointer user_data,
                 gint mismatch_threshold, gint seed_length){
     PCR *pcr = (PCR*)malloc(sizeof(PCR)* 1);
-    register Submat *submat = Submat_create("iupac-identity");
-    register WordHood_Alphabet *wha;
+    Submat *submat = Submat_create("iupac-identity");
+    WordHood_Alphabet *wha;
     pcr->slist_set = SListSet_create();
     pcr->fsm = FSM_create("ACGT", PCR_FSM_merge_PCR_Sensor,
                                   PCR_FSM_combine_PCR_Sensor, pcr);
@@ -353,7 +353,7 @@ PCR *PCR_create(PCR_ReportFunc report_func, gpointer user_data,
     }
 
 void PCR_destroy(PCR *pcr){
-    register gint i;
+    gint i;
     for(i = 0; i < pcr->experiment_list->len; i++)
         PCR_Experiment_destroy(pcr->experiment_list->pdata[i]);
     g_ptr_array_free(pcr->experiment_list, TRUE);
@@ -377,7 +377,7 @@ static gsize PCR_memory_usage(PCR *pcr){
 gsize PCR_add_experiment(PCR *pcr, gchar *id,
                         gchar *primer_a, gchar *primer_b,
                         gint min_product_len, gint max_product_len){
-    register PCR_Experiment *pcr_experiment;
+    PCR_Experiment *pcr_experiment;
     g_assert(pcr);
     g_assert(!pcr->is_prepared);
     pcr_experiment = PCR_Experiment_create(pcr, id, primer_a, primer_b,
@@ -398,9 +398,9 @@ void PCR_prepare(PCR *pcr){
 
 static void PCR_Sensor_register_hit_recur(PCR_Sensor *pcr_sensor,
                                  Sequence *sequence, guint seq_pos){
-    register SListNode *node;
-    register PCR_Probe *pcr_probe;
-    register PCR_Sensor *borrowed_sensor;
+    SListNode *node;
+    PCR_Probe *pcr_probe;
+    PCR_Sensor *borrowed_sensor;
     SList_for_each(pcr_sensor->owned_probe_list, node){
         pcr_probe = node->data;
         PCR_Probe_register_hit(pcr_probe, sequence, seq_pos);
@@ -416,15 +416,15 @@ static void PCR_Sensor_register_hit_recur(PCR_Sensor *pcr_sensor,
 static void PCR_FSM_traverse_func(guint seq_pos,
                                   gpointer node_data,
                                   gpointer user_data){
-    register PCR_Sensor *pcr_sensor = node_data;
-    register Sequence *sequence = user_data;
+    PCR_Sensor *pcr_sensor = node_data;
+    Sequence *sequence = user_data;
     PCR_Sensor_register_hit_recur(pcr_sensor, sequence, seq_pos);
     return;
     }
 
 void PCR_simulate(PCR *pcr, Sequence *sequence){
-    register gint i;
-    register gchar *str = Sequence_get_str(sequence);
+    gint i;
+    gchar *str = Sequence_get_str(sequence);
     g_assert(pcr->is_prepared);
     FSM_traverse(pcr->fsm, str,
                  PCR_FSM_traverse_func, sequence);

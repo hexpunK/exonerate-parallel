@@ -22,16 +22,16 @@
 FILE *file;
 
 static void test_coding2genome(Sequence *query, Sequence *target){
-    register C4_Score score;
-    register C4_Model *model = Coding2Genome_create();
-    register Coding2Genome_Data *c2gd = Coding2Genome_Data_create(
+    C4_Score score;
+    C4_Model *model = Coding2Genome_create();
+    Coding2Genome_Data *c2gd = Coding2Genome_Data_create(
                                                query, target);
-    register Alignment *alignment;
-    register Optimal *optimal = Optimal_create(model, NULL,
+    Alignment *alignment;
+    Optimal *optimal = Optimal_create(model, NULL,
                                                Optimal_Type_SCORE
                                               |Optimal_Type_PATH,
                                               FALSE);
-    register Region *region = Region_create(0, 0,
+    Region *region = Region_create(0, 0,
                                             query->len, target->len);
     score = Optimal_find_score(optimal, region, c2gd, NULL);
     g_message("Score is [%d]", score);
@@ -53,9 +53,9 @@ static void test_coding2genome(Sequence *query, Sequence *target){
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register Sequence
+    Sequence
         *qy = Sequence_create("qyr", NULL,
 "AGCCCAGCCAAGCACTGTCAGGAATCCTGT"
 "GAAGCAGCTCCAGCTATGTGTGAAGAA"

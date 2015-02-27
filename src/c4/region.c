@@ -26,14 +26,14 @@ gboolean Region_is_valid(Region *region){
     }
 
 Region *Region_create_blank(void){
-    register Region *region = g_new0(Region, 1);
+    Region *region = g_new0(Region, 1);
     region->ref_count = 1;
     return region;
     }
 
 Region *Region_create(gint query_start, gint target_start,
                       gint query_length, gint target_length){
-    register Region *region = g_new(Region, 1);
+    Region *region = g_new(Region, 1);
     region->ref_count = 1;
     region->query_start = query_start;
     region->target_start = target_start;

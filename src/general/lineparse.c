@@ -17,7 +17,7 @@
 #include <ctype.h> /* For isspace() */
 
 LineParse  *LineParse_create(FILE *fp){
-    register LineParse *lp = g_new(LineParse, 1);
+    LineParse *lp = g_new(LineParse, 1);
     lp->fp = fp;
     lp->line = g_string_sized_new(128);
     lp->word = g_ptr_array_new();
@@ -32,7 +32,7 @@ void LineParse_destroy(LineParse *lp){
     }
 
 gint LineParse_line(LineParse *lp){
-    register int ch;
+    int ch;
     g_string_truncate(lp->line, 0);
     while((ch = getc(lp->fp)) != EOF){ /* read a line */
         if(ch == '\n')
@@ -43,7 +43,7 @@ gint LineParse_line(LineParse *lp){
     }
 
 gint LineParse_word(LineParse *lp){
-    register guchar *prev, *ptr;
+    guchar *prev, *ptr;
     g_ptr_array_set_size(lp->word, 0);
     switch(LineParse_line(lp)){
         case   0: return 0;
@@ -70,8 +70,8 @@ gint LineParse_word(LineParse *lp){
     }
 
 gint LineParse_seek(LineParse *lp, gchar *pattern){
-    register gchar *ptr = pattern;
-    register gint ch, total = 0;
+    gchar *ptr = pattern;
+    gint ch, total = 0;
     while((ch = getc(lp->fp)) != EOF){
         if(*ptr == ch)
             ptr++;

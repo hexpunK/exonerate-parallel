@@ -42,7 +42,7 @@
 /**/
 
 Translate_ArgumentSet *Translate_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Translate_ArgumentSet tas = {NULL};
     if(arg){
         as = ArgumentSet_create("Translation Options");
@@ -57,7 +57,7 @@ Translate_ArgumentSet *Translate_ArgumentSet_create(Argument *arg){
 /**/
 
 static void Translate_initialise_nucleotide_data(Translate *t){
-    register gint i;
+    gint i;
     for(i = 0; i < Translate_NT_SET_SIZE; i++)
         t->nt2d[t->nt[i]] = t->nt2d[tolower(t->nt[i])] = i;
     t->nt2d['X'] = t->nt2d['x'] = t->nt2d['N'];
@@ -66,7 +66,7 @@ static void Translate_initialise_nucleotide_data(Translate *t){
     }
 
 static void Translate_initialise_peptide_data(Translate *t){
-    register gint i, j;
+    gint i, j;
     guchar pimagrp[Translate_PIMA_SET_SIZE][6] = {
      "aIV", "bLM",  "dFWY", "lND",   "kDE",  "oEQ",
      "nKR", "iST",  "hAG",  "cab",   "edH",  "mlk",
@@ -86,8 +86,8 @@ static void Translate_initialise_peptide_data(Translate *t){
     }
 
 static void Translate_initialise_translation_data(Translate *t){
-    register gchar a, b, c, x, y, z;
-    register gint i, tmp;
+    gchar a, b, c, x, y, z;
+    gint i, tmp;
     for(x = 0; x < 16; x++){
         for(y = 0; y < 16; y++){
             for(z = 0; z < 16; z++){
@@ -115,7 +115,7 @@ static void Translate_initialise_translation_data(Translate *t){
     }
 
 static void Translate_initialise_reverse_translate_data(Translate *t){
-    register gint i;
+    gint i;
     for(i = 0; t->code[i]; i++){
         if(!t->revtrans[t->code[i]])
             t->revtrans[t->code[i]] = g_ptr_array_new();
@@ -127,9 +127,9 @@ static void Translate_initialise_reverse_translate_data(Translate *t){
 /**/
 
 static gchar *Translate_convert_genetic_code(gchar *code){
-    register gint a, b, c, n = 0;
+    gint a, b, c, n = 0;
     gint table[4] = {3, 2, 0, 1};
-    register gchar *result;
+    gchar *result;
     g_assert(code && (strlen(code) == 64));
     result = g_new(gchar, 65);
     result[64] = '\0';
@@ -152,7 +152,7 @@ typedef struct {
 } Translate_GeneticCode;
 
 static gchar *Translate_get_builtin_genetic_code(gint id){
-    register gint i;
+    gint i;
     Translate_GeneticCode code[17] = {
         { 1, "The Standard Code",
         "FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG"},
@@ -202,7 +202,7 @@ static gchar *Translate_get_builtin_genetic_code(gint id){
  */
 
 static gchar *Translate_get_genetic_code(gchar *code){
-    register gint len, id;
+    gint len, id;
     if(!code)
         return g_strdup(
          "GGGGEEDDVVVVAAAARRSSKKNNMIIITTTTW*CC**YYLLFFSSSSRRRRQQHHLLLLPPPP");
@@ -220,8 +220,8 @@ static gchar *Translate_get_genetic_code(gchar *code){
 /**/
 
 Translate *Translate_create(gboolean use_pima){
-    register Translate *t = g_new0(Translate, 1);
-    register Translate_ArgumentSet *tas = Translate_ArgumentSet_create(NULL);
+    Translate *t = g_new0(Translate, 1);
+    Translate_ArgumentSet *tas = Translate_ArgumentSet_create(NULL);
     t->ref_count = 1;
     t->nt = (guchar*)"-GARTKWDCSMVYBHN";
     t->aa = (guchar*)"-ARNDCQEGHILKMFPSTWYV*ablkonihdmcepjfrxX";
@@ -242,7 +242,7 @@ Translate *Translate_share(Translate *t){
     }
 
 void Translate_destroy(Translate *t){
-    register gint i;
+    gint i;
     g_assert(t);
     if(--t->ref_count)
         return;
@@ -259,7 +259,7 @@ void Translate_destroy(Translate *t){
 
 gint Translate_sequence(Translate *t, gchar *dna, gint dna_length,
                         gint frame, gchar *aaseq, guchar *filter){
-    register gchar *dp, *ap = aaseq, *end;
+    gchar *dp, *ap = aaseq, *end;
     if((frame > 0) && (frame < 4)){
         end = dna + dna_length-2;
         if(filter){
@@ -295,8 +295,8 @@ gint Translate_sequence(Translate *t, gchar *dna, gint dna_length,
 
 void Translate_reverse(Translate *t, gchar *aaseq, gint length,
                        Translate_reverse_func trf, gpointer user_data){
-    register gint i, j, total, *prod, id, codon;
-    register gchar *nucleotide;
+    gint i, j, total, *prod, id, codon;
+    gchar *nucleotide;
     g_assert(length > 0);
     g_assert(aaseq);
     g_assert(aaseq[0]);

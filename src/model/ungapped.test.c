@@ -25,16 +25,16 @@ FILE *file;
 
 static void run_ungapped_test(Sequence *query, Sequence *target,
         gboolean translate_both, gint crib){
-    register Match_Type match_type
+    Match_Type match_type
            = Match_Type_find(query->alphabet->type,
                              target->alphabet->type,
                              translate_both);
-    register Ungapped_Data *ud = Ungapped_Data_create(query, target,
+    Ungapped_Data *ud = Ungapped_Data_create(query, target,
                                                       match_type);
-    register C4_Model *ungapped = Ungapped_create(match_type);
-    register C4_Score score;
-    register Alignment *alignment;
-    register Optimal *optimal = Optimal_create(ungapped, NULL,
+    C4_Model *ungapped = Ungapped_create(match_type);
+    C4_Score score;
+    Alignment *alignment;
+    Optimal *optimal = Optimal_create(ungapped, NULL,
                                                Optimal_Type_SCORE
                                               |Optimal_Type_PATH,
                                               FALSE);
@@ -64,19 +64,19 @@ static void run_ungapped_test(Sequence *query, Sequence *target,
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register Alphabet
+    Alphabet
      *dna_alphabet = Alphabet_create(Alphabet_Type_DNA, FALSE),
      *protein_alphabet = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
-    register Sequence *dna1 = Sequence_create("dna1", NULL,
+    Sequence *dna1 = Sequence_create("dna1", NULL,
              "CGATCAGCTAGCTAGCTACGATCGATCGAT", 0,
              Sequence_Strand_UNKNOWN, dna_alphabet);
-    register Sequence *dna2 = Sequence_create("dna2", NULL,
+    Sequence *dna2 = Sequence_create("dna2", NULL,
              "CGATACGATCGCTCTGAGATCTCGACTCAG", 0,
              Sequence_Strand_UNKNOWN, dna_alphabet);
-    register Sequence *protein1 = Sequence_create("protein1", NULL,
+    Sequence *protein1 = Sequence_create("protein1", NULL,
              "DFCPIECFLNHILCIPEF", 0,
              Sequence_Strand_UNKNOWN, protein_alphabet);
-    register Sequence *protein2 = Sequence_create("protein2", NULL,
+    Sequence *protein2 = Sequence_create("protein2", NULL,
              "DFHLISCPIRYLICIEFP", 0,
              Sequence_Strand_UNKNOWN, protein_alphabet);
     Match_ArgumentSet_create(arg);

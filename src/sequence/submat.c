@@ -221,9 +221,9 @@ static SubmatMatrix local_submat_iupac_identity = {
 }; /* Possible identity according to IUPAC redundancy codes */
 
 static void Submat_read_matrix(SubmatMatrix matrix, gchar *path){
-    register FILE *fp = fopen(path, "r");
-    register gint i, total, ch, prev = '\n', num = 0, pos = 0, res;
-    register gboolean neg, seen;
+    FILE *fp = fopen(path, "r");
+    gint i, total, ch, prev = '\n', num = 0, pos = 0, res;
+    gboolean neg, seen;
     guchar sub_index[SUBMAT_ALPHABETSIZE];
     if(!fp)
         g_error("Could not open substitution matrix [%s]\n", path);
@@ -282,7 +282,7 @@ static void Submat_read_matrix(SubmatMatrix matrix, gchar *path){
     }
 
 static void Submat_copy_matrix(SubmatMatrix dst, SubmatMatrix src){
-    register gint i, j;
+    gint i, j;
     for(i = 0; i < SUBMAT_ALPHABETSIZE; i++)
         for(j = 0; j < SUBMAT_ALPHABETSIZE; j++)
             dst[i][j] = src[i][j];
@@ -290,7 +290,7 @@ static void Submat_copy_matrix(SubmatMatrix dst, SubmatMatrix src){
     }
 
 Submat *Submat_create(gchar *path){
-    register Submat *s = g_new0(Submat, 1);
+    Submat *s = g_new0(Submat, 1);
     s->ref_count = 1;
     s->index = local_submat_index;
     if((!path) || (!strcmp(path, "nucleic"))) /* default */
@@ -323,7 +323,7 @@ Submat *Submat_share(Submat *s){
     }
 
 gint Submat_max_score(Submat *s){
-    register gint i, j, max;
+    gint i, j, max;
     g_assert(s);
     max = s->matrix[0][0];
     for(i = 0; i < SUBMAT_ALPHABETSIZE; i++)

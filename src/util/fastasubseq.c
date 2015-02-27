@@ -20,9 +20,9 @@
 FILE *file;
 
 int Argument_main(Argument *arg){
-    register FastaDB_Seq *fdbs;
-    register Sequence *subseq;
-    register ArgumentSet *as
+    FastaDB_Seq *fdbs;
+    Sequence *subseq;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *outputFile;
     gint subseq_start, subseq_length;
