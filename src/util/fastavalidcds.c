@@ -46,9 +46,9 @@ static gboolean is_stop_codon(gchar *seq){
 
 static gboolean fasta_valid_cds_traverse_func(FastaDB_Seq *fdbs,
                                               gpointer user_data){
-    register gint i;
-    register gboolean explain = *((gboolean*)user_data);
-    register gchar *seq;
+    gint i;
+    gboolean explain = *((gboolean*)user_data);
+    gchar *seq;
     if(fdbs->seq->len % 3){
         if(explain)
             g_warning("%s length (%d) not divisible by 3",
@@ -111,8 +111,8 @@ static gboolean fasta_valid_cds_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *outputFile;
     gboolean explain;

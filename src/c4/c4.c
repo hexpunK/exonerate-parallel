@@ -22,7 +22,7 @@
 /**/
 
 static C4_State *C4_State_create(gchar *name){
-    register C4_State *state = g_new(C4_State, 1);
+    C4_State *state = g_new(C4_State, 1);
     g_assert(name);
     state->name = g_strdup(name);
     state->input_transition_list = g_ptr_array_new();
@@ -48,7 +48,7 @@ static C4_Calc *C4_Calc_create(gchar *name, C4_Score max_score,
                       C4_PrepFunc init_func, gchar *init_macro,
                       C4_PrepFunc exit_func, gchar *exit_macro,
                       C4_Protect protect){
-    register C4_Calc *calc = g_new(C4_Calc, 1);
+    C4_Calc *calc = g_new(C4_Calc, 1);
     g_assert(name);
     g_assert(calc_macro?(calc_func?TRUE:FALSE):TRUE);
     g_assert(init_macro?(init_func?TRUE:FALSE):TRUE);
@@ -99,7 +99,7 @@ static gboolean C4_Calc_diff(C4_Calc *a, C4_Calc *b){
 static C4_StartState* C4_StartState_create(C4_State *state,
        C4_Scope scope,
        C4_CellStartFunc cell_start_func, gchar *cell_start_macro){
-    register C4_StartState *start_state = g_new(C4_StartState, 1);
+    C4_StartState *start_state = g_new(C4_StartState, 1);
     g_assert(state);
     start_state->state = state;
     start_state->scope = scope;
@@ -123,7 +123,7 @@ static void C4_StartState_destroy(C4_StartState *start_state){
 
 static C4_EndState* C4_EndState_create(C4_State *state, C4_Scope scope,
         C4_CellEndFunc cell_end_func, gchar *cell_end_macro){
-    register C4_EndState *end_state = g_new(C4_EndState, 1);
+    C4_EndState *end_state = g_new(C4_EndState, 1);
     g_assert(state);
     end_state->state = state;
     end_state->scope = scope;
@@ -150,7 +150,7 @@ static C4_Transition *C4_Transition_create(gchar *name,
                          gint advance_query, gint advance_target,
                          C4_Calc *calc, C4_Label label,
                          gpointer label_data){
-    register C4_Transition *transition = g_new(C4_Transition, 1);
+    C4_Transition *transition = g_new(C4_Transition, 1);
     g_assert(name);
     transition->name = g_strdup(name);
     transition->input = input;
@@ -178,7 +178,7 @@ static C4_Shadow *C4_Shadow_create(gchar *name,
                     C4_State *src, C4_Transition *dst,
                     C4_StartFunc start_func, gchar *start_macro,
                     C4_EndFunc end_func, gchar *end_macro){
-    register C4_Shadow *shadow = g_new0(C4_Shadow, 1);
+    C4_Shadow *shadow = g_new0(C4_Shadow, 1);
     g_assert(name);
     g_assert(start_macro?(start_func?TRUE:FALSE):TRUE);
     g_assert(end_macro?(end_func?TRUE:FALSE):TRUE);
@@ -234,9 +234,9 @@ void C4_Shadow_add_dst_transition(C4_Shadow *shadow,
     }
 
 static gboolean C4_Shadow_is_valid(C4_Shadow *shadow, C4_Model *model){
-    register gint i, j;
-    register C4_State *state;
-    register C4_Transition *transition;
+    gint i, j;
+    C4_State *state;
+    C4_Transition *transition;
     g_assert(shadow);
     g_assert(shadow->src_state_list->len);
     g_assert(shadow->dst_transition_list->len);
@@ -260,7 +260,7 @@ static gboolean C4_Shadow_is_valid(C4_Shadow *shadow, C4_Model *model){
 
 static C4_Portal *C4_Portal_create(gchar *name, C4_Calc *calc,
            gint advance_query, gint advance_target){
-    register C4_Portal *portal = g_new(C4_Portal, 1);
+    C4_Portal *portal = g_new(C4_Portal, 1);
     g_assert(name);
     g_assert(calc);
     portal->name = g_strdup(name);
@@ -281,8 +281,8 @@ static void C4_Portal_destroy(C4_Portal *portal){
 /**/
 
 static void C4_Span_find_loop_transitions(C4_Span *span){
-    register gint i;
-    register C4_Transition *transition;
+    gint i;
+    C4_Transition *transition;
     span->query_loop = span->target_loop = NULL;
     for(i = 0; i < span->span_state->output_transition_list->len; i++){
         transition = span->span_state->output_transition_list->pdata[i];
@@ -315,7 +315,7 @@ static void C4_Span_find_loop_transitions(C4_Span *span){
 static C4_Span *C4_Span_create(gchar *name, C4_State *span_state,
                                gint min_query, gint max_query,
                                gint min_target, gint max_target){
-    register C4_Span *span = g_new(C4_Span, 1);
+    C4_Span *span = g_new(C4_Span, 1);
     g_assert(name);
     g_assert(span_state);
     g_assert(min_query >= 0);
@@ -347,7 +347,7 @@ C4_Calc *C4_Model_add_calc(C4_Model *model, gchar *name,
                       C4_PrepFunc init_func, gchar *init_macro,
                       C4_PrepFunc exit_func, gchar *exit_macro,
                       C4_Protect protect){
-    register C4_Calc *calc = C4_Calc_create(name, max_score,
+    C4_Calc *calc = C4_Calc_create(name, max_score,
                                             calc_func, calc_macro,
                                             init_func, init_macro,
                                             exit_func, exit_macro,
@@ -360,8 +360,8 @@ C4_Calc *C4_Model_add_calc(C4_Model *model, gchar *name,
     }
 
 static C4_Calc *C4_Model_match_calc(C4_Model *model, C4_Calc *calc){
-    register C4_Calc *mcalc = NULL;
-    register gint i;
+    C4_Calc *mcalc = NULL;
+    gint i;
     g_assert(model);
     g_assert(calc);
     for(i = 0; i < model->calc_list->len; i++){
@@ -373,7 +373,7 @@ static C4_Calc *C4_Model_match_calc(C4_Model *model, C4_Calc *calc){
     }
 
 C4_State *C4_Model_add_state(C4_Model *model, gchar *name){
-    register C4_State *state = C4_State_create(name);
+    C4_State *state = C4_State_create(name);
     g_assert(model);
     g_assert(name);
     g_assert(model->is_open);
@@ -382,9 +382,9 @@ C4_State *C4_Model_add_state(C4_Model *model, gchar *name){
     }
 
 GPtrArray *C4_Model_select_transitions(C4_Model *model, C4_Label label){
-    register gint i;
-    register GPtrArray *list = g_ptr_array_new();
-    register C4_Transition *transition;
+    gint i;
+    GPtrArray *list = g_ptr_array_new();
+    C4_Transition *transition;
     for(i = 0; i < model->transition_list->len; i++){
         transition = model->transition_list->pdata[i];
         if(transition->label == label)
@@ -399,8 +399,8 @@ GPtrArray *C4_Model_select_transitions(C4_Model *model, C4_Label label){
 
 C4_Transition *C4_Model_select_single_transition(C4_Model *model,
                                                  C4_Label label){
-    register C4_Transition *transition = NULL;
-    register GPtrArray *transition_list
+    C4_Transition *transition = NULL;
+    GPtrArray *transition_list
         = C4_Model_select_transitions(model, label);
     g_assert(transition_list);
     g_assert(transition_list->len == 1);
@@ -420,7 +420,7 @@ C4_Transition *C4_Model_add_transition(C4_Model *model, gchar *name,
                        gint advance_query, gint advance_target,
                        C4_Calc *calc, C4_Label label,
                        gpointer label_data){
-    register C4_Transition *transition;
+    C4_Transition *transition;
     g_assert(model);
     g_assert(name);
     g_assert(model->is_open);
@@ -451,8 +451,8 @@ C4_Shadow *C4_Model_add_shadow(C4_Model *model, gchar *name,
                     C4_State *src, C4_Transition *dst,
                     C4_StartFunc start_func, gchar *start_macro,
                     C4_EndFunc end_func, gchar *end_macro){
-    register C4_Shadow *shadow;
-    register gint i;
+    C4_Shadow *shadow;
+    gint i;
     g_assert(model);
     g_assert(name);
     g_assert(model->is_open);
@@ -484,7 +484,7 @@ C4_Shadow *C4_Model_add_shadow(C4_Model *model, gchar *name,
 
 C4_Portal *C4_Model_add_portal(C4_Model *model, gchar *name,
            C4_Calc *calc, gint advance_query, gint advance_target){
-    register C4_Portal *portal;
+    C4_Portal *portal;
     g_assert(model->is_open);
     g_assert(calc);
     g_assert(calc->calc_func); /* Must have position specific calc */
@@ -499,7 +499,7 @@ C4_Span *C4_Model_add_span(C4_Model *model, gchar *name,
                            C4_State *span_state,
                            gint min_query, gint max_query,
                            gint min_target, gint max_target){
-    register C4_Span *span;
+    C4_Span *span;
     g_assert(model->is_open);
     span = C4_Span_create(name, span_state, min_query, max_query,
                                             min_target, max_target);
@@ -508,7 +508,7 @@ C4_Span *C4_Model_add_span(C4_Model *model, gchar *name,
     }
 
 C4_Model *C4_Model_create(gchar *name){
-    register C4_Model *model = g_new(C4_Model, 1);
+    C4_Model *model = g_new(C4_Model, 1);
     g_assert(name);
     model->name = g_strdup(name);
     /**/
@@ -550,7 +550,7 @@ void C4_Model_rename(C4_Model *model, gchar *name){
 /**/
 
 static void C4_Model_destroy_string_list(GPtrArray *string_list){
-    register gint i;
+    gint i;
     for(i = 0; i < string_list->len; i++)
         g_free(string_list->pdata[i]);
     g_ptr_array_free(string_list, TRUE);
@@ -558,7 +558,7 @@ static void C4_Model_destroy_string_list(GPtrArray *string_list){
     }
 
 void C4_Model_destroy(C4_Model *model){
-    register gint i;
+    gint i;
     g_assert(model);
     if(ThreadRef_destroy(model->thread_ref))
         return;
@@ -603,25 +603,25 @@ C4_Model *C4_Model_share(C4_Model *model){
 
 static gint C4_State_compare_by_name(gconstpointer a,
                                      gconstpointer b){
-    register C4_State *state_a = (C4_State*)a,
+    C4_State *state_a = (C4_State*)a,
                       *state_b = (C4_State*)b;
     return strcmp(state_a->name, state_b->name);
     }
 
 static gint C4_Transition_compare_by_name(gconstpointer a,
                                           gconstpointer b){
-    register C4_Transition *tran_a = (C4_Transition*)a,
+    C4_Transition *tran_a = (C4_Transition*)a,
                            *tran_b = (C4_Transition*)b;
     return strcmp(tran_a->name, tran_b->name);
     }
 
 /* FIXME: rewrite without using state names */
 C4_State **C4_Model_build_state_map(C4_Model *src, C4_Model *dst){
-    register C4_State **state_map = g_new0(C4_State*,
+    C4_State **state_map = g_new0(C4_State*,
                                            src->state_list->len);
-    register gint i;
-    register C4_State *src_state, *dst_state;
-    register GTree *state_map_tree
+    gint i;
+    C4_State *src_state, *dst_state;
+    GTree *state_map_tree
         = g_tree_new(C4_State_compare_by_name);
     g_assert(src);
     g_assert(dst);
@@ -647,11 +647,11 @@ C4_State **C4_Model_build_state_map(C4_Model *src, C4_Model *dst){
 /* FIXME: rewrite without using transition names */
 C4_Transition **C4_Model_build_transition_map(C4_Model *src,
                                               C4_Model *dst){
-    register C4_Transition **transition_map = g_new0(C4_Transition*,
+    C4_Transition **transition_map = g_new0(C4_Transition*,
                                       src->transition_list->len);
-    register gint i;
-    register C4_Transition *src_transition, *dst_transition;
-    register GTree *transition_map_tree
+    gint i;
+    C4_Transition *src_transition, *dst_transition;
+    GTree *transition_map_tree
         = g_tree_new(C4_Transition_compare_by_name);
     g_assert(src);
     g_assert(dst);
@@ -680,17 +680,17 @@ C4_Transition **C4_Model_build_transition_map(C4_Model *src,
 
 void C4_Model_make_stereo(C4_Model *model, gchar *suffix_a,
                                            gchar *suffix_b){
-    register gint i, j,
+    gint i, j,
                   prev_state_count = model->state_list->len,
                   prev_transition_count = model->transition_list->len,
                   prev_shadow_count = model->shadow_list->len;
-    register C4_State *state,
+    C4_State *state,
                      **state_map = g_new0(C4_State*, prev_state_count);
-    register C4_Transition *transition,
+    C4_Transition *transition,
                      **transition_map = g_new0(C4_Transition*,
                                                prev_transition_count);
-    register C4_Shadow *shadow, *new_shadow;
-    register gchar *name;
+    C4_Shadow *shadow, *new_shadow;
+    gchar *name;
     g_assert(model->is_open);
     /* Copy each state -> state.suffix_b */
     for(i = 0; i < prev_state_count; i++){
@@ -771,8 +771,8 @@ void C4_Model_make_stereo(C4_Model *model, gchar *suffix_a,
 
 static void C4_Model_insert_calcs(C4_Model *target, C4_Model *insert,
                                   C4_Calc **calc_map){
-    register gint i;
-    register C4_Calc *insert_calc, *target_calc;
+    gint i;
+    C4_Calc *insert_calc, *target_calc;
     for(i = 0; i < insert->calc_list->len; i++){
         insert_calc = insert->calc_list->pdata[i];
         target_calc = C4_Model_match_calc(target, insert_calc);
@@ -790,8 +790,8 @@ static void C4_Model_insert_calcs(C4_Model *target, C4_Model *insert,
 
 static void C4_Model_insert_states(C4_Model *target, C4_Model *insert,
                                    C4_State **state_map){
-    register gint i;
-    register C4_State *insert_state;
+    gint i;
+    C4_State *insert_state;
     for(i = 0; i < insert->state_list->len; i++){
         insert_state = insert->state_list->pdata[i];
         if((insert_state != insert->start_state->state)
@@ -808,9 +808,9 @@ static void C4_Model_insert_transitions(C4_Model *target,
                 C4_Calc **calc_map,
                 C4_State **state_map,
                 C4_Transition **transition_map){
-    register gint i;
-    register C4_Transition *transition;
-    register C4_Calc *calc;
+    gint i;
+    C4_Transition *transition;
+    C4_Calc *calc;
     for(i = 0; i < insert->transition_list->len; i++){
         transition = insert->transition_list->pdata[i];
         g_assert(transition);
@@ -834,10 +834,10 @@ static void C4_Model_insert_shadows(C4_Model *target,
                                     C4_State *src, C4_State *dst,
                                     C4_State **state_map,
                                     C4_Transition **transition_map){
-    register gint i, j;
-    register C4_Shadow *shadow, *new_shadow;
-    register C4_State *state, *src_state;
-    register C4_Transition *transition, *dst_transition;
+    gint i, j;
+    C4_Shadow *shadow, *new_shadow;
+    C4_State *state, *src_state;
+    C4_Transition *transition, *dst_transition;
     /* For each insert shadow */
     for(i = 0; i < insert->shadow_list->len; i++){
         shadow = insert->shadow_list->pdata[i];
@@ -887,10 +887,10 @@ static gboolean C4_Portal_is_same(C4_Portal *portal_a,
 
 static void C4_Model_insert_portals(C4_Model *target,
             C4_Model *insert, C4_Calc **calc_map){
-    register gint i, j;
-    register C4_Portal *insert_portal, *target_portal;
-    register C4_Transition *transition;
-    register gboolean found_same;
+    gint i, j;
+    C4_Portal *insert_portal, *target_portal;
+    C4_Transition *transition;
+    gboolean found_same;
     for(i = 0; i < insert->portal_list->len; i++){
         insert_portal = insert->portal_list->pdata[i];
         found_same = FALSE;
@@ -921,8 +921,8 @@ static void C4_Model_insert_portals(C4_Model *target,
 
 static void C4_Model_insert_spans(C4_Model *target,
             C4_Model *insert, C4_State **state_map){
-    register gint i;
-    register C4_Span *span;
+    gint i;
+    C4_Span *span;
     for(i = 0; i < insert->span_list->len; i++){
         span = insert->span_list->pdata[i];
         C4_Model_add_span(target, span->name,
@@ -935,7 +935,7 @@ static void C4_Model_insert_spans(C4_Model *target,
 
 static gboolean C4_Model_string_list_contains(GPtrArray *list,
                                               gchar *str){
-    register gint i;
+    gint i;
     for(i = 0; i < list->len; i++)
         if(!strcmp(list->pdata[i], str))
             return TRUE;
@@ -943,7 +943,7 @@ static gboolean C4_Model_string_list_contains(GPtrArray *list,
     }
 
 static void C4_Model_merge_codegen_list(GPtrArray *dst, GPtrArray *src){
-    register gint i;
+    gint i;
     for(i = 0; i < src->len; i++)
         if(!C4_Model_string_list_contains(dst, src->pdata[i]))
             g_ptr_array_add(dst, g_strdup(src->pdata[i]));
@@ -962,11 +962,11 @@ static void C4_Model_merge_codegen(C4_Model *dst, C4_Model *src){
 
 void C4_Model_insert(C4_Model *target, C4_Model *insert,
                      C4_State *src, C4_State *dst){
-    register C4_Calc **calc_map = g_new0(C4_Calc*,
+    C4_Calc **calc_map = g_new0(C4_Calc*,
                                          insert->calc_list->len);
-    register C4_State **state_map = g_new0(C4_State*,
+    C4_State **state_map = g_new0(C4_State*,
                                          insert->state_list->len);
-    register C4_Transition **transition_map = g_new0(C4_Transition*,
+    C4_Transition **transition_map = g_new0(C4_Transition*,
                                          insert->transition_list->len);
     g_assert(target->is_open);
     g_assert(!insert->is_open);
@@ -1106,7 +1106,7 @@ void C4_Model_configure_end_state(C4_Model *model, C4_Scope scope,
 /**/
 
 gchar *C4_Scope_get_name(C4_Scope scope){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     switch(scope){
         case C4_Scope_ANYWHERE:
             name = "anywhere";
@@ -1131,7 +1131,7 @@ gchar *C4_Scope_get_name(C4_Scope scope){
     }
 
 gchar *C4_Label_get_name(C4_Label label){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     switch(label){
         case C4_Label_NONE:
             name = "none";
@@ -1168,12 +1168,12 @@ gchar *C4_Label_get_name(C4_Label label){
     }
 
 void C4_Model_print(C4_Model *model){
-    register gint i;
-    register C4_State *state;
-    register C4_Transition *transition;
-    register C4_Calc *calc;
-    register C4_Portal *portal;
-    register C4_Span *span;
+    gint i;
+    C4_State *state;
+    C4_Transition *transition;
+    C4_Calc *calc;
+    C4_Portal *portal;
+    C4_Span *span;
     g_assert(model);
     g_print("--\n"
             "    Info for model [%s]\n"
@@ -1213,8 +1213,8 @@ void C4_Model_print(C4_Model *model){
     }
 
 static gchar *clean_string(gchar *str){
-    register gchar *new_string = g_strdup(str);
-    register gint i;
+    gchar *new_string = g_strdup(str);
+    gint i;
     for(i = 0; new_string[i]; i++){
         if(!isalnum(new_string[i]))
             new_string[i] = '_';
@@ -1223,9 +1223,9 @@ static gchar *clean_string(gchar *str){
     }
 
 static gchar *break_string(gchar *str){
-    register GString *s = g_string_sized_new(strlen(str)+10);
-    register gchar *new_string;
-    register gint i;
+    GString *s = g_string_sized_new(strlen(str)+10);
+    gchar *new_string;
+    gint i;
     for(i = 0; str[i]; i++){
         if(isspace(str[i]))
             g_string_append(s, "\\n");
@@ -1238,11 +1238,11 @@ static gchar *break_string(gchar *str){
     }
 
 void C4_Model_dump_graphviz(C4_Model *model){
-    register gint i, j, k;
-    register C4_State *state;
-    register C4_Transition *transition;
-    register C4_Shadow *shadow;
-    register gchar *identifier;
+    gint i, j, k;
+    C4_State *state;
+    C4_Transition *transition;
+    C4_Shadow *shadow;
+    gchar *identifier;
     g_assert(model);
     g_assert(!model->is_open);
     identifier = clean_string(model->name);
@@ -1306,9 +1306,9 @@ void C4_Model_open(C4_Model *model){
 
 static gboolean C4_Model_path_is_possible_recur(C4_Model *model,
                 C4_State *src, C4_State *dst, gboolean *visited){
-    register C4_Transition *transition;
-    register C4_State *next_state;
-    register gint i;
+    C4_Transition *transition;
+    C4_State *next_state;
+    gint i;
     visited[src->id] = TRUE;
     for(i = 0; i < src->output_transition_list->len; i++){
         transition = src->output_transition_list->pdata[i];
@@ -1328,8 +1328,8 @@ static gboolean C4_Model_path_is_possible_recur(C4_Model *model,
 
 gboolean C4_Model_path_is_possible(C4_Model *model,
                                    C4_State *src, C4_State *dst){
-    register gboolean *visited;
-    register gboolean is_valid;
+    gboolean *visited;
+    gboolean is_valid;
     g_assert(model);
     g_assert(src);
     g_assert(dst);
@@ -1347,13 +1347,13 @@ static gboolean C4_Model_has_start_to_end_path(C4_Model *model){
     }
 
 static void C4_Model_set_ids(C4_Model *model){
-    register gint i;
-    register C4_State *state;
-    register C4_Transition *transition;
-    register C4_Shadow *shadow;
-    register C4_Calc *calc;
-    register C4_Portal *portal;
-    register C4_Span *span;
+    gint i;
+    C4_State *state;
+    C4_Transition *transition;
+    C4_Shadow *shadow;
+    C4_Calc *calc;
+    C4_Portal *portal;
+    C4_Span *span;
     g_assert(model);
     for(i = 0; i < model->state_list->len; i++){
         state = model->state_list->pdata[i];
@@ -1383,8 +1383,8 @@ static void C4_Model_set_ids(C4_Model *model){
     }
 
 static gboolean C4_Model_is_valid(C4_Model *model){
-    register gint i;
-    register C4_State *state;
+    gint i;
+    C4_State *state;
     g_assert(model);
     for(i = 0; i < model->state_list->len; i++){
         state = model->state_list->pdata[i];
@@ -1403,8 +1403,8 @@ static gboolean C4_Model_is_valid(C4_Model *model){
     }
 
 static void c4_g_ptr_array_reverse(GPtrArray *ptr_array){
-    register gint a, z;
-    register gpointer swap;
+    gint a, z;
+    gpointer swap;
     for(a = 0, z = ptr_array->len-1; a < z; a++, z--){
         swap = ptr_array->pdata[a];
         ptr_array->pdata[a] = ptr_array->pdata[z];
@@ -1416,13 +1416,13 @@ static void c4_g_ptr_array_reverse(GPtrArray *ptr_array){
 /* Calculate dependency ordering and transition precedence:
  */
 static void C4_Model_topological_sort(C4_Model *model){
-    register gint *dependent
+    gint *dependent
              = g_new0(gint, model->transition_list->len);
-    register GPtrArray *ordered = g_ptr_array_new();
-    register gint i, j;
-    register C4_Transition *transition, *input_transition;
-    register C4_State *state;
-    register gboolean removed_transition;
+    GPtrArray *ordered = g_ptr_array_new();
+    gint i, j;
+    C4_Transition *transition, *input_transition;
+    C4_State *state;
+    gboolean removed_transition;
     /**/
     /* Set initial dependencies */
     for(i = 0; i < model->transition_list->len; i++){
@@ -1492,8 +1492,8 @@ static void C4_Model_topological_sort(C4_Model *model){
 
 static void C4_Portal_find_transitions(C4_Portal *portal,
                                        C4_Model *model){
-    register gint i;
-    register C4_Transition *transition;
+    gint i;
+    C4_Transition *transition;
     /* Find applicable transitions for portal->calc */
     for(i = 0; i < model->transition_list->len; i++){
         transition = model->transition_list->pdata[i];
@@ -1511,9 +1511,9 @@ static void C4_Portal_find_transitions(C4_Portal *portal,
     }
 
 static void C4_Model_finalise(C4_Model *model){
-    register gint i;
-    register C4_Portal *portal;
-    register C4_Transition *transition;
+    gint i;
+    C4_Portal *portal;
+    C4_Transition *transition;
     g_assert(model);
     for(i = 0; i < model->portal_list->len; i++){
         portal = model->portal_list->pdata[i];
@@ -1540,8 +1540,8 @@ static void C4_Shadow_designate_recur(C4_Shadow *shadow,
                                       C4_Transition *transition,
                                       gboolean *des,
                                       gboolean *states_visited){
-    register gint i;
-    register C4_State *state = transition->input;
+    gint i;
+    C4_State *state = transition->input;
     if(!states_visited[state->id]){
         states_visited[state->id] = TRUE;
         /* If transition is an dst transition stop */
@@ -1563,12 +1563,12 @@ static void C4_Shadow_designate_recur(C4_Shadow *shadow,
 
 static gboolean *C4_Shadow_get_designation(C4_Model *model,
                                            C4_Shadow *shadow){
-    register gboolean *des = g_new0(gboolean,
+    gboolean *des = g_new0(gboolean,
                                     model->transition_list->len);
-    register gboolean *states_visited = g_new0(gboolean,
+    gboolean *states_visited = g_new0(gboolean,
                                                model->state_list->len);
-    register gint i;
-    register C4_Transition *transition;
+    gint i;
+    C4_Transition *transition;
     g_assert(C4_Shadow_is_valid(shadow, model));
     for(i = 0; i < shadow->dst_transition_list->len; i++){
         transition = shadow->dst_transition_list->pdata[i];
@@ -1582,9 +1582,9 @@ static gboolean *C4_Shadow_get_designation(C4_Model *model,
 
 static gboolean C4_Shadow_designation_fits(C4_Model *model,
                           gboolean *des_a, gboolean *des_b){
-    register gint i;
-    register gboolean *state_is_used;
-    register C4_Transition *transition;
+    gint i;
+    gboolean *state_is_used;
+    C4_Transition *transition;
     for(i = 0; i < model->transition_list->len; i++)
         if(des_a[i] && des_b[i])
             return FALSE;
@@ -1625,7 +1625,7 @@ static gboolean C4_Shadow_designation_fits(C4_Model *model,
 
 static void C4_Shadow_designation_join(C4_Model *model,
                           gboolean *master, gboolean *copy){
-    register gint i;
+    gint i;
     for(i = 0; i < model->transition_list->len; i++){
         if(copy[i]){
             g_assert(!master[i]);
@@ -1636,10 +1636,10 @@ static void C4_Shadow_designation_join(C4_Model *model,
     }
 
 static void C4_Model_designate_shadows(C4_Model *model){
-    register gboolean *des, *curr_des;
-    register GPtrArray *designation_list = g_ptr_array_new();
-    register gint i, j;
-    register C4_Shadow *shadow;
+    gboolean *des, *curr_des;
+    GPtrArray *designation_list = g_ptr_array_new();
+    gint i, j;
+    C4_Shadow *shadow;
     for(i = 0; i < model->shadow_list->len; i++){
         shadow = model->shadow_list->pdata[i];
         curr_des = C4_Shadow_get_designation(model, shadow);
@@ -1699,7 +1699,7 @@ void C4_Calc_exit(C4_Calc *calc, Region *region, gpointer user_data){
 
 C4_Score C4_Calc_score(C4_Calc *calc, gint query_pos, gint target_pos,
                        gpointer user_data){
-    register C4_Score score;
+    C4_Score score;
     if(!calc)
         return 0;
     if(calc->calc_func){
@@ -1711,20 +1711,20 @@ C4_Score C4_Calc_score(C4_Calc *calc, gint query_pos, gint target_pos,
     }
 
 C4_Model *C4_Model_copy(C4_Model *old_model){
-    register C4_Model *new_model;
-    register gchar *name;
-    register gint i, j;
-    register C4_Calc *calc, **calc_map = g_new0(C4_Calc*,
+    C4_Model *new_model;
+    gchar *name;
+    gint i, j;
+    C4_Calc *calc, **calc_map = g_new0(C4_Calc*,
                                         old_model->calc_list->len);
-    register C4_State *state, **state_map = g_new0(C4_State*,
+    C4_State *state, **state_map = g_new0(C4_State*,
                                         old_model->state_list->len);
-    register C4_State *src_state, *dst_state;
-    register C4_Transition *transition,
+    C4_State *src_state, *dst_state;
+    C4_Transition *transition,
                            **transition_map = g_new0(C4_Transition*,
                                      old_model->transition_list->len);
-    register C4_Shadow *shadow, *new_shadow;
-    register C4_Portal *portal;
-    register C4_Span *span;
+    C4_Shadow *shadow, *new_shadow;
+    C4_Portal *portal;
+    C4_Span *span;
     g_assert(old_model);
     g_assert(!old_model->is_open);
     name = g_strdup_printf("Copy:%s", old_model->name);
@@ -1829,7 +1829,7 @@ C4_Model *C4_Model_copy(C4_Model *old_model){
 
 void C4_Model_remove_transition(C4_Model *model,
                                 C4_Transition *transition){
-    register gboolean removed_transition;
+    gboolean removed_transition;
     /* Remove from the input state */
     removed_transition = g_ptr_array_remove_fast(
             transition->input->output_transition_list, transition);
@@ -1848,10 +1848,10 @@ void C4_Model_remove_transition(C4_Model *model,
 
 static void C4_Model_remove_shadow(C4_Model *model,
                                    C4_Shadow *shadow){
-    register gint i;
-    register gboolean removed_shadow;
-    register C4_State *state;
-    register C4_Transition *transition;
+    gint i;
+    gboolean removed_shadow;
+    C4_State *state;
+    C4_Transition *transition;
     /* Remove from src states */
     for(i = 0; i < shadow->src_state_list->len; i++){
         state = shadow->src_state_list->pdata[i];
@@ -1875,14 +1875,14 @@ static void C4_Model_remove_shadow(C4_Model *model,
     }
 
 void C4_Model_remove_state(C4_Model *model, C4_State *state){
-    register gboolean was_open, removed_state;
-    register gint i;
-    register C4_Transition *transition;
-    register C4_Shadow *shadow;
-    register C4_Calc *calc;
-    register C4_Portal *portal;
-    register C4_Span *span;
-    register gboolean *calc_used;
+    gboolean was_open, removed_state;
+    gint i;
+    C4_Transition *transition;
+    C4_Shadow *shadow;
+    C4_Calc *calc;
+    C4_Portal *portal;
+    C4_Span *span;
+    gboolean *calc_used;
     /* Check not start or end */
     g_assert(model);
     g_assert(state);
@@ -1973,7 +1973,7 @@ gboolean C4_Model_is_local(C4_Model *model){
     }
 
 void C4_Model_remove_all_shadows(C4_Model *model){
-    register C4_Shadow *shadow;
+    C4_Shadow *shadow;
     g_assert(model->is_open);
     while(model->shadow_list->len){
         shadow = model->shadow_list->pdata[0];
@@ -1991,7 +1991,7 @@ typedef struct {
 } C4_ProtoShadow;
 
 static C4_ProtoShadow *C4_ProtoShadow_create(void){
-    register C4_ProtoShadow *cps = g_new(C4_ProtoShadow, 1);
+    C4_ProtoShadow *cps = g_new(C4_ProtoShadow, 1);
     cps->new_src_state_list = g_ptr_array_new();
     cps->new_dst_transition_list = g_ptr_array_new();
     return cps;
@@ -2020,8 +2020,8 @@ static void C4_ProtoShadow_generate(C4_ProtoShadow *cps,
                                     C4_Model *old_model,
                                     C4_Model *new_model,
                                     C4_Shadow *old_shadow){
-    register gint i;
-    register C4_Shadow *new_shadow;
+    gint i;
+    C4_Shadow *new_shadow;
     g_assert(cps);
     g_assert(cps->new_src_state_list->len);
     g_assert(cps->new_dst_transition_list->len);
@@ -2047,9 +2047,9 @@ static void C4_Model_segment_reuse_state(C4_Model *old_model,
                              C4_State *old_state,
                              C4_State **state_map,
                              C4_ProtoShadow **proto_shadow_map){
-    register C4_State *new_state;
-    register gint i;
-    register C4_Shadow *shadow;
+    C4_State *new_state;
+    gint i;
+    C4_Shadow *shadow;
     if(old_state == old_model->start_state->state)
         return;
     if(old_state == old_model->end_state->state)
@@ -2074,10 +2074,10 @@ static void C4_Model_segment_add_transition(C4_Model *old_model,
                  C4_Calc **calc_map, GTree *transition_map_tree,
                  C4_ProtoShadow **proto_shadow_map,
                  gboolean from_start, gboolean to_end){
-    register C4_Calc *calc = NULL;
-    register C4_Transition *new_transition;
-    register gint i;
-    register C4_Shadow *shadow;
+    C4_Calc *calc = NULL;
+    C4_Transition *new_transition;
+    gint i;
+    C4_Shadow *shadow;
     if(!from_start)
         C4_Model_segment_reuse_state(old_model, new_model,
                                      transition->input, state_map,
@@ -2127,8 +2127,8 @@ static void C4_Model_segment_recur(C4_Model *old_model,
                                    C4_Calc  **calc_map,
                                    GTree *transition_map_tree,
                                    C4_ProtoShadow **proto_shadow_map){
-    register gint i;
-    register C4_Transition *transition;
+    gint i;
+    C4_Transition *transition;
     if(!state_map[state->id]) /* Check that it is on the state map */
         return;
     if(visited_state[state->id]) /* Check is it not already visited */
@@ -2158,9 +2158,9 @@ static void C4_Model_segment_recur(C4_Model *old_model,
 
 static void C4_State_remove_duplicate_transitions(C4_State *state,
                                C4_Model *model, GPtrArray *to_remove){
-    register gint i, j;
-    register C4_Score score_a, score_b;
-    register C4_Transition *transition_a, *transition_b;
+    gint i, j;
+    C4_Score score_a, score_b;
+    C4_Transition *transition_a, *transition_b;
     for(i = 0; i < state->output_transition_list->len; i++){
         transition_a = state->output_transition_list->pdata[i];
         for(j = 0; j < i; j++){
@@ -2194,10 +2194,10 @@ static void C4_State_remove_duplicate_transitions(C4_State *state,
     }
 
 static void C4_Model_remove_duplicate_transitions(C4_Model *model){
-    register gint i;
-    register C4_State *state;
-    register C4_Transition *transition;
-    register GPtrArray *to_remove = g_ptr_array_new();
+    gint i;
+    C4_State *state;
+    C4_Transition *transition;
+    GPtrArray *to_remove = g_ptr_array_new();
     /* Find transitions to remove */
     for(i = 0; i < model->state_list->len; i++){
         state = model->state_list->pdata[i];
@@ -2218,19 +2218,19 @@ static C4_Model *C4_Model_select(C4_Model *model,
                                  C4_State *src, C4_State *dst,
                                  C4_State **state_map,
                                  GTree *transition_map_tree){
-    register gchar *name = g_strdup_printf(
+    gchar *name = g_strdup_printf(
                                    "Segment(\"%s\"->\"%s\"):[%s]",
                                    src->name, dst->name, model->name);
-    register C4_Model *segment_model = C4_Model_create(name);
-    register C4_Transition *transition;
-    register gboolean *visited_state = g_new0(gboolean,
+    C4_Model *segment_model = C4_Model_create(name);
+    C4_Transition *transition;
+    gboolean *visited_state = g_new0(gboolean,
                                        model->state_list->len);
-    register C4_State *state;
-    register C4_Calc **calc_map = g_new0(C4_Calc*,
+    C4_State *state;
+    C4_Calc **calc_map = g_new0(C4_Calc*,
                                          model->calc_list->len);
-    register gint i;
-    register C4_Shadow *shadow;
-    register C4_ProtoShadow **proto_shadow_map = g_new0(C4_ProtoShadow*,
+    gint i;
+    C4_Shadow *shadow;
+    C4_ProtoShadow **proto_shadow_map = g_new0(C4_ProtoShadow*,
                                   model->shadow_list->len);
     /* Propagate model extras */
     C4_Model_configure_extra(segment_model,
@@ -2300,12 +2300,12 @@ C4_DerivedModel *C4_DerivedModel_create(C4_Model *original_model,
                 gchar *cell_start_macro,
                 C4_Scope end_scope, C4_CellEndFunc cell_end_func,
                 gchar *cell_end_macro){
-    register C4_DerivedModel *derived_model = g_new(C4_DerivedModel, 1);
-    register GTree *transition_map_tree
+    C4_DerivedModel *derived_model = g_new(C4_DerivedModel, 1);
+    GTree *transition_map_tree
           = g_tree_new(C4_Transition_compare_by_address);
-    register gint i;
-    register C4_Transition *original_transition, *derived_transition;
-    register C4_State **state_map = g_new0(C4_State*,
+    gint i;
+    C4_Transition *original_transition, *derived_transition;
+    C4_State **state_map = g_new0(C4_State*,
                                     original_model->state_list->len);
     g_assert(!original_model->is_open);
     g_assert(src);

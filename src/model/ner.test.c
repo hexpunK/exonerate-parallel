@@ -22,13 +22,13 @@ FILE *file;
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register C4_Score score;
-    register C4_Model *ner;
-    register Alignment *alignment;
-    register Optimal *optimal;
-    register Alphabet *dna_alphabet
+    C4_Score score;
+    C4_Model *ner;
+    Alignment *alignment;
+    Optimal *optimal;
+    Alphabet *dna_alphabet
            = Alphabet_create(Alphabet_Type_DNA, FALSE);
-    register Sequence
+    Sequence
         *query = Sequence_create("qy", NULL,
        "TTTTATCTTCCCAAGAGNCCCCATNNNGCGA"
        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -42,7 +42,7 @@ int Argument_main(Argument *arg){
        "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
        "GTGANTGAAATGTGGATGAACATTTC", 0,
        Sequence_Strand_UNKNOWN, dna_alphabet);
-    register NER_Data *nd;
+    NER_Data *nd;
 /**/
     Region region;
     Match_ArgumentSet_create(arg);

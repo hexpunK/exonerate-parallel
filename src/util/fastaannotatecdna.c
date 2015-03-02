@@ -21,9 +21,9 @@
 
 static gint find_translation(gchar *protein_str, gint protein_len,
                              Sequence *cdna, Translate *translate){
-    register Sequence *trans_seq;
-    register gchar *trans_str, *result;
-    register gint i, pos, count = 0;
+    Sequence *trans_seq;
+    gchar *trans_str, *result;
+    gint i, pos, count = 0;
     for(i = 1; i <= 3; i++){
         trans_seq = Sequence_translate(cdna, translate, i);
         trans_str = Sequence_get_str(trans_seq);
@@ -45,14 +45,14 @@ static gint find_translation(gchar *protein_str, gint protein_len,
     }
 
 static gint fastaannotatecdna(gchar *cdna_path, gchar *protein_path){
-    register FastaDB *cdna_fdb, *protein_fdb;
-    register FastaDB_Seq *cdna = NULL, *protein = NULL;
-    register gint ret_val = 0, total;
-    register FastaDB_Mask mask = FastaDB_Mask_ID|FastaDB_Mask_SEQ;
-    register Sequence *rc_seq;
-    register gchar *protein_str;
-    register Translate *translate = Translate_create(FALSE);
-    register Alphabet
+    FastaDB *cdna_fdb, *protein_fdb;
+    FastaDB_Seq *cdna = NULL, *protein = NULL;
+    gint ret_val = 0, total;
+    FastaDB_Mask mask = FastaDB_Mask_ID|FastaDB_Mask_SEQ;
+    Sequence *rc_seq;
+    gchar *protein_str;
+    Translate *translate = Translate_create(FALSE);
+    Alphabet
         *cdna_alphabet = Alphabet_create(Alphabet_Type_DNA, FALSE),
         *protein_alphabet = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
     cdna_fdb = FastaDB_open(cdna_path, cdna_alphabet);
@@ -112,7 +112,7 @@ static gint fastaannotatecdna(gchar *cdna_path, gchar *protein_path){
     }
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *cdna_path, *protein_path;
     ArgumentSet_add_option(as, 'c', "cdna", "path",

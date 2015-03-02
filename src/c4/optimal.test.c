@@ -19,9 +19,9 @@
 #include "match.h"
 
 int Argument_main(Argument *arg){
-    register C4_Model *model = C4_Model_create("test");
-    register Optimal *optimal;
-    register Match *match;
+    C4_Model *model = C4_Model_create("test");
+    Optimal *optimal;
+    Match *match;
     Match_ArgumentSet_create(arg);
     Argument_process(arg, "optimal.test", NULL, NULL);
     match = Match_find(Match_Type_DNA2DNA);

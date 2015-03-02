@@ -17,8 +17,8 @@
 #include "phase.h"
 
 gint Argument_main(Argument *arg){
-    register Match *match;
-    register C4_Model *phase;
+    Match *match;
+    C4_Model *phase;
     Match_ArgumentSet_create(arg);
     Argument_process(arg, "phase.test", NULL, NULL);
     match = Match_find(Match_Type_DNA2PROTEIN);

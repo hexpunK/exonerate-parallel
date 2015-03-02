@@ -82,7 +82,7 @@ static Index_Header *Index_Header_create(gint dataset_path_len,
                                          gint word_jump,
                                          gint word_ambiguity,
                                          gint saturate_threshold){
-    register Index_Header *index_header = g_new0(Index_Header, 1);
+    Index_Header *index_header = g_new0(Index_Header, 1);
     index_header->magic = INDEX_HEADER_MAGIC;
     index_header->version = INDEX_HEADER_VERSION;
     index_header->type = is_translated?1:0;
@@ -140,7 +140,7 @@ static void Index_Header_write(Index_Header *index_header, FILE *fp){
     }
 
 static Index_Header *Index_Header_read(FILE *fp){
-    register Index_Header *index_header = g_new(Index_Header, 1);
+    Index_Header *index_header = g_new(Index_Header, 1);
     index_header->magic = BitArray_read_int(fp);
     if(index_header->magic != INDEX_HEADER_MAGIC)
         g_error("Bad magic number in index file");
@@ -161,8 +161,8 @@ static Index_Header *Index_Header_read(FILE *fp){
 /**/
 
 static Index_Width *Index_Width_create(VFSM *vfsm, Dataset *dataset){
-    register Index_Width *index_width = g_new0(Index_Width, 1);
-    register guint64 n;
+    Index_Width *index_width = g_new0(Index_Width, 1);
+    guint64 n;
     for(n = vfsm->lrw; n; n >>= 1)
         index_width->max_word_width++;
     for(n = dataset->header->number_of_seqs; n; n >>= 1)
@@ -197,9 +197,9 @@ static void Index_visit_seq_words_single(Index *index, Index_Strand *index_stran
                                   gint seq_id, Sequence *seq,
                                   Index_WordVisit_Func iwvf, gint frame,
                                   gpointer user_data){
-    register gint i, jump_ctr = 0, pos;
-    register gchar *str = Sequence_get_str(seq);
-    register VFSM_Int state = 0, leaf;
+    gint i, jump_ctr = 0, pos;
+    gchar *str = Sequence_get_str(seq);
+    VFSM_Int state = 0, leaf;
     for(i = 0; str[i]; i++){
         if(!index->vfsm->index[(guchar)str[i]]){
             state = 0;
@@ -230,15 +230,15 @@ static void Index_visit_seq_words_ambig(Index *index, Index_Strand *index_strand
                                   gint seq_id, Sequence *seq,
                                   Index_WordVisit_Func iwvf, gint frame,
                                   gpointer user_data){
-    register gint i, j, k, jump_ctr = 0, pos;
-    register gchar *ambig, *str = Sequence_get_str(seq);
-    register VFSM_Int state, next_state, leaf;
-    register VFSM_Int *temp_state_list,
+    gint i, j, k, jump_ctr = 0, pos;
+    gchar *ambig, *str = Sequence_get_str(seq);
+    VFSM_Int state, next_state, leaf;
+    VFSM_Int *temp_state_list,
                       *curr_state_list = g_new0(VFSM_Int,
                                                 index->header->word_ambiguity),
                       *next_state_list = g_new0(VFSM_Int,
                                                 index->header->word_ambiguity);
-    register gint curr_state_list_len = 1, next_state_list_len = 0;
+    gint curr_state_list_len = 1, next_state_list_len = 0;
     for(i = 0; str[i]; i++){
         if(jump_ctr--)
             continue;
@@ -300,9 +300,9 @@ static void Index_visit_seq_words(Index *index, Index_Strand *index_strand,
 static void Index_visit_words(Index *index, Index_Strand *index_strand,
                               Index_WordVisit_Func iwvf,
                               gboolean is_forward, gpointer user_data){
-    register gint i, j;
-    register Sequence *ds_seq, *seq, *rc_seq, *aa_seq;
-    register Translate *translate = Translate_create(FALSE);
+    gint i, j;
+    Sequence *ds_seq, *seq, *rc_seq, *aa_seq;
+    Translate *translate = Translate_create(FALSE);
     /* FIXME: move Translate_create() outside of this function */
     for(i = 0; i < index->dataset->seq_list->len; i++){
         ds_seq = Dataset_get_sequence(index->dataset, i);
@@ -350,10 +350,10 @@ static void Index_freq_count(Index *index, Index_Strand *index_strand,
 /**/
 
 static gint Index_get_expect(Index *index, Index_Strand *index_strand){
-    register gdouble expect = 1.0 / pow(index->vfsm->alphabet_size,
+    gdouble expect = 1.0 / pow(index->vfsm->alphabet_size,
                                         index->header->word_length);
-    register gint i;
-    register gint64 observed_words = 0;
+    gint i;
+    gint64 observed_words = 0;
     for(i = 0; i < index->vfsm->lrw; i++)
         observed_words += index_strand->word_table[i];
     return (expect * observed_words) + index->header->saturate_threshold;
@@ -362,9 +362,9 @@ static gint Index_get_expect(Index *index, Index_Strand *index_strand){
 // allow compilation with "-Werror"
 #pragma GCC diagnostic warning "-Wformat"
 static void Index_desaturate(Index *index, Index_Strand *index_strand){
-    register VFSM_Int i;
-    register gint64 removed_words = 0, removed_instances = 0;
-    register gint target_expect = Index_get_expect(index, index_strand);
+    VFSM_Int i;
+    gint64 removed_words = 0, removed_instances = 0;
+    gint target_expect = Index_get_expect(index, index_strand);
     if(!index->header->saturate_threshold)
         return;
     g_message("Desaturating (expecting [%d] target words)", target_expect);
@@ -387,8 +387,8 @@ static void Index_desaturate(Index *index, Index_Strand *index_strand){
 
 static void Index_survey_word_list(Index *index,
                                    Index_Strand *index_strand){
-    register gint i, pos = 0;
-    register Index_Word *word;
+    gint i, pos = 0;
+    Index_Word *word;
     for(i = 0; i < index->vfsm->lrw; i++){
         if(index_strand->word_table[i] > 0)
             index_strand->header.word_list_length++;
@@ -417,8 +417,8 @@ static void Index_survey_word_list(Index *index,
  */
 
 gboolean Index_check_filetype(gchar *path){
-    register FILE *fp = fopen(path, "r");
-    register guint64 magic;
+    FILE *fp = fopen(path, "r");
+    guint64 magic;
     if(!fp)
         g_error("Could not open file [%s]", path);
     magic = BitArray_read_int(fp);
@@ -434,7 +434,7 @@ typedef struct {
 } Index_AddressList;
 
 static Index_AddressList *Index_AddressList_create(gint freq_count){
-    register Index_AddressList *address_list = g_new(Index_AddressList, 1);
+    Index_AddressList *address_list = g_new(Index_AddressList, 1);
     address_list->found = 0;
     address_list->address_list = g_new(Index_Address, freq_count);
     return address_list;
@@ -448,7 +448,7 @@ static void Index_AddressList_destroy(Index_AddressList *address_list){
 
 static void Index_AddressList_append(Index_AddressList *address_list,
                                      gint seq_id, gint position){
-    register Index_Address *address
+    Index_Address *address
         = &address_list->address_list[address_list->found];
     address->sequence_id = seq_id;
     address->position = position;
@@ -458,9 +458,9 @@ static void Index_AddressList_append(Index_AddressList *address_list,
 
 static void Index_AddressList_write(Index_AddressList *address_list,
                                     Index *index){
-    register gint i;
-    register BitArray *ba = BitArray_create();
-    register Index_Address *address;
+    gint i;
+    BitArray *ba = BitArray_create();
+    Index_Address *address;
     for(i = 0; i < address_list->found; i++){
         address = &address_list->address_list[i];
         BitArray_append(ba, address->sequence_id,
@@ -475,7 +475,7 @@ static void Index_AddressList_write(Index_AddressList *address_list,
 /* FIXME: optimisation: clear and reuse BitArray */
 
 static int Index_Address_compare(const void *a, const void *b){
-    register Index_Address *addr_a = (Index_Address*)a,
+    Index_Address *addr_a = (Index_Address*)a,
                            *addr_b = (Index_Address*)b;
     if(addr_a->sequence_id == addr_b->sequence_id)
         return addr_a->position - addr_b->position;
@@ -496,10 +496,10 @@ static void Index_AddressList_sort(Index_AddressList *address_list){
 static GArray *Index_find_pass_boundaries(Index *index,
                                           Index_Strand *index_strand,
                                           gsize available_space){
-    register GArray *pass_boundary_list = g_array_new(FALSE, FALSE, sizeof(gint));
-    register gsize usage = 0;
+    GArray *pass_boundary_list = g_array_new(FALSE, FALSE, sizeof(gint));
+    gsize usage = 0;
     gint i;
-    register Index_Word *index_word;
+    Index_Word *index_word;
     for(i = 0; i < index_strand->header.word_list_length; i++){
         index_word = &index_strand->word_list[i];
         usage += sizeof(gpointer)
@@ -532,9 +532,9 @@ static Index_AddressData *Index_AddressData_create(Index *index,
                                                    Index_Strand *index_strand,
                                                    gint first_word,
                                                    gint interval_len){
-    register Index_AddressData *address_data = g_new(Index_AddressData, 1);
-    register gint i;
-    register Index_Word *index_word;
+    Index_AddressData *address_data = g_new(Index_AddressData, 1);
+    gint i;
+    Index_Word *index_word;
     address_data->first_word = first_word;
     address_data->interval_len = interval_len;
     address_data->address_list_array
@@ -550,7 +550,7 @@ static Index_AddressData *Index_AddressData_create(Index *index,
  */
 
 static void Index_AddressData_destroy(Index_AddressData *address_data){
-    register gint i;
+    gint i;
     for(i = 0; i < address_data->interval_len; i++)
         Index_AddressList_destroy(address_data->address_list_array[i]);
     g_free(address_data->address_list_array);
@@ -560,9 +560,9 @@ static void Index_AddressData_destroy(Index_AddressData *address_data){
 
 static void Index_AddressData_write(Index_AddressData *address_data,
                                     Index *index, Index_Strand *index_strand){
-    register gint i, word_id;
-    register Index_Word *index_word;
-    register Index_AddressList *address_list;
+    gint i, word_id;
+    Index_Word *index_word;
+    Index_AddressList *address_list;
     for(i = 0; i < address_data->interval_len; i++){
         word_id = address_data->first_word+i;
         index_word = &index_strand->word_list[word_id];
@@ -580,9 +580,9 @@ static void Index_AddressData_write(Index_AddressData *address_data,
 static void Index_report_words_visit(Index *index, Index_Strand *index_strand,
                                      gint seq_id, gint seq_pos,
                                      gint leaf_id, gpointer user_data){
-    register gint word_id = index_strand->word_table[leaf_id];
-    register Index_AddressData *address_data = user_data;
-    register Index_AddressList *address_list;
+    gint word_id = index_strand->word_table[leaf_id];
+    Index_AddressData *address_data = user_data;
+    Index_AddressList *address_list;
     /* Skip word which are outside the interval for this pass */
     if((word_id < address_data->first_word)
     || (word_id >= (address_data->first_word+address_data->interval_len)))
@@ -596,15 +596,15 @@ static void Index_report_words_visit(Index *index, Index_Strand *index_strand,
 
 static void Index_report_word_list(Index *index, Index_Strand *index_strand,
                                    gboolean is_forward, gint memory_limit){
-    register Index_AddressList **address_list_array
+    Index_AddressList **address_list_array
         = g_new0(Index_AddressList*, index_strand->header.word_list_length);
-    register guint64 available_memory = ((guint64)memory_limit << 20); /* Mb */
-    register guint64 used_memory = Index_memory_usage(index)
+    guint64 available_memory = ((guint64)memory_limit << 20); /* Mb */
+    guint64 used_memory = Index_memory_usage(index)
                                  + Index_Strand_memory_usage(index_strand,
                                                              index->vfsm);
-    register GArray *pass_boundary_list;
-    register gint i, curr, prev = 0;
-    register Index_AddressData *address_data;
+    GArray *pass_boundary_list;
+    gint i, curr, prev = 0;
+    Index_AddressData *address_data;
     /**/
     if(used_memory > available_memory)
         g_error("Memory limit (%d Mb) already exceeded usage:[%d Mb]",
@@ -646,7 +646,7 @@ static void Index_report_word_list(Index *index, Index_Strand *index_strand,
  */
 
 static gsize Index_get_word_data_space(Index *index, Index_Strand *index_strand){
-    register gint word_data_bits = index->width->max_word_width
+    gint word_data_bits = index->width->max_word_width
                                  + index_strand->width.max_index_len_width
                                  + index_strand->width.total_index_len_width;
     return BitArray_get_size(word_data_bits
@@ -654,9 +654,9 @@ static gsize Index_get_word_data_space(Index *index, Index_Strand *index_strand)
     }
 
 static void Index_find_offsets(Index *index, Index_Strand *index_strand){
-    register gint i;
-    register gint64 offset = 0;
-    register Index_Word *index_word;
+    gint i;
+    gint64 offset = 0;
+    Index_Word *index_word;
     for(i = 0; i < index_strand->header.word_list_length; i++){
         index_word = &index_strand->word_list[i];
         index_word->index_offset = offset;
@@ -681,9 +681,9 @@ static void Index_Strand_Header_print(Index_Strand_Header *header, FILE *fp){
     }
 
 static void Index_Strand_write(Index *index, Index_Strand *index_strand){
-    register BitArray *word_ba = BitArray_create();
-    register gint i, word_id, word_count = 0;
-    register Index_Word *index_word;
+    BitArray *word_ba = BitArray_create();
+    gint i, word_id, word_count = 0;
+    Index_Word *index_word;
     /* Create a bitarray from word_list and write it out */
     Index_Strand_Header_print(&index_strand->header, index->fp);
     for(i = 0; i < index->vfsm->lrw; i++){
@@ -706,7 +706,7 @@ static void Index_Strand_write(Index *index, Index_Strand *index_strand){
     }
 
 static void Index_Strand_Width_fill(Index_Strand *index_strand){
-    register guint64 n;
+    guint64 n;
     for(n = index_strand->header.max_index_length; n; n >>= 1)
         index_strand->width.max_index_len_width++;
     for(n = index_strand->header.total_index_length; n; n >>= 1)
@@ -716,7 +716,7 @@ static void Index_Strand_Width_fill(Index_Strand *index_strand){
 
 static Index_Strand *Index_Strand_create(Index *index, gboolean is_forward,
                                          gint memory_limit){
-    register Index_Strand *index_strand = g_new0(Index_Strand, 1);
+    Index_Strand *index_strand = g_new0(Index_Strand, 1);
     g_assert(index);
     index_strand->word_table = g_new0(gint, index->vfsm->lrw);
     g_assert(index_strand->word_table);
@@ -747,9 +747,9 @@ static void Index_Strand_destroy(Index_Strand *index_strand){
 Index *Index_create(Dataset *dataset, gboolean is_translated, gint word_length,
                     gint word_jump, gint word_ambiguity, gint saturate_threshold,
                     gchar *index_path, gchar *dataset_path, gint memory_limit){
-    register Index *index = g_new0(Index, 1);
-    register gchar *member;
-    register Alphabet *alphabet;
+    Index *index = g_new0(Index, 1);
+    gchar *member;
+    Alphabet *alphabet;
     index->ref_count = 1;
     /* Open index path for reading */
     index->fp = fopen(index_path, "r");
@@ -883,13 +883,13 @@ void Index_info(Index *index){
 
 static Index_Word *Index_Strand_read_word_list(Index *index,
                                                Index_Strand *index_strand){
-    register Index_Word *word_list = g_new(Index_Word,
+    Index_Word *word_list = g_new(Index_Word,
                                            index_strand->header.word_list_length);
-    register BitArray *word_list_ba = BitArray_read(index->fp,
+    BitArray *word_list_ba = BitArray_read(index->fp,
                             Index_get_word_data_space(index, index_strand));
-    register gint i, start = 0;
-    register guint64 leaf;
-    register Index_Word *index_word;
+    gint i, start = 0;
+    guint64 leaf;
+    Index_Word *index_word;
     for(i = 0; i < index->vfsm->lrw; i++)
         index_strand->word_table[i] = -1;
     for(i = 0; i < index_strand->header.word_list_length; i++){
@@ -913,7 +913,7 @@ static Index_Word *Index_Strand_read_word_list(Index *index,
     }
 
 static Index_Strand *Index_Strand_read(Index *index, gboolean is_forward){
-    register Index_Strand *index_strand = g_new0(Index_Strand, 1);
+    Index_Strand *index_strand = g_new0(Index_Strand, 1);
     Index_Strand_Header_fill(&index_strand->header, index->fp);
     Index_Strand_Width_fill(index_strand);
     /**/
@@ -928,9 +928,9 @@ static Index_Strand *Index_Strand_read(Index *index, gboolean is_forward){
     }
 
 Index *Index_open(gchar *index_path){
-    register Index *index = g_new(Index, 1);
-    register gchar *member;
-    register Alphabet *alphabet;
+    Index *index = g_new(Index, 1);
+    gchar *member;
+    Alphabet *alphabet;
     index->ref_count = 1;
     index->fp = fopen(index_path, "r");
     if(!index->fp)
@@ -972,9 +972,9 @@ VFSM_Int leaf;
 static void Index_get_query_word_list(Index *index, Index_Strand *index_strand,
                                       Sequence *query, GArray *word_seed_list,
                                       gint frame, HSP_Param *hsp_param){
-    register gint i;
-    register gchar *str = Sequence_get_str(query);
-    register VFSM_Int state = 0;
+    gint i;
+    gchar *str = Sequence_get_str(query);
+    VFSM_Int state = 0;
     Index_WordSeed seed;
     for(i = 0; str[i]; i++){
         if(!index->vfsm->index[(guchar)str[i]]){
@@ -1028,7 +1028,7 @@ static gint Index_Address_list_trim_start(Index_Address *address_list,
                                           gint address_list_start,
                                           gint address_list_len,
                                           Index_Interval *limit){
-    register gint left = address_list_start,
+    gint left = address_list_start,
                   right = address_list_start+address_list_len-1, mid;
     while(left < right){
         mid = (left+right) >> 1;
@@ -1048,7 +1048,7 @@ static gint Index_Address_list_trim_end(Index_Address *address_list,
                                         gint address_list_start,
                                         gint address_list_len,
                                         Index_Interval *limit){
-    register gint left = address_list_start,
+    gint left = address_list_start,
                   right = address_list_start+address_list_len-1, mid;
     while(left < right){
         mid = (left+right) >> 1;
@@ -1070,7 +1070,7 @@ static void Index_Address_list_refine_recur(
             Index_Interval *interval_list,
             gint interval_list_start, gint interval_list_len,
             Index_Address *refined_address_list, gint *refined_address_list_len){
-    register gint i, move, interval_mid;
+    gint i, move, interval_mid;
     if(Index_Address_lt_Interval_start(&address_list[address_list_start],
                                        &interval_list[interval_list_start])){
         move = Index_Address_list_trim_start(address_list, address_list_start,
@@ -1145,9 +1145,9 @@ static void Index_Address_list_refine_recur(
 static gint Index_Address_list_refine(Index_Address *address_list,
                                       gint address_list_len,
                                       GArray *interval_list){
-    register Index_Address *refined_address_list
+    Index_Address *refined_address_list
         = g_new(Index_Address, address_list_len);
-    register gint i;
+    gint i;
     gint refined_address_list_len = 0;
     Index_Address_list_refine_recur(address_list, 0, address_list_len,
             (Index_Interval*)interval_list->data, 0, interval_list->len,
@@ -1175,10 +1175,10 @@ static gint Index_Word_get_address_list(Index *index,
                                         Index_Word *index_word,
                                         Index_Address *address_list,
                                         GArray *interval_list){
-    register BitArray *ba;
-    register gint i, pos = 0;
-    register guint64 start = 0;
-    register gint address_list_len = index_word->freq_count;
+    BitArray *ba;
+    gint i, pos = 0;
+    guint64 start = 0;
+    gint address_list_len = index_word->freq_count;
     g_assert(index_word->freq_count);
     if(index_strand->index_cache){
         ba = index_strand->index_cache;
@@ -1223,9 +1223,9 @@ typedef struct {
 
 static gboolean Index_WordHood_collect_traverse_func(gchar *word, gint score,
                                                      gpointer user_data){
-    register VFSM_Int state;
+    VFSM_Int state;
     VFSM_Int leaf;
-    register Index_Word_Collect_Traverse_Data *iwctd = user_data;
+    Index_Word_Collect_Traverse_Data *iwctd = user_data;
     state = VFSM_word2state(iwctd->index->vfsm, word);
     leaf = VFSM_state2leaf(iwctd->index->vfsm, state);
     iwctd->seed.leaf = leaf;
@@ -1238,15 +1238,15 @@ static gboolean Index_WordHood_collect_traverse_func(gchar *word, gint score,
 static void Index_expand_word_seed_list(Index *index,
                                         Index_Strand *index_strand,
                                         WordHood *wh, GArray *word_seed_list){
-    register gint i;
-    register VFSM_Int state;
+    gint i;
+    VFSM_Int state;
     /* FIXME: set threshold, use_dropoff elsewhere */
     /* FIXME: set word limit for dna/protein/codon and from default or client */
-    register gchar *word = g_new(gchar, index->header->word_length+1);
-    register gint init_seed_list_len = word_seed_list->len;
-    register Index_WordSeed *init_seed_list = g_new(Index_WordSeed,
+    gchar *word = g_new(gchar, index->header->word_length+1);
+    gint init_seed_list_len = word_seed_list->len;
+    Index_WordSeed *init_seed_list = g_new(Index_WordSeed,
                                                     init_seed_list_len);
-    register Index_WordSeed *orig_seed;
+    Index_WordSeed *orig_seed;
     for(i = 0; i < word_seed_list->len; i++){
         orig_seed = &g_array_index(word_seed_list, Index_WordSeed, i);
         init_seed_list[i].leaf = orig_seed->leaf;
@@ -1289,10 +1289,10 @@ static HSPset *Index_get_HSPset(Index *index, gint target_id,
                                 HSP_Param *hsp_param, Sequence *query,
                                 HSPset_SList_Node *node,
                                 gboolean revcomp_target){
-    register Sequence *target, *tmp_seq;
-    register HSPset *hsp_set;
-    register HSPset_SList_Node *curr;
-    register gint i;
+    Sequence *target, *tmp_seq;
+    HSPset *hsp_set;
+    HSPset_SList_Node *curr;
+    gint i;
     /* Check there are enough seeds */
     curr = node;
     for(i = 0; i < hsp_param->has->seed_repeat; i++){
@@ -1323,7 +1323,7 @@ static HSPset *Index_get_HSPset(Index *index, gint target_id,
 
 static Index_HSPset *Index_HSPset_create(HSPset *hsp_set,
                                          gint target_id){
-    register Index_HSPset *index_hsp_set = g_new(Index_HSPset, 1);
+    Index_HSPset *index_hsp_set = g_new(Index_HSPset, 1);
     index_hsp_set->hsp_set = HSPset_share(hsp_set);
     index_hsp_set->target_id = target_id;
     return index_hsp_set;
@@ -1341,21 +1341,21 @@ static GPtrArray *Index_seed_HSPsets(Index *index, Index_Strand *index_strand,
                                      GArray *seed_list, HSP_Param *hsp_param,
                                      Sequence *query, gboolean revcomp_target,
                                      GArray *interval_list){
-    register GPtrArray *hsp_set_list = g_ptr_array_new();
-    register gint i, j, word_id, address_list_len;
+    GPtrArray *hsp_set_list = g_ptr_array_new();
+    gint i, j, word_id, address_list_len;
     gint target_id;
-    register Index_WordSeed *seed;
-    register Index_Address *address_list;
-    register Index_Word *index_word;
-    register HSPset_SList_Node *node, **target_bin
+    Index_WordSeed *seed;
+    Index_Address *address_list;
+    Index_Word *index_word;
+    HSPset_SList_Node *node, **target_bin
         = g_new0(HSPset_SList_Node*, index->dataset->header->number_of_seqs);
     /* FIXME: allocate target_bin outside of this function
      *        (and clear after use) (per-thread)
      */
-    register GArray *target_id_list = g_array_new(FALSE, FALSE, sizeof(gint));
-    register HSPset *hsp_set;
-    register Index_HSPset *index_hsp_set;
-    register RecycleBin *hsp_slist_recycle = HSPset_SList_RecycleBin_create();
+    GArray *target_id_list = g_array_new(FALSE, FALSE, sizeof(gint));
+    HSPset *hsp_set;
+    Index_HSPset *index_hsp_set;
+    RecycleBin *hsp_slist_recycle = HSPset_SList_RecycleBin_create();
     /**/
     for(i = 0; i < seed_list->len; i++){
         seed = &g_array_index(seed_list, Index_WordSeed, i);
@@ -1409,10 +1409,10 @@ static GPtrArray *Index_seed_HSPsets(Index *index, Index_Strand *index_strand,
 static GArray *Index_get_word_seed_list(Index*index, Sequence *query,
                                         Index_Strand *index_strand,
                                         HSP_Param *hsp_param){
-    register GArray *word_seed_list = g_array_new(FALSE, FALSE,
+    GArray *word_seed_list = g_array_new(FALSE, FALSE,
                                                   sizeof(Index_WordSeed));
-    register gint i;
-    register Sequence *aa_seq;
+    gint i;
+    Sequence *aa_seq;
     if(hsp_param->match->query->is_translated){
         g_assert(hsp_param->match->mas->translate);
         for(i = 0; i < 3; i++){
@@ -1452,10 +1452,10 @@ static Index_Strand *Index_get_index_strand(Index *index,
 static GPtrArray *Index_get_HSPsets_interval(Index *index, HSP_Param *hsp_param,
                              Sequence *query, gboolean revcomp_target,
                              GArray *interval_list, GArray *word_seed_list){
-    register GPtrArray *hsp_set_list;
-    register Index_Strand *index_strand = Index_get_index_strand(index,
+    GPtrArray *hsp_set_list;
+    Index_Strand *index_strand = Index_get_index_strand(index,
                                                                  revcomp_target);
-    register gboolean free_word_seed_list = FALSE;
+    gboolean free_word_seed_list = FALSE;
     /* Traverse the query using VSFM */
     g_assert(index_strand);
     if(!word_seed_list){
@@ -1499,7 +1499,7 @@ typedef struct {
 
 static void Index_Subseed_add_to_subseed_list(GPtrArray *subseed_list, HSP *hsp,
                                               gboolean go_fwd, gboolean go_rev){
-    register Index_Subseed *index_subseed = g_new(Index_Subseed, 1);
+    Index_Subseed *index_subseed = g_new(Index_Subseed, 1);
     index_subseed->hsp = hsp;
     index_subseed->go_fwd = go_fwd;
     index_subseed->go_rev = go_rev;
@@ -1509,9 +1509,9 @@ static void Index_Subseed_add_to_subseed_list(GPtrArray *subseed_list, HSP *hsp,
 
 static Index_Geneseed *Index_Geneseed_create(Index_HSPset *index_hspset,
                                              NOI_Tree_Set *nts){
-    register Index_Geneseed *index_geneseed = g_new(Index_Geneseed, 1);
-    register gint i;
-    register HSP *hsp;
+    Index_Geneseed *index_geneseed = g_new(Index_Geneseed, 1);
+    gint i;
+    HSP *hsp;
     index_geneseed->keeper_hsp_tree = RangeTree_create();
     index_geneseed->cand_hsp_tree = RangeTree_create();
     index_geneseed->max_cobs_cand_hsp = NULL;
@@ -1534,8 +1534,8 @@ static Index_Geneseed *Index_Geneseed_create(Index_HSPset *index_hspset,
 
 static void Index_Geneseed_destroy(Index_Geneseed *index_geneseed,
                                    NOI_Tree_Set *nts){
-    register gint i;
-    register HSPset *hspset;
+    gint i;
+    HSPset *hspset;
     for(i = 0; i < index_geneseed->hspset_list->len; i++){
         hspset = index_geneseed->hspset_list->pdata[i];
         HSPset_destroy(hspset);
@@ -1549,8 +1549,8 @@ static void Index_Geneseed_destroy(Index_Geneseed *index_geneseed,
 
 static gboolean Index_Geneseed_collect_hspset_Rangetree_traverse(gint x, gint y,
                 gpointer info, gpointer user_data){
-    register HSP *hsp = info;
-    register HSPset *hsp_set = user_data;
+    HSP *hsp = info;
+    HSPset *hsp_set = user_data;
     HSPset_add_known_hsp(hsp_set, hsp->query_start, hsp->target_start,
                          hsp->length);
     return FALSE;
@@ -1558,8 +1558,8 @@ static gboolean Index_Geneseed_collect_hspset_Rangetree_traverse(gint x, gint y,
 
 static Index_HSPset *Index_Geneseed_collect_hspset(
                      Index_Geneseed *index_geneseed){
-    register Index_HSPset *index_hspset;
-    register HSPset *hsp_set, *source_hspset;
+    Index_HSPset *index_hspset;
+    HSPset *hsp_set, *source_hspset;
     if(RangeTree_is_empty(index_geneseed->keeper_hsp_tree))
         return NULL;
     g_assert(index_geneseed->hspset_list->len);
@@ -1592,7 +1592,7 @@ typedef struct {
 
 static void Index_Interval_NOI_Tree_traverse(gint start, gint length,
                                                       gpointer user_data){
-    register Index_Geneseed_List *geneseed_list = user_data;
+    Index_Geneseed_List *geneseed_list = user_data;
     Index_Interval interval;
     /**/
     interval.start = start;
@@ -1609,7 +1609,7 @@ static void Index_Interval_NOI_Tree_traverse(gint start, gint length,
 
 static int Index_Geneseed_Subseed_compare(const void *a,
                                           const void *b){
-    register Index_Subseed **subseed_a = (Index_Subseed**)a,
+    Index_Subseed **subseed_a = (Index_Subseed**)a,
                            **subseed_b = (Index_Subseed**)b;
     return (*subseed_a)->hsp->target_start
          - (*subseed_b)->hsp->target_start;
@@ -1618,10 +1618,10 @@ static int Index_Geneseed_Subseed_compare(const void *a,
 #if 0
 static void Index_Geneseed_get_regions(Index_Geneseed *index_geneseed,
                                        NOI_Tree_Set *nts, gint max_target_span){
-    register gint i, start, length;
-    register gint target_range;
-    register Index_Subseed *subseed;
-    register HSP *hsp;
+    gint i, start, length;
+    gint target_range;
+    Index_Subseed *subseed;
+    HSP *hsp;
     NOI_Tree_delta_init(index_geneseed->coverage, nts);
     /* FIXME: optimisation replace qsort of HSPset with radix type sort */
     qsort(index_geneseed->subseed_list->pdata, index_geneseed->subseed_list->len,
@@ -1656,10 +1656,10 @@ static void Index_Geneseed_get_regions(Index_Geneseed *index_geneseed,
 
 static void Index_Geneseed_get_regions(Index_Geneseed *index_geneseed,
                                        NOI_Tree_Set *nts, gint max_target_span){
-    register gint i, start, length;
-    register gint target_range;
-    register Index_Subseed *subseed;
-    register HSP *hsp;
+    gint i, start, length;
+    gint target_range;
+    Index_Subseed *subseed;
+    HSP *hsp;
     NOI_Tree_delta_init(index_geneseed->coverage, nts);
     /* FIXME: optimisation replace qsort of HSPset with radix type sort */
     qsort(index_geneseed->subseed_list->pdata, index_geneseed->subseed_list->len,
@@ -1694,7 +1694,7 @@ static void Index_Geneseed_get_regions(Index_Geneseed *index_geneseed,
 
 static int Index_Geneseed_compare(const void *a,
                                   const void *b){
-    register Index_Geneseed **geneseed_a = (Index_Geneseed**)a,
+    Index_Geneseed **geneseed_a = (Index_Geneseed**)a,
                             **geneseed_b = (Index_Geneseed**)b;
     return (*geneseed_a)->target_id
          - (*geneseed_b)->target_id;
@@ -1702,11 +1702,11 @@ static int Index_Geneseed_compare(const void *a,
 
 static Index_Geneseed_List *Index_Geneseed_List_create(GPtrArray *hspset_list,
                                      gint max_query_span, gint max_target_span){
-    register Index_Geneseed_List *geneseed_list
+    Index_Geneseed_List *geneseed_list
      = g_new(Index_Geneseed_List, hspset_list->len);
-    register Index_HSPset *index_hsp_set;
-    register Index_Geneseed *index_geneseed;
-    register gint i;
+    Index_HSPset *index_hsp_set;
+    Index_Geneseed *index_geneseed;
+    gint i;
     geneseed_list->curr_interval_list = NULL;
     geneseed_list->curr_target_id = -1;
     /**/
@@ -1728,8 +1728,8 @@ static Index_Geneseed_List *Index_Geneseed_List_create(GPtrArray *hspset_list,
     }
 
 static void Index_Geneseed_List_destroy(Index_Geneseed_List *geneseed_list){
-    register gint i;
-    register Index_Geneseed *index_geneseed;
+    gint i;
+    Index_Geneseed *index_geneseed;
     for(i = 0; i < geneseed_list->index_geneseed_list->len; i++){
         index_geneseed = geneseed_list->index_geneseed_list->pdata[i];
         Index_Geneseed_destroy(index_geneseed, geneseed_list->nts);
@@ -1742,9 +1742,9 @@ static void Index_Geneseed_List_destroy(Index_Geneseed_List *geneseed_list){
 
 static GArray *Index_Geneseed_List_get_regions(
                Index_Geneseed_List *geneseed_list){
-    register gint i;
-    register Index_Geneseed *index_geneseed;
-    register GArray *interval_list = g_array_new(FALSE, FALSE,
+    gint i;
+    Index_Geneseed *index_geneseed;
+    GArray *interval_list = g_array_new(FALSE, FALSE,
                                                  sizeof(Index_Interval));
     geneseed_list->curr_interval_list = interval_list;
     for(i = 0; i < geneseed_list->index_geneseed_list->len; i++){
@@ -1778,8 +1778,8 @@ static GPtrArray *Index_Geneseed_List_get_subseeds(Index *index,
 static gboolean Index_Geneseed_refine_RangeTree_report_fwd(gint x, gint y,
                                     gpointer info, gpointer user_data){
     /* Called for each selected new HSP */
-    register HSP *hsp = info;
-    register Index_Geneseed *index_geneseed = user_data;
+    HSP *hsp = info;
+    Index_Geneseed *index_geneseed = user_data;
     /* Add to keeper rangetree if not already present */
     if(!RangeTree_check_pos(index_geneseed->keeper_hsp_tree, x, y)){
         RangeTree_add(index_geneseed->keeper_hsp_tree, x, y, hsp);
@@ -1792,8 +1792,8 @@ static gboolean Index_Geneseed_refine_RangeTree_report_fwd(gint x, gint y,
 static gboolean Index_Geneseed_refine_RangeTree_report_rev(gint x, gint y,
                                     gpointer info, gpointer user_data){
     /* Called for each selected new HSP */
-    register HSP *hsp = info;
-    register Index_Geneseed *index_geneseed = user_data;
+    HSP *hsp = info;
+    Index_Geneseed *index_geneseed = user_data;
     /* Add to keeper rangetree if not already present */
     if(!RangeTree_check_pos(index_geneseed->keeper_hsp_tree, x, y)){
         RangeTree_add(index_geneseed->keeper_hsp_tree, x, y, hsp);
@@ -1804,7 +1804,7 @@ static gboolean Index_Geneseed_refine_RangeTree_report_rev(gint x, gint y,
     }
 
 static int Index_HSPset_compare(const void *a, const void *b){
-    register Index_HSPset **index_hspset_a = (Index_HSPset**)a,
+    Index_HSPset **index_hspset_a = (Index_HSPset**)a,
                           **index_hspset_b = (Index_HSPset**)b;
     return (*index_hspset_a)->target_id
          - (*index_hspset_b)->target_id;
@@ -1813,12 +1813,12 @@ static int Index_HSPset_compare(const void *a, const void *b){
 static void Index_Geneseed_refine_subseeds(
             Index_Geneseed_List *index_geneseed_list,
             GPtrArray *subseed_hsp_list){
-    register gint i, j, ig_pos = 0, query_range, target_range;
-    register Index_HSPset *index_hspset;
-    register Index_Geneseed *index_geneseed;
-    register HSP *hsp;
-    register GPtrArray *swap_list;
-    register Index_Subseed *subseed;
+    gint i, j, ig_pos = 0, query_range, target_range;
+    Index_HSPset *index_hspset;
+    Index_Geneseed *index_geneseed;
+    HSP *hsp;
+    GPtrArray *swap_list;
+    Index_Subseed *subseed;
     /* Sort subseed_hsp_list by target_id */
     qsort(subseed_hsp_list->pdata, subseed_hsp_list->len,
           sizeof(gpointer), Index_HSPset_compare);
@@ -1893,10 +1893,10 @@ static void Index_Geneseed_refine_subseeds(
 
 static GPtrArray *Index_Geneseed_collect_hsps(
                   Index_Geneseed_List *index_geneseed_list){
-    register GPtrArray *hsp_list = g_ptr_array_new();
-    register gint i;
-    register Index_Geneseed *index_geneseed;
-    register Index_HSPset *index_hspset;
+    GPtrArray *hsp_list = g_ptr_array_new();
+    gint i;
+    Index_Geneseed *index_geneseed;
+    Index_HSPset *index_hspset;
     for(i = 0; i < index_geneseed_list->index_geneseed_list->len; i++){
         index_geneseed = index_geneseed_list->index_geneseed_list->pdata[i];
         index_hspset = Index_Geneseed_collect_hspset(index_geneseed);
@@ -1911,8 +1911,8 @@ static GPtrArray *Index_Geneseed_collect_hsps(
     }
 
 static void Index_HSPset_List_destroy(GPtrArray *index_hspset_list){
-    register gint i;
-    register Index_HSPset *index_hsp_set;
+    gint i;
+    Index_HSPset *index_hsp_set;
     for(i = 0; i < index_hspset_list->len; i++){
         index_hsp_set = index_hspset_list->pdata[i];
         Index_HSPset_destroy(index_hsp_set);
@@ -1925,15 +1925,15 @@ GPtrArray *Index_get_HSPsets_geneseed(Index *index, HSP_Param *hsp_param,
                                   Sequence *query, gboolean revcomp_target,
                                   gint geneseed_threshold, gint geneseed_repeat,
                                   gint max_query_span, gint max_target_span){
-    register gint original_hsp_threshold = hsp_param->threshold,
+    gint original_hsp_threshold = hsp_param->threshold,
                   original_seed_repeat = hsp_param->seed_repeat;
-    register GPtrArray *geneseed_hsp_list, *subseed_hsp_list,
+    GPtrArray *geneseed_hsp_list, *subseed_hsp_list,
                        *final_hsp_list;
-    register Index_Geneseed_List *index_geneseed_list;
-    register GArray *interval_list;
-    register Index_Strand *index_strand = Index_get_index_strand(index,
+    Index_Geneseed_List *index_geneseed_list;
+    GArray *interval_list;
+    Index_Strand *index_strand = Index_get_index_strand(index,
                                                                  revcomp_target);
-    register GArray *word_seed_list = Index_get_word_seed_list(index, query,
+    GArray *word_seed_list = Index_get_word_seed_list(index, query,
                                                      index_strand, hsp_param);
     /* g_message("have [%d] words", word_seed_list->len); */
     /* Find geneseed HSPs */

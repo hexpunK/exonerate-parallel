@@ -29,7 +29,7 @@ SparseCache *SparseCache_create(gint length,
                                 SparseCache_EmptyFunc empty_func,
                                 SparseCache_FreeFunc free_func,
                                 gpointer user_data){
-    register SparseCache *sc = g_new(SparseCache, 1);
+    SparseCache *sc = g_new(SparseCache, 1);
     g_assert(fill_func);
     sc->ref_count = 1;
     sc->page_total = (length >> SparseCache_PAGE_SIZE_BIT_WIDTH) + 1;
@@ -45,8 +45,8 @@ SparseCache *SparseCache_create(gint length,
     }
 
 void SparseCache_destroy(SparseCache *sc){
-    register SparseCache_Page *page;
-    register gint i;
+    SparseCache_Page *page;
+    gint i;
     if(--sc->ref_count)
         return;
     for(i = 0; i < sc->page_total; i++){
@@ -72,7 +72,7 @@ SparseCache *SparseCache_share(SparseCache *sc){
     }
 
 static SparseCache_Page *SparseCache_fill(SparseCache *sc, gint page_id){
-    register SparseCache_Page *page;
+    SparseCache_Page *page;
     g_assert(!sc->page_list[page_id]);
     page = sc->fill_func((page_id << SparseCache_PAGE_SIZE_BIT_WIDTH),
                          sc->user_data);
@@ -83,8 +83,8 @@ static SparseCache_Page *SparseCache_fill(SparseCache *sc, gint page_id){
     }
 
 gpointer SparseCache_get(SparseCache *sc, gint pos){
-    register gint page_id = SparseCache_pos2page(pos);
-    register SparseCache_Page *page = sc->page_list[page_id];
+    gint page_id = SparseCache_pos2page(pos);
+    SparseCache_Page *page = sc->page_list[page_id];
     g_assert(pos >= 0);
     g_assert(pos < sc->length);
     if(!page)
@@ -101,9 +101,9 @@ gsize SparseCache_memory_usage(SparseCache *sc){
 
 void SparseCache_copy(SparseCache *sc, gint start, gint length,
                       gchar *dst){
-    register gint pos = start, dst_pos = 0, page_id, copy_len,
+    gint pos = start, dst_pos = 0, page_id, copy_len,
                   read_remain = length, page_remain, page_start;
-    register SparseCache_Page *page;
+    SparseCache_Page *page;
     do {
         page_id = SparseCache_pos2page(pos);
         page = sc->page_list[page_id];

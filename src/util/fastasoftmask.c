@@ -23,10 +23,10 @@
 FILE *file;
 
 static void fasta_softmask_merge(Sequence *unmasked, Sequence *masked){
-    register Sequence *softmask_seq;
-    register gchar *sm = g_new(gchar, unmasked->len+1);
-    register gint i;
-    register gchar *ms = Sequence_get_str(unmasked),
+    Sequence *softmask_seq;
+    gchar *sm = g_new(gchar, unmasked->len+1);
+    gint i;
+    gchar *ms = Sequence_get_str(unmasked),
                    *us = Sequence_get_str(masked);
     sm[unmasked->len] = '\0';
     for(i = 0; i < unmasked->len; i++){
@@ -48,10 +48,10 @@ static void fasta_softmask_merge(Sequence *unmasked, Sequence *masked){
     }
 
 static void fasta_softmask(gchar *unmasked_path, gchar *masked_path){
-    register Alphabet *alphabet_unmasked, *alphabet_masked;
-    register FastaDB *fdb_unmasked, *fdb_masked;
-    register FastaDB_Seq *fdbs_unmasked = NULL, *fdbs_masked = NULL;
-    register FastaDB_Mask mask = FastaDB_Mask_ID
+    Alphabet *alphabet_unmasked, *alphabet_masked;
+    FastaDB *fdb_unmasked, *fdb_masked;
+    FastaDB_Seq *fdbs_unmasked = NULL, *fdbs_masked = NULL;
+    FastaDB_Mask mask = FastaDB_Mask_ID
                                 |FastaDB_Mask_DEF
                                 |FastaDB_Mask_SEQ;
     alphabet_unmasked = Alphabet_create(Alphabet_Type_UNKNOWN, FALSE);
@@ -89,7 +89,7 @@ static void fasta_softmask(gchar *unmasked_path, gchar *masked_path){
     }
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *unmasked_path, *masked_path, *outputFile;
     ArgumentSet_add_option(as, 'u', "unmasked", "path",

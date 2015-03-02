@@ -30,14 +30,14 @@
 
 static gboolean test_rtrf(gint x, gint y, gpointer info,
                           gpointer user_data){
-    register gint *total = user_data;
+    gint *total = user_data;
     (*total)++;
     g_message("Found (%d,%d) (count:%d)", x, y, *total);
     return FALSE;
     }
 
 int main(void){
-    register RangeTree *rt = RangeTree_create();
+    RangeTree *rt = RangeTree_create();
     gint total = 0;
     RangeTree_add(rt, 3, 5, NULL); /* within */
     RangeTree_add(rt, 5, 8, NULL);

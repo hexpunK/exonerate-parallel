@@ -17,14 +17,14 @@
 #include "lineparse.h"
 
 int main(void){
-    register gchar *path =
+    gchar *path =
         g_strconcat(SOURCE_ROOT_DIR, G_DIR_SEPARATOR_S,
                     "src", G_DIR_SEPARATOR_S,
                     "general", G_DIR_SEPARATOR_S,
                     __FILE__, NULL);
-    register FILE *fp = fopen(path, "r");
-    register LineParse *lp;
-    register int i;
+    FILE *fp = fopen(path, "r");
+    LineParse *lp;
+    int i;
     if(!fp)
         g_error("Could not open file [%s]", path);
     lp = LineParse_create(fp);

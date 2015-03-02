@@ -22,12 +22,12 @@
 FILE *file;
 
 static void test_coding2coding(Sequence *query, Sequence *target){
-    register C4_Score score;
-    register C4_Model *model = Coding2Coding_create();
-    register Coding2Coding_Data *c2cd = Coding2Coding_Data_create(
+    C4_Score score;
+    C4_Model *model = Coding2Coding_create();
+    Coding2Coding_Data *c2cd = Coding2Coding_Data_create(
                                                query, target);
-    register Alignment *alignment;
-    register Optimal *optimal = Optimal_create(model, NULL,
+    Alignment *alignment;
+    Optimal *optimal = Optimal_create(model, NULL,
                                                Optimal_Type_SCORE
                                               |Optimal_Type_PATH,
                                               FALSE);
@@ -51,9 +51,9 @@ static void test_coding2coding(Sequence *query, Sequence *target){
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register Sequence
+    Sequence
         *qy = Sequence_create("qy", NULL,
 "AGCCCAGCCAAGCACTGTCAGGAATCCTGTGAAGCAGCTCCAGCTATGTGTGAAGAAG"
 "AGGACAGCACTGCCTTGGTGTGTGACAATGGCTCTGGGCTCTGTAAGGCCGGCTTTGCT", 0,

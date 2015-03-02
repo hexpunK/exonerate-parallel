@@ -39,8 +39,8 @@
 FILE *file; // An output file, can be a file or stdout/err. Awful global hack.
 
 int Argument_main(Argument *arg){
-    register Analysis *analysis;
-    register ArgumentSet *as_input =
+    Analysis *analysis;
+    ArgumentSet *as_input =
         ArgumentSet_create("Sequence Input Options");
     GPtrArray *query_path_list, *target_path_list;
     Alphabet_Type query_type, target_type;

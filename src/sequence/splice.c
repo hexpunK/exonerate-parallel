@@ -29,7 +29,7 @@
 #endif /* SPLICE_IMPOSSIBLY_LOW_SCORE */
 
 Splice_ArgumentSet *Splice_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Splice_ArgumentSet sas = {NULL, NULL, FALSE};
     if(arg){
         as = ArgumentSet_create("Splice Site Prediction Options");
@@ -60,7 +60,7 @@ Splice_ArgumentSet *Splice_ArgumentSet_create(Argument *arg){
  */
 
 static void SplicePredictor_add_data_primate_5SS(SplicePredictor *sp){
-    register gint i, j;
+    gint i, j;
     gint splice_pssm_primate_5SS_data[9][4] = {
     /*            A    C    G   T                        */
     /*  -3 */ {  28,  40,  17,  14 },
@@ -86,7 +86,7 @@ static void SplicePredictor_add_data_primate_5SS(SplicePredictor *sp){
     }
 
 static void SplicePredictor_add_data_primate_3SS(SplicePredictor *sp){
-    register gint i, j;
+    gint i, j;
     gint splice_pssm_primate_3SS_data[15][4]  = {
     /*            A     C     G     T  */
     /* -14 */ {  10,  31,  14,  44 },
@@ -121,12 +121,12 @@ static void SplicePredictor_add_data_primate_3SS(SplicePredictor *sp){
 /* ------------------------------------------------------------ */
 
 static void SplicePredictor_parse_data(SplicePredictor *sp, gchar *path){
-    register FILE *fp = fopen(path, "r");
-    register LineParse *lp;
-    register gint i;
+    FILE *fp = fopen(path, "r");
+    LineParse *lp;
+    gint i;
     gfloat num;
-    register gchar *word;
-    register GArray *number_list = g_array_new(FALSE, FALSE, sizeof(gfloat));
+    gchar *word;
+    GArray *number_list = g_array_new(FALSE, FALSE, sizeof(gfloat));
     if(!fp)
         g_error("Could not open splice frequency data [%s]", path);
     lp = LineParse_create(fp);
@@ -178,7 +178,7 @@ static void SplicePredictor_parse_data(SplicePredictor *sp, gchar *path){
 
 #if 0
 static void SplicePredictor_info(SplicePredictor *sp){
-    register gint i;
+    gint i;
     g_message("type [%d] len [%d] splice_after [%d]",
             sp->type, sp->model_length, sp->model_splice_after);
     for(i = 0; i < sp->model_length; i++)
@@ -213,7 +213,7 @@ static void SplicePredictor_add_3SS_data(SplicePredictor *sp, gchar *path){
 
 static SplicePredictor_GTAGonly *SplicePredictor_GTAGonly_create(
                                  SplicePredictor *sp){
-    register SplicePredictor_GTAGonly *spgo
+    SplicePredictor_GTAGonly *spgo
      = g_new(SplicePredictor_GTAGonly, 1);
     switch(sp->type){
         case SpliceType_ss5_forward:
@@ -240,10 +240,10 @@ static SplicePredictor_GTAGonly *SplicePredictor_GTAGonly_create(
     }
 
 SplicePredictor *SplicePredictor_create(SpliceType type){
-    register SplicePredictor *sp = g_new(SplicePredictor, 1);
-    register gint i, j, a, z;
-    register gfloat swap;
-    register Splice_ArgumentSet *sas = Splice_ArgumentSet_create(NULL);
+    SplicePredictor *sp = g_new(SplicePredictor, 1);
+    gint i, j, a, z;
+    gfloat swap;
+    Splice_ArgumentSet *sas = Splice_ArgumentSet_create(NULL);
     sp->ref_count = 1;
     sp->type = type;
     if((type == SpliceType_ss5_forward)
@@ -311,7 +311,7 @@ SplicePredictor *SplicePredictor_share(SplicePredictor *sp){
 
 static gboolean Splice_predict_is_on_GTAG(SplicePredictor *sp,
                           gchar *seq, guint seq_pos){
-    register gchar base_one = toupper(seq[seq_pos]),
+    gchar base_one = toupper(seq[seq_pos]),
                    base_two = toupper(seq[seq_pos+1]);
     return ((base_one == sp->gtag_only->expect_one)
          && (base_two == sp->gtag_only->expect_two));
@@ -319,8 +319,8 @@ static gboolean Splice_predict_is_on_GTAG(SplicePredictor *sp,
 
 static gfloat Splice_predict_position(SplicePredictor *sp,
                                       gchar *seq, gint seq_len, guint seq_pos){
-    register gfloat pos_score, score = 0.0;
-    register gint i,
+    gfloat pos_score, score = 0.0;
+    gint i,
                   seq_start = seq_pos-sp->model_splice_after,
                   model_start = 0,
                   calc_length = sp->model_length;
@@ -346,9 +346,9 @@ static gfloat Splice_predict_position(SplicePredictor *sp,
 gint SplicePredictor_predict(SplicePredictor *sp,
                              gchar *seq, gint seq_len,
                              guint start, guint length, gfloat *score){
-    register guint i;
-    register guint max_pos = -1;
-    register gfloat curr_score, max_score = SPLICE_IMPOSSIBLY_LOW_SCORE;
+    guint i;
+    guint max_pos = -1;
+    gfloat curr_score, max_score = SPLICE_IMPOSSIBLY_LOW_SCORE;
     g_assert((start+length) <= seq_len);
     for(i = 0; i < length; i++){
         curr_score = Splice_predict_position(sp, seq, seq_len, start+i);
@@ -366,7 +366,7 @@ void SplicePredictor_predict_array(SplicePredictor *sp,
                                    gchar *seq, guint seq_len,
                                    guint start, guint length,
                                    gfloat *pred){
-    register guint i;
+    guint i;
     g_assert((start+length) <= seq_len);
     g_assert(seq);
     g_assert(pred);
@@ -384,8 +384,8 @@ void SplicePredictor_predict_array_int(SplicePredictor *sp,
                                        gchar *seq, guint seq_len,
                                        guint start, guint length,
                                        gint *pred){
-    register guint i;
-    register gfloat score;
+    guint i;
+    gfloat score;
     g_assert(seq);
     g_assert(length?(pred?TRUE:FALSE):TRUE);
     g_assert((start+length) <= seq_len);
@@ -397,8 +397,8 @@ void SplicePredictor_predict_array_int(SplicePredictor *sp,
     }
 
 gfloat SplicePredictor_get_max_score(SplicePredictor *sp){
-    register gfloat score = 0.0, pos_score;
-    register gint i, j;
+    gfloat score = 0.0, pos_score;
+    gint i, j;
     for(i = 0; i < sp->model_length; i++){
         pos_score = sp->model_data[i][0];
         for(j = 1; j < 4; j++)
@@ -410,7 +410,7 @@ gfloat SplicePredictor_get_max_score(SplicePredictor *sp){
     }
 
 SplicePredictorSet *SplicePredictorSet_create(void){
-    register SplicePredictorSet *sps = g_new(SplicePredictorSet, 1);
+    SplicePredictorSet *sps = g_new(SplicePredictorSet, 1);
     sps->ss5_forward = SplicePredictor_create(SpliceType_ss5_forward);
     sps->ss5_reverse = SplicePredictor_create(SpliceType_ss5_reverse);
     sps->ss3_forward = SplicePredictor_create(SpliceType_ss3_forward);
@@ -435,16 +435,16 @@ void SplicePredictorSet_destroy(SplicePredictorSet *sps){
 
 static gpointer SplicePredictor_cache_get_func(gint pos, gpointer page_data,
                                                gpointer user_data){
-    register gint *data = page_data;
+    gint *data = page_data;
     return GINT_TO_POINTER(data[pos]);
     }
 
 static SparseCache_Page *SplicePrediction_cache_fill_func(gint start,
                                                           gpointer user_data){
-    register SplicePrediction *spn = user_data;
-    register SparseCache_Page *page = g_new(SparseCache_Page, 1);
-    register gint seq_start, seq_length, pred_start, pred_length;
-    register gchar *seq;
+    SplicePrediction *spn = user_data;
+    SparseCache_Page *page = g_new(SparseCache_Page, 1);
+    gint seq_start, seq_length, pred_start, pred_length;
+    gchar *seq;
     page->get_func = SplicePredictor_cache_get_func;
     page->copy_func = NULL;
     pred_start = MAX(0, start);
@@ -466,8 +466,8 @@ static SparseCache_Page *SplicePrediction_cache_fill_func(gint start,
 SplicePrediction *SplicePrediction_create(SplicePredictor *sp, gint len,
                                   SplicePrediction_get_seq_func get_seq_func,
                                   gboolean use_single, gpointer user_data){
-    register SplicePrediction *spn = g_new(SplicePrediction, 1);
-    register gchar *seq;
+    SplicePrediction *spn = g_new(SplicePrediction, 1);
+    gchar *seq;
     g_assert(get_seq_func);
     g_assert(len > 0);
     spn->sp = SplicePredictor_share(sp);

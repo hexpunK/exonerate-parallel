@@ -16,10 +16,10 @@
 #include "analysis.h"
 
 int Argument_main(Argument *arg){
-    register Analysis *analysis;
-    register gchar *query_path, *target_path;
-    register Alphabet_Type query_type, target_type;
-    register GPtrArray *query_path_list = g_ptr_array_new(),
+    Analysis *analysis;
+    gchar *query_path, *target_path;
+    Alphabet_Type query_type, target_type;
+    GPtrArray *query_path_list = g_ptr_array_new(),
                        *target_path_list = g_ptr_array_new();
     if(arg->argc == 5){
         query_path = arg->argv[1];

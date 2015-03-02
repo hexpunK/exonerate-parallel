@@ -35,7 +35,7 @@ static Comparison_Param *Comparison_Param_create_without_mirror(
                                           HSP_Param *protein_hsp_param,
                                           HSP_Param *codon_hsp_param,
                                           gboolean swap_param){
-    register Comparison_Param *param = g_new(Comparison_Param, 1);
+    Comparison_Param *param = g_new(Comparison_Param, 1);
     param->thread_ref = NULL;
     param->query_type = query_type;
     param->target_type = target_type;
@@ -54,7 +54,7 @@ Comparison_Param *Comparison_Param_create(Alphabet_Type query_type,
                                           HSP_Param *dna_hsp_param,
                                           HSP_Param *protein_hsp_param,
                                           HSP_Param *codon_hsp_param){
-    register Comparison_Param *param
+    Comparison_Param *param
         = Comparison_Param_create_without_mirror(
                             query_type, target_type,
                             dna_hsp_param, protein_hsp_param,
@@ -98,7 +98,7 @@ Comparison_Param *Comparison_Param_share(Comparison_Param *param){
     }
 
 Comparison_Param *Comparison_Param_swap(Comparison_Param *param){
-    register Comparison_Param *mirror
+    Comparison_Param *mirror
            = Comparison_Param_share(param->mirror);
     g_assert(param);
     g_assert(param->mirror);
@@ -122,7 +122,7 @@ HSPset_ArgumentSet *Comparison_Param_get_HSPSet_Argument_Set(
 
 Comparison *Comparison_create(Comparison_Param *param,
                               Sequence *query, Sequence *target){
-    register Comparison *comparison = g_new(Comparison, 1);
+    Comparison *comparison = g_new(Comparison, 1);
     g_assert(param);
     g_assert(query);
     g_assert(target);
@@ -212,7 +212,7 @@ void Comparison_finalise(Comparison *comparison){
     }
 
 void Comparison_swap(Comparison *comparison){
-    register Sequence *query;
+    Sequence *query;
     g_assert(ThreadRef_get_count(comparison->thread_ref) == 1);
     /* Mirror parameters */
     comparison->param = Comparison_Param_share(comparison->param->mirror);
@@ -236,7 +236,7 @@ void Comparison_swap(Comparison *comparison){
 /* Swaps query and target of comparison in place */
 
 void Comparison_revcomp(Comparison *comparison){
-    register Sequence *rc_query = Sequence_revcomp(comparison->query),
+    Sequence *rc_query = Sequence_revcomp(comparison->query),
                       *rc_target = Sequence_revcomp(comparison->target);
     g_assert(ThreadRef_get_count(comparison->thread_ref) == 1);
     g_assert(comparison->dna_hspset);

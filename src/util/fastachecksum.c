@@ -24,8 +24,8 @@ static gboolean fasta_checksum_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path;
     ArgumentSet_add_option(as, 'f', "fasta", "path",

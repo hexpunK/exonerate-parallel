@@ -28,7 +28,7 @@ void CDNA2Genome_Data_init(CDNA2Genome_Data *cd2gd,
 
 CDNA2Genome_Data *CDNA2Genome_Data_create(Sequence *query,
                                           Sequence *target){
-    register CDNA2Genome_Data *cd2gd = g_new0(CDNA2Genome_Data, 1);
+    CDNA2Genome_Data *cd2gd = g_new0(CDNA2Genome_Data, 1);
     CDNA2Genome_Data_init(cd2gd, query, target);
     return cd2gd;
     }
@@ -50,13 +50,13 @@ void CDNA2Genome_Data_destroy(CDNA2Genome_Data *cd2gd){
 /* Create a special single-orientation e2g model */
 /* FIXME: move this to utr module ? */
 static C4_Model *CDNA2Genome_UTR_create(void){
-    register C4_Model *model = Affine_create(
+    C4_Model *model = Affine_create(
                 Affine_Model_Type_LOCAL,
                 Alphabet_Type_DNA,
                 Alphabet_Type_DNA, FALSE);
-    register C4_Model *intron_model = Intron_create("forward",
+    C4_Model *intron_model = Intron_create("forward",
                                                     FALSE, TRUE, TRUE);
-    register C4_Transition *match_transition
+    C4_Transition *match_transition
            = C4_Model_select_single_transition(model, C4_Label_MATCH);
     g_assert(match_transition);
     C4_Model_open(model);
@@ -68,10 +68,10 @@ static C4_Model *CDNA2Genome_UTR_create(void){
     }
 
 C4_Model *CDNA2Genome_create(void){
-    register C4_Model *model = C4_Model_create("cdna2genome");
-    register C4_Model *c2g_model = Coding2Genome_create();
-    register C4_Model *utr_model = CDNA2Genome_UTR_create();
-    register C4_Transition *transition;
+    C4_Model *model = C4_Model_create("cdna2genome");
+    C4_Model *c2g_model = Coding2Genome_create();
+    C4_Model *utr_model = CDNA2Genome_UTR_create();
+    C4_Transition *transition;
     g_assert(model);
     /**/
     C4_Model_insert(model, c2g_model, NULL, NULL);

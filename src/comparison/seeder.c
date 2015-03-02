@@ -31,7 +31,7 @@
 #endif /* Swap */
 
 Seeder_ArgumentSet *Seeder_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Seeder_ArgumentSet sas;
     if(arg){
         as = ArgumentSet_create("Alignment Seeding Options");
@@ -55,7 +55,7 @@ Seeder_ArgumentSet *Seeder_ArgumentSet_create(Argument *arg){
 /**/
 
 static Seeder_WordInfo *Seeder_WordInfo_create(Seeder *seeder){
-    register Seeder_WordInfo *word_info
+    Seeder_WordInfo *word_info
            = RecycleBin_alloc(seeder->recycle_wordinfo);
     word_info->seed_list = NULL;
     word_info->neighbour_list = NULL;
@@ -68,8 +68,8 @@ static Seeder_WordInfo *Seeder_WordInfo_create(Seeder *seeder){
 
 static void Seeder_WordInfo_empty(Seeder *seeder,
                                   Seeder_WordInfo *word_info){
-    register Seeder_Seed *seed;
-    register Seeder_Neighbour *neighbour;
+    Seeder_Seed *seed;
+    Seeder_Neighbour *neighbour;
     while(word_info->seed_list){
         seed = word_info->seed_list;
         word_info->seed_list = seed->next;
@@ -88,7 +88,7 @@ static void Seeder_WordInfo_add_Seed(Seeder *seeder,
                                      Seeder_Context *context,
                                      Match_Score query_expect,
                                      gint qpos){
-    register Seeder_Seed *seed;
+    Seeder_Seed *seed;
     g_assert(word_info);
     if(seeder->saturate_threshold){
         if(!word_info->match_mailbox) /* Already blocked */
@@ -111,7 +111,7 @@ static void Seeder_WordInfo_add_Seed(Seeder *seeder,
 static void Seeder_WordInfo_add_Neighbour(Seeder *seeder,
             Seeder_WordInfo *word_info,
             Seeder_WordInfo *neighbour){
-    register Seeder_Neighbour *n;
+    Seeder_Neighbour *n;
     g_assert(seeder);
     g_assert(word_info);
     g_assert(neighbour);
@@ -128,7 +128,7 @@ static void Seeder_WordInfo_add_Neighbour(Seeder *seeder,
 /**/
 
 static Seeder_QueryInfo *Seeder_QueryInfo_create(Sequence *query){
-    register Seeder_QueryInfo *query_info = g_new(Seeder_QueryInfo, 1);
+    Seeder_QueryInfo *query_info = g_new(Seeder_QueryInfo, 1);
     query_info->query = Sequence_share(query);
     query_info->curr_comparison = NULL;
     return query_info;
@@ -146,9 +146,9 @@ static void Seeder_QueryInfo_destroy(Seeder_QueryInfo *query_info){
 
 static gpointer Seeder_FSM_merge_func(gpointer a, gpointer b,
                                       gpointer user_data){
-    register Seeder_WordInfo *word_info_a = a,
+    Seeder_WordInfo *word_info_a = a,
                              *word_info_b = b;
-    register Seeder *seeder = user_data;
+    Seeder *seeder = user_data;
     /* Assume word_info_b is always empty during merging */
     g_assert(!word_info_b->seed_list);
     g_assert(!word_info_b->neighbour_list);
@@ -163,8 +163,8 @@ static gpointer Seeder_FSM_combine_func(gpointer a, gpointer b,
     }
 
 static Seeder_FSM *Seeder_FSM_create(Seeder *seeder){
-    register Seeder_FSM *seeder_fsm = g_new(Seeder_FSM, 1);
-    register Match *match = seeder->any_hsp_param->match;
+    Seeder_FSM *seeder_fsm = g_new(Seeder_FSM, 1);
+    Match *match = seeder->any_hsp_param->match;
     seeder_fsm->fsm
             = FSM_create((gchar*)match->comparison_alphabet->member,
                                  Seeder_FSM_merge_func,
@@ -192,8 +192,8 @@ typedef struct {
 
 static Seeder_WordInfo *Seeder_add_WordInfo(Seeder *seeder, gchar *word,
                                             Seeder_Context *context){
-    register Seeder_WordInfo *word_info;
-    register VFSM_Int state = 0, leaf;
+    Seeder_WordInfo *word_info;
+    VFSM_Int state = 0, leaf;
     if(seeder->seeder_fsm){ /* Add to FSM */
         word_info = Seeder_WordInfo_create(seeder);
         word_info = FSM_add(seeder->seeder_fsm->fsm, word,
@@ -238,7 +238,7 @@ static gboolean Seeder_word_is_valid(Match *match,
 /**/
 
 static Seeder_VFSM *Seeder_VFSM_create(Seeder *seeder){
-    register Seeder_VFSM *seeder_vfsm = g_new(Seeder_VFSM, TRUE);
+    Seeder_VFSM *seeder_vfsm = g_new(Seeder_VFSM, TRUE);
     seeder_vfsm->vfsm = VFSM_create(
       (gchar*)seeder->any_hsp_param->match->comparison_alphabet->member,
               seeder->any_hsp_param->wordlen);
@@ -281,10 +281,10 @@ static gboolean Seeder_decide_fsm_type(gchar *force_fsm){
 
 static Seeder_Loader *Seeder_Loader_create(HSP_Param *hsp_param,
         Seeder_ArgumentSet *sas, gsize hspset_offset){
-    register Seeder_Loader *loader = g_new(Seeder_Loader, 1);
-    register Alphabet *comparison_alphabet
+    Seeder_Loader *loader = g_new(Seeder_Loader, 1);
+    Alphabet *comparison_alphabet
                       = hsp_param->match->comparison_alphabet;
-    register gint alphabet_size
+    gint alphabet_size
               = strlen((gchar*)comparison_alphabet->member);
     loader->hsp_param = HSP_Param_share(hsp_param);
     if(hsp_param->match->target->is_translated)
@@ -308,7 +308,7 @@ Seeder *Seeder_create(gint verbosity,
                       Match_Score saturate_threshold,
                       Seeder_ReportFunc report_func,
                       gpointer user_data){
-    register Seeder *seeder = g_new0(Seeder, 1);
+    Seeder *seeder = g_new0(Seeder, 1);
     seeder->sas = Seeder_ArgumentSet_create(NULL);
     if(seeder->sas->word_ambiguity < 1)
         g_error("Word ambiguity cannot be less than one.");
@@ -383,8 +383,8 @@ Seeder *Seeder_create(gint verbosity,
     }
 
 void Seeder_destroy(Seeder *seeder){
-    register gint i;
-    register Seeder_QueryInfo *query_info;
+    gint i;
+    Seeder_QueryInfo *query_info;
     Comparison_Param_destroy(seeder->comparison_param);
     for(i = 0; i < seeder->query_info_list->len; i++){
         query_info = seeder->query_info_list->pdata[i];
@@ -412,7 +412,7 @@ void Seeder_destroy(Seeder *seeder){
     }
 
 gsize Seeder_memory_usage(Seeder *seeder){
-    register gsize fsm_memory;
+    gsize fsm_memory;
     g_assert(seeder);
     if(seeder->seeder_fsm)
         fsm_memory = Seeder_FSM_memory_usage(seeder->seeder_fsm);
@@ -460,9 +460,9 @@ static gint Seeder_get_expect(Seeder *seeder, Seeder_Loader *loader,
 
 static gboolean Seeder_WordHood_traverse(gchar *word,
                  gint score, gpointer user_data){
-    register Seeder_TraverseData *traverse_data = user_data;
-    register Seeder *seeder = traverse_data->seeder;
-    register Seeder_WordInfo *word_info;
+    Seeder_TraverseData *traverse_data = user_data;
+    Seeder *seeder = traverse_data->seeder;
+    Seeder_WordInfo *word_info;
     g_assert(seeder);
     word_info = Seeder_add_WordInfo(traverse_data->seeder, word,
                                     traverse_data->context);
@@ -477,14 +477,14 @@ static gboolean Seeder_WordHood_traverse(gchar *word,
 
 static void Seeder_insert_query(Seeder *seeder, Seeder_Context *context,
                                 Sequence *query, gint frame){
-    register Match_Score query_expect = 0;
-    register gint i, ch, pos, orig_pos, valid_count = 0, wj_ctr = 0;
-    register Seeder_WordInfo *word_info;
-    register Match *match = context->loader->hsp_param->match;
-    register VFSM *vfsm = seeder->seeder_vfsm?seeder->seeder_vfsm->vfsm:NULL;
-    register VFSM_Int state = 0, leaf;
-    register Sequence *seq_masked = Sequence_mask(query);
-    register gchar *seq = Sequence_get_str(seq_masked);
+    Match_Score query_expect = 0;
+    gint i, ch, pos, orig_pos, valid_count = 0, wj_ctr = 0;
+    Seeder_WordInfo *word_info;
+    Match *match = context->loader->hsp_param->match;
+    VFSM *vfsm = seeder->seeder_vfsm?seeder->seeder_vfsm->vfsm:NULL;
+    VFSM_Int state = 0, leaf;
+    Sequence *seq_masked = Sequence_mask(query);
+    gchar *seq = Sequence_get_str(seq_masked);
     Seeder_TraverseData traverse_data;
     if(seeder->saturate_threshold){
         seeder->total_query_length += query->len;
@@ -561,7 +561,7 @@ static void Seeder_insert_query(Seeder *seeder, Seeder_Context *context,
 static Seeder_Context *Seeder_Context_create(Seeder *seeder,
                        Seeder_QueryInfo *query_info,
                        Seeder_Loader *loader){
-    register Seeder_Context *context
+    Seeder_Context *context
            = RecycleBin_alloc(seeder->recycle_context);
     context->loader = loader;
     context->query_info = query_info;
@@ -571,10 +571,10 @@ static Seeder_Context *Seeder_Context_create(Seeder *seeder,
 static void Seeder_load_query(Seeder *seeder,
                               Seeder_QueryInfo *query_info,
                               Seeder_Loader *loader){
-    register Match *match = loader->hsp_param->match;
-    register gint i;
-    register Sequence *aa_seq;
-    register Seeder_Context *context = Seeder_Context_create(seeder,
+    Match *match = loader->hsp_param->match;
+    gint i;
+    Sequence *aa_seq;
+    Seeder_Context *context = Seeder_Context_create(seeder,
                                                   query_info, loader);
     g_assert(match);
     g_assert(query_info->query->alphabet->type
@@ -594,7 +594,7 @@ static void Seeder_load_query(Seeder *seeder,
     }
 
 gboolean Seeder_add_query(Seeder *seeder, Sequence *query){
-    register Seeder_QueryInfo *query_info;
+    Seeder_QueryInfo *query_info;
     g_assert(seeder);
     g_assert(query);
     g_assert(!seeder->is_prepared);
@@ -624,7 +624,7 @@ static void Seeder_WordInfo_seed(Seeder_QueryInfo *query_info,
                                  Seeder_TargetInfo *target_info,
                                  gint query_pos, gint target_pos,
                                  Seeder_Loader *loader){
-    register HSPset *hspset;
+    HSPset *hspset;
     g_assert(query_pos >= 0);
     g_assert(target_pos >= 0);
     target_info->seeder->comparison_count++;
@@ -649,12 +649,12 @@ static void Seeder_WordInfo_seed(Seeder_QueryInfo *query_info,
 static void Seeder_FSM_traverse_func(guint seq_pos,
                                      gpointer node_data,
                                      gpointer user_data){
-    register Seeder_TargetInfo *target_info = user_data;
-    register Seeder_WordInfo *word_info = node_data;
-    register gint tpos, target_pos;
-    register Seeder *seeder = target_info->seeder;
-    register Seeder_Seed *seed;
-    register Seeder_Neighbour *neighbour;
+    Seeder_TargetInfo *target_info = user_data;
+    Seeder_WordInfo *word_info = node_data;
+    gint tpos, target_pos;
+    Seeder *seeder = target_info->seeder;
+    Seeder_Seed *seed;
+    Seeder_Neighbour *neighbour;
     if(target_info->curr_frame)
         tpos = (seq_pos * 3) + target_info->curr_frame - 1;
     else
@@ -695,10 +695,10 @@ static void Seeder_FSM_traverse_func(guint seq_pos,
 
 static void Seeder_VFSM_traverse_single(Seeder *seeder, gchar *seq,
                                         Seeder_TargetInfo *target_info){
-    register gint i, ch;
-    register VFSM_Int state = 0, leaf;
-    register VFSM *vfsm = seeder->seeder_vfsm->vfsm;
-    register Seeder_WordInfo *word_info;
+    gint i, ch;
+    VFSM_Int state = 0, leaf;
+    VFSM *vfsm = seeder->seeder_vfsm->vfsm;
+    Seeder_WordInfo *word_info;
     g_assert(vfsm);
     for(i = 0; seq[i]; i++){
         ch = toupper(seq[i]); /* FIXME: filter properly */
@@ -720,17 +720,17 @@ static void Seeder_VFSM_traverse_single(Seeder *seeder, gchar *seq,
 
 static void Seeder_VFSM_traverse_ambig(Seeder *seeder, gchar *seq,
                                        Seeder_TargetInfo *target_info){
-    register gint i, j, k, ch;
-    register VFSM_Int state, next_state, leaf;
-    register VFSM *vfsm = seeder->seeder_vfsm->vfsm;
-    register Seeder_WordInfo *word_info;
-    register gchar *ambig;
-    register VFSM_Int *temp_state_list,
+    gint i, j, k, ch;
+    VFSM_Int state, next_state, leaf;
+    VFSM *vfsm = seeder->seeder_vfsm->vfsm;
+    Seeder_WordInfo *word_info;
+    gchar *ambig;
+    VFSM_Int *temp_state_list,
                       *curr_state_list = g_new0(VFSM_Int,
                                                 seeder->sas->word_ambiguity),
                       *next_state_list = g_new0(VFSM_Int,
                                                 seeder->sas->word_ambiguity);
-    register gint curr_state_list_len = 1, next_state_list_len = 0;
+    gint curr_state_list_len = 1, next_state_list_len = 0;
     g_assert(vfsm);
     for(i = 0; seq[i]; i++){
         ch = toupper(seq[i]); /* FIXME: filter properly */
@@ -790,17 +790,17 @@ static void Seeder_prepare(Seeder *seeder){
 
 static void Seeder_FSM_traverse_ambig(Seeder *seeder, gchar *seq,
                                       FSM_Traverse_Func ftf, gpointer user_data){
-    register FSM *f = seeder->seeder_fsm->fsm;
-    register FSM_Node *n, *next_state;
-    register gint c;
-    register gchar *ambig;
-    register gint i, j, k;
-    register FSM_Node **temp_state_list,
+    FSM *f = seeder->seeder_fsm->fsm;
+    FSM_Node *n, *next_state;
+    gint c;
+    gchar *ambig;
+    gint i, j, k;
+    FSM_Node **temp_state_list,
                       **curr_state_list = g_new0(FSM_Node*,
                                                 seeder->sas->word_ambiguity),
                       **next_state_list = g_new0(FSM_Node*,
                                                 seeder->sas->word_ambiguity);
-    register gint curr_state_list_len = 1, next_state_list_len = 0;
+    gint curr_state_list_len = 1, next_state_list_len = 0;
     g_assert(f->is_compiled);
     curr_state_list[0] = f->root;
     for(i = 0; seq[i]; i++){
@@ -850,12 +850,12 @@ static void Seeder_FSM_traverse(Seeder *seeder, gchar *seq, FSM_Traverse_Func ft
     }
 
 void Seeder_add_target(Seeder *seeder, Sequence *target){
-    register gint i;
-    register Sequence *aa_seq;
-    register gchar *seq;
-    register Seeder_QueryInfo *query_info;
-    register Match *match = seeder->any_hsp_param->match;
-    register Sequence *target_masked;
+    gint i;
+    Sequence *aa_seq;
+    gchar *seq;
+    Seeder_QueryInfo *query_info;
+    Match *match = seeder->any_hsp_param->match;
+    Sequence *target_masked;
     Seeder_TargetInfo target_info;
     g_assert(seeder);
     g_assert(target);

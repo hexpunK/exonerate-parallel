@@ -21,9 +21,9 @@
 #include "fastadb.h"
 
 static int Fasta_Index_compare(const void *a, const void *b){
-    register FastaDB_Seq **fdbs_a = (FastaDB_Seq**)a,
+    FastaDB_Seq **fdbs_a = (FastaDB_Seq**)a,
                          **fdbs_b = (FastaDB_Seq**)b;
-    register gint result = strcmp((*fdbs_a)->seq->id,
+    gint result = strcmp((*fdbs_a)->seq->id,
                                   (*fdbs_b)->seq->id);
     if(!result)
         g_error("Duplicate fasta identifier [%s]", (*fdbs_a)->seq->id);
@@ -31,9 +31,9 @@ static int Fasta_Index_compare(const void *a, const void *b){
     }
 
 static void fasta_index_build(gchar *fasta_path, gchar *index_path){
-    register FILE *fp;
-    register FastaDB_Seq **fdbs_list;
-    register gint i;
+    FILE *fp;
+    FastaDB_Seq **fdbs_list;
+    gint i;
     guint total = 0;
     fp = fopen(index_path, "r");
     if(fp){
@@ -56,7 +56,7 @@ static void fasta_index_build(gchar *fasta_path, gchar *index_path){
     }
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *fasta_path, *index_path;
     ArgumentSet_add_option(as, 'f', "fasta", "path",

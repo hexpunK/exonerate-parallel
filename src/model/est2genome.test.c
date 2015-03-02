@@ -23,11 +23,11 @@ FILE *file;
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register C4_Model *est2genome;
-    register C4_Score score;
-    register Alignment *alignment;
-    register Optimal *optimal;
-    register gchar *query_seq =
+    C4_Model *est2genome;
+    C4_Score score;
+    Alignment *alignment;
+    Optimal *optimal;
+    gchar *query_seq =
                   "CGATCGATCGNATCGATCGATC"
                   "CATCTATCTAGCGAGCGATCTA",
                    *target_seq =
@@ -39,18 +39,18 @@ int Argument_main(Argument *arg){
               "NNNNNNNNNNNNNNNNNNNNNNNNNNNAG"
            /* "CTNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAC" */
                    "CATCTATCTANNNGCGAGCGATCTA";
-    register Alphabet *dna_alphabet = Alphabet_create(
+    Alphabet *dna_alphabet = Alphabet_create(
                                        Alphabet_Type_DNA, FALSE);
-    register Sequence *query = Sequence_create("query", NULL,
+    Sequence *query = Sequence_create("query", NULL,
                                query_seq, 0, Sequence_Strand_UNKNOWN,
                                dna_alphabet),
                       *target = Sequence_create("target", NULL,
                               target_seq, 0, Sequence_Strand_UNKNOWN,
                               dna_alphabet);
 /**/
-    register Region *region = Region_create(0, 0,
+    Region *region = Region_create(0, 0,
                                query->len, target->len);
-    register EST2Genome_Data *e2gd;
+    EST2Genome_Data *e2gd;
     Match_ArgumentSet_create(arg);
     Affine_ArgumentSet_create(arg);
     Intron_ArgumentSet_create(arg);

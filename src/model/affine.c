@@ -17,7 +17,7 @@
 #include "affine.h"
 
 Affine_ArgumentSet *Affine_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Affine_ArgumentSet aas;
     if(arg){
         as = ArgumentSet_create("Affine Model Options");
@@ -55,7 +55,7 @@ Affine_ArgumentSet *Affine_ArgumentSet_create(Argument *arg){
 void Affine_Data_init(Affine_Data *ad,
                       Sequence *query, Sequence *target,
                       gboolean translate_both){
-    register Match_Type match_type
+    Match_Type match_type
         = Match_Type_find(query->alphabet->type,
                           target->alphabet->type,
                           translate_both);
@@ -67,7 +67,7 @@ void Affine_Data_init(Affine_Data *ad,
 
 Affine_Data *Affine_Data_create(Sequence *query, Sequence *target,
                                 gboolean translate_both){
-    register Affine_Data *ad = g_new0(Affine_Data, 1);
+    Affine_Data *ad = g_new0(Affine_Data, 1);
     Affine_Data_init(ad, query, target, translate_both);
     return ad;
     }
@@ -88,7 +88,7 @@ void Affine_Data_destroy(Affine_Data *ad){
 static C4_Score affine_gap_open_calc_func(gint query_pos,
                                           gint target_pos,
                                           gpointer user_data){
-    register Affine_Data *ad = (Affine_Data*)user_data;
+    Affine_Data *ad = (Affine_Data*)user_data;
     return ad->aas->gap_open;
     }
 
@@ -97,7 +97,7 @@ static gchar *affine_gap_open_calc_macro = "(ad->aas->gap_open)";
 static C4_Score affine_gap_extend_calc_func(gint query_pos,
                                             gint target_pos,
                                             gpointer user_data){
-    register Affine_Data *ad = (Affine_Data*)user_data;
+    Affine_Data *ad = (Affine_Data*)user_data;
     return ad->aas->gap_extend;
     }
 
@@ -108,7 +108,7 @@ static gchar *affine_gap_extend_calc_macro = "(ad->aas->gap_extend)";
 static C4_Score affine_codon_gap_open_calc_func(gint query_pos,
                                                 gint target_pos,
                                                 gpointer user_data){
-    register Affine_Data *ad = (Affine_Data*)user_data;
+    Affine_Data *ad = (Affine_Data*)user_data;
     return ad->aas->codon_gap_open;
     }
 
@@ -117,7 +117,7 @@ static gchar *affine_codon_gap_open_calc_macro = "(ad->aas->codon_gap_open)";
 static C4_Score affine_codon_gap_extend_calc_func(gint query_pos,
                                                   gint target_pos,
                                                   gpointer user_data){
-    register Affine_Data *ad = (Affine_Data*)user_data;
+    Affine_Data *ad = (Affine_Data*)user_data;
     return ad->aas->codon_gap_extend;
     }
 
@@ -126,7 +126,7 @@ static gchar *affine_codon_gap_extend_calc_macro = "(ad->aas->codon_gap_extend)"
 /**/
 
 gchar *Affine_Model_Type_get_name(Affine_Model_Type type){
-    register gchar *model_name = NULL;
+    gchar *model_name = NULL;
     switch(type){
         case Affine_Model_Type_GLOBAL:
             model_name = "global";
@@ -151,19 +151,19 @@ C4_Model *Affine_create(Affine_Model_Type type,
                         Alphabet_Type query_type,
                         Alphabet_Type target_type,
                         gboolean translate_both){
-    register C4_Scope scope = C4_Scope_ANYWHERE;
-    register C4_Model *affine;
-    register C4_State *insert_state, *delete_state;
-    register C4_Transition *match_transition;
-    register C4_Calc *gap_open_calc, *gap_extend_calc;
-    register Affine_ArgumentSet *aas = Affine_ArgumentSet_create(NULL);
-    register Match_Type match_type = Match_Type_find(query_type,
+    C4_Scope scope = C4_Scope_ANYWHERE;
+    C4_Model *affine;
+    C4_State *insert_state, *delete_state;
+    C4_Transition *match_transition;
+    C4_Calc *gap_open_calc, *gap_extend_calc;
+    Affine_ArgumentSet *aas = Affine_ArgumentSet_create(NULL);
+    Match_Type match_type = Match_Type_find(query_type,
                                        target_type, translate_both);
-    register C4_CalcFunc gap_open_calc_func = NULL,
+    C4_CalcFunc gap_open_calc_func = NULL,
                          gap_extend_calc_func = NULL;
-    register gchar *gap_open_calc_macro = NULL,
+    gchar *gap_open_calc_macro = NULL,
                    *gap_extend_calc_macro = NULL;
-    register gchar *model_name = Affine_Model_Type_get_name(type);
+    gchar *model_name = Affine_Model_Type_get_name(type);
     affine = Ungapped_create(match_type);
     switch(type){
         case Affine_Model_Type_GLOBAL:
@@ -249,7 +249,7 @@ C4_Model *Affine_create(Affine_Model_Type type,
 /**/
     C4_Model_append_codegen(affine,
       "#include \"affine.h\"\n",
-      "register Affine_Data *ad = (Affine_Data*)user_data;\n", NULL);
+      "Affine_Data *ad = (Affine_Data*)user_data;\n", NULL);
     C4_Model_close(affine);
     return affine;
     }

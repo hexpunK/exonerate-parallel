@@ -29,23 +29,23 @@ typedef struct {
 
 static gboolean test_comp_low_int(gpointer low, gpointer high,
                                   gpointer user_data){
-    register Data *low_d = (Data*)low,
+    Data *low_d = (Data*)low,
                   *high_d = (Data*)high;
     return low_d->real_priority < high_d->real_priority;
     }
 
 static gboolean test_traverse_func(gpointer data, gpointer user_data){
-    register Data *d = (Data*)data;
+    Data *d = (Data*)data;
     g_print("Traverse [%s]\n", d->word);
     return FALSE;
     }
 
 int main(void){
-    register guint i;
-    register PQueueSet *pq_set = PQueueSet_create();
-    register PQueue *pq = PQueue_create(pq_set, test_comp_low_int,
+    guint i;
+    PQueueSet *pq_set = PQueueSet_create();
+    PQueue *pq = PQueue_create(pq_set, test_comp_low_int,
                                         NULL);
-    register Data *dn;
+    Data *dn;
     PQueue_Node *acc[DATA_TOTAL];
     Data data[DATA_TOTAL] = {
         { "REMOVE-1", -1, 300, 200,  50},

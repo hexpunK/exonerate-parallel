@@ -24,7 +24,7 @@
 #include "dejavu.h"
 
 DejaVu *DejaVu_create(gchar *seq, gint len){
-    register DejaVu *dv = g_new(DejaVu, 1);
+    DejaVu *dv = g_new(DejaVu, 1);
     g_assert(seq);
     g_assert(len >= 0);
     dv->seq = seq;
@@ -41,7 +41,7 @@ void DejaVu_destroy(DejaVu *dv){
     }
 
 void DejaVu_info(DejaVu *dv){
-    register gint i;
+    gint i;
     g_print(" Seq:");
     for(i = 0; i < dv->len; i++)
         g_print("  %c", dv->seq[i]);
@@ -58,7 +58,7 @@ void DejaVu_info(DejaVu *dv){
     }
 
 static gint DejaVu_init(DejaVu *dv, guchar *filter){
-    register gint i, ch, start = -1, end = -1;
+    gint i, ch, start = -1, end = -1;
     gint first[ALPHABET_SIZE];
     gint last[ALPHABET_SIZE];
     for(i = 0; i < ALPHABET_SIZE; i++)
@@ -103,7 +103,7 @@ static gint DejaVu_promote_species(DejaVu *dv, gint curr,
                      DejaVu_TraverseFunc dvtf, guchar *filter,
                      gpointer user_data,
                      gint *first, gint *last){
-    register gint ch, pos = curr;
+    gint ch, pos = curr;
     do {
         if(length >= min_wordlen)
             dvtf(curr, pos, length, dv->seq, dv->len, user_data); /* report */
@@ -127,7 +127,7 @@ static gint DejaVu_promote(DejaVu *dv, gint start,
                        gint length, gint min_wordlen,
                        DejaVu_TraverseFunc dvtf, guchar *filter,
                        gpointer user_data){
-    register gint i, ch, pos = start, end = -1, new_start = -1;
+    gint i, ch, pos = start, end = -1, new_start = -1;
     gint first[ALPHABET_SIZE];
     gint last[ALPHABET_SIZE];
     for(i = 0; i < dv->symbol_list_len; i++){
@@ -161,8 +161,8 @@ void DejaVu_traverse(DejaVu *dv,
                      gint min_wordlen, gint max_wordlen,
                      DejaVu_TraverseFunc dvtf, gpointer user_data,
                      guchar *filter, gint verbosity){
-    register gint i, start, length = 1;
-    register guchar *plain_filter = NULL;
+    gint i, start, length = 1;
+    guchar *plain_filter = NULL;
     g_assert(min_wordlen >= 0);
     g_assert(min_wordlen <= max_wordlen);
     g_assert(dv);

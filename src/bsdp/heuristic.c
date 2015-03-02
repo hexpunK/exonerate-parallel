@@ -22,7 +22,7 @@
 
 #if 0
 gchar *Heuristic_Refinement_to_string(Heuristic_Refinement refinement){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     switch(refinement){
         case Heuristic_Refinement_NONE:
             name = "none";
@@ -47,7 +47,7 @@ Heuristic_Refinement Heuristic_Refinement_from_string(gchar *str){
        {Heuristic_Refinement_NONE,
         Heuristic_Refinement_FULL,
         Heuristic_Refinement_REGION};
-    register gint i;
+    gint i;
     for(i = 0; i < Heuristic_Refinement_TOTAL; i++)
         if(!g_strcasecmp(name[i], str))
             return refinement[i];
@@ -57,10 +57,10 @@ Heuristic_Refinement Heuristic_Refinement_from_string(gchar *str){
 
 static gchar *Heuristic_Argument_parse_refinement(gchar *arg_string,
                                                   gpointer data){
-    register Heuristic_Refinement *refinement
+    Heuristic_Refinement *refinement
           = (Heuristic_Refinement*)data;
     gchar *refine_str;
-    register gchar *ret_val = Argument_parse_string(arg_string,
+    gchar *ret_val = Argument_parse_string(arg_string,
                                                     &refine_str);
     if(ret_val)
         return ret_val;
@@ -70,7 +70,7 @@ static gchar *Heuristic_Argument_parse_refinement(gchar *arg_string,
 #endif /* 0 */
 
 Heuristic_ArgumentSet *Heuristic_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Heuristic_ArgumentSet has;
     if(arg){
         as = ArgumentSet_create("Heuristic Options");
@@ -115,7 +115,7 @@ Heuristic_ArgumentSet *Heuristic_ArgumentSet_create(Argument *arg){
 static Heuristic_Range *Heuristic_Range_create(gint internal,
                                                gint external,
                                                C4_Portal *portal){
-    register Heuristic_Range *heuristic_range = g_new(Heuristic_Range,
+    Heuristic_Range *heuristic_range = g_new(Heuristic_Range,
                                                       1);
     g_assert(internal);
     g_assert(external);
@@ -140,7 +140,7 @@ static void Heuristic_Range_destroy(Heuristic_Range *heuristic_range){
 static void Heuristic_Bound_report_end_func(C4_Score *cell,
         gint cell_size, gint query_pos, gint target_pos,
         gpointer user_data){
-    register C4_Score **matrix = user_data;
+    C4_Score **matrix = user_data;
     matrix[query_pos][target_pos] = cell[0];
     return;
     }
@@ -150,14 +150,14 @@ static gchar *Heuristic_Bound_report_end_macro =
 
 static Heuristic_Bound *Heuristic_Bound_create(C4_Model *model,
                         gint query_range, gint target_range){
-    register Heuristic_Bound *heuristic_bound
+    Heuristic_Bound *heuristic_bound
            = g_new(Heuristic_Bound, 1);
-    register gint i, j;
-    register Optimal *optimal;
-    register C4_Model *bound_model = C4_Model_copy(model);
-    register gchar *optimal_name;
-    register Region *region;
-    register C4_Calc *calc;
+    gint i, j;
+    Optimal *optimal;
+    C4_Model *bound_model = C4_Model_copy(model);
+    gchar *optimal_name;
+    Region *region;
+    C4_Calc *calc;
     C4_Model_open(bound_model);
     heuristic_bound->query_range = query_range;
     heuristic_bound->target_range = target_range;
@@ -214,7 +214,7 @@ static void Heuristic_Bound_destroy(Heuristic_Bound *heuristic_bound){
 
 static void Heuristic_Bound_max_region_convert(
             Heuristic_Bound *heuristic_bound){
-    register gint i, j;
+    gint i, j;
     for(i = 1; i <= heuristic_bound->query_range; i++){
         for(j = 1; j <= heuristic_bound->target_range; j++){
             if(heuristic_bound->matrix[i][j]
@@ -242,9 +242,9 @@ static void Heuristic_Bound_max_region_convert(
 static Heuristic_Join *Heuristic_Join_create(C4_Model *model,
                        Heuristic_Match *src, Heuristic_Match *dst,
                        Heuristic_ArgumentSet *has){
-    register Heuristic_Join *heuristic_join;
-    register C4_Model *derived;
-    register gchar *optimal_name;
+    Heuristic_Join *heuristic_join;
+    C4_Model *derived;
+    gchar *optimal_name;
     heuristic_join = g_new(Heuristic_Join, 1);
     heuristic_join->src_range = Heuristic_Range_create(
             has->join_range_internal, has->join_range_external,
@@ -289,10 +289,10 @@ static void Heuristic_Join_destroy(Heuristic_Join *heuristic_join){
 static Heuristic_Terminal *Heuristic_Terminal_create(C4_Model *model,
       C4_Portal *portal, C4_Transition *transition, gboolean is_start,
       Heuristic_ArgumentSet *has){
-    register Heuristic_Terminal *heuristic_terminal
+    Heuristic_Terminal *heuristic_terminal
             = g_new(Heuristic_Terminal, 1);
-    register C4_Model *derived;
-    register gchar *optimal_name;
+    C4_Model *derived;
+    gchar *optimal_name;
     heuristic_terminal->range = Heuristic_Range_create(
             has->terminal_range_internal,
             has->terminal_range_external,
@@ -339,7 +339,7 @@ static void Heuristic_Terminal_destroy(
 static Heuristic_Match *Heuristic_Match_create(C4_Model *model,
                 C4_Portal *portal, C4_Transition *transition, gint id,
                 Heuristic_ArgumentSet *has){
-    register Heuristic_Match *match = g_new(Heuristic_Match, 1);
+    Heuristic_Match *match = g_new(Heuristic_Match, 1);
     match->id = id;
     match->portal = portal;
     match->transition = transition;
@@ -385,12 +385,12 @@ void Heuristic_Span_add_traceback(Heuristic_Span *heuristic_span,
 static void Heuristic_Span_src_report_end_func(C4_Score *cell,
         gint cell_size, gint query_pos, gint target_pos,
         gpointer user_data){
-    register Heuristic_Data *heuristic_data = user_data;
+    Heuristic_Data *heuristic_data = user_data;
     /* This requires heuristic_data to be the 1st member of user_data */
-    register Heuristic_Span *heuristic_span
+    Heuristic_Span *heuristic_span
                            = heuristic_data->heuristic_span;
-    register gint real_query_pos, real_target_pos;
-    register gint i;
+    gint real_query_pos, real_target_pos;
+    gint i;
     g_assert(heuristic_span);
     g_assert(heuristic_span->curr_src_region);
     real_query_pos = query_pos
@@ -412,12 +412,12 @@ static void Heuristic_Span_src_report_end_func(C4_Score *cell,
 static C4_Score *Heuristic_Span_dst_init_start_func(
                      gint query_pos, gint target_pos,
                      gpointer user_data){
-    register Heuristic_Data *heuristic_data = user_data;
+    Heuristic_Data *heuristic_data = user_data;
     /* This requires heuristic_data to be the 1st member of user_data */
-    register Heuristic_Span *heuristic_span
+    Heuristic_Span *heuristic_span
                            = heuristic_data->heuristic_span;
-    register gint real_query_pos, real_target_pos;
-    register Heuristic_Span_Cell *span_cell;
+    gint real_query_pos, real_target_pos;
+    Heuristic_Span_Cell *span_cell;
     g_assert(heuristic_span);
     g_assert(heuristic_span->curr_dst_region);
     real_query_pos = query_pos
@@ -446,9 +446,9 @@ static Heuristic_Span *Heuristic_Span_create(C4_Model *model,
                        C4_State *src, C4_State *dst,
                        C4_Portal *src_portal, C4_Portal *dst_portal,
                        C4_Span *span, Heuristic_ArgumentSet *has){
-    register Heuristic_Span *heuristic_span = g_new(Heuristic_Span, 1);
-    register gchar *optimal_name;
-    register gint cell_size = 1 + model->total_shadow_designations;
+    Heuristic_Span *heuristic_span = g_new(Heuristic_Span, 1);
+    gchar *optimal_name;
+    gint cell_size = 1 + model->total_shadow_designations;
     heuristic_span->span = span;
     /**/
     heuristic_span->src_range = Heuristic_Range_create(
@@ -553,7 +553,7 @@ static void Heuristic_Span_destroy(Heuristic_Span *heuristic_span){
 
 static void Heuristic_Span_clear(Heuristic_Span *heuristic_span,
                           gint query_length, gint target_length){
-    register gint i, j;
+    gint i, j;
     g_assert(query_length <= heuristic_span->src_bound->query_range);
     g_assert(target_length <= heuristic_span->src_bound->target_range);
     for(i = 0; i <= heuristic_span->src_bound->query_range; i++)
@@ -588,13 +588,13 @@ void Heuristic_Span_register(Heuristic_Span *heuristic_span,
 
 void Heuristic_Span_integrate(Heuristic_Span *heuristic_span,
                               Region *src_region, Region *dst_region){
-    register gint i, j, x, y;
-    register gint init_query, finish_query,
+    gint i, j, x, y;
+    gint init_query, finish_query,
                   init_target, finish_target;
-    register gint prev_init_query = -1, prev_finish_query = -1,
+    gint prev_init_query = -1, prev_finish_query = -1,
                   prev_init_target = -1, prev_finish_target = -1;
-    register C4_Score candidate_score, top_score = 0;
-    register gint top_query_pos = -1, top_target_pos = -1;
+    C4_Score candidate_score, top_score = 0;
+    gint top_query_pos = -1, top_target_pos = -1;
     /**/
     g_assert(heuristic_span);
     g_assert(src_region);
@@ -699,12 +699,12 @@ static gint Heuristic_Span_get_max_target_range(
 static Heuristic_Pair *Heuristic_Pair_create(C4_Model *model,
                        Heuristic_Match *src, Heuristic_Match *dst,
                        Heuristic_ArgumentSet *has){
-    register Heuristic_Pair *pair;
-    register gint i;
-    register C4_State *src_state = src->transition->output,
+    Heuristic_Pair *pair;
+    gint i;
+    C4_State *src_state = src->transition->output,
                       *dst_state = dst->transition->output;
-    register C4_Span *span;
-    register Heuristic_Span *heuristic_span;
+    C4_Span *span;
+    Heuristic_Span *heuristic_span;
     if(!C4_Model_path_is_possible(model,
                                   src->transition->output,
                                   dst->transition->output))
@@ -732,7 +732,7 @@ static Heuristic_Pair *Heuristic_Pair_create(C4_Model *model,
 
 static void Heuristic_Pair_destroy(
             Heuristic_Pair *match_pair){
-    register gint i;
+    gint i;
     Heuristic_Join_destroy(match_pair->join);
     for(i = 0; i < match_pair->span_list->len; i++)
         Heuristic_Span_destroy(match_pair->span_list->pdata[i]);
@@ -745,8 +745,8 @@ static void Heuristic_Pair_destroy(
 void Heuristic_Pair_get_max_range(Heuristic_Pair *pair,
                                   gint *max_query_join_range,
                                   gint *max_target_join_range){
-    register gint i, range;
-    register Heuristic_Span *heuristic_span;
+    gint i, range;
+    Heuristic_Span *heuristic_span;
     g_assert(pair);
     g_assert(pair->join);
     (*max_query_join_range) = pair->join->src_range->external_query
@@ -768,11 +768,11 @@ void Heuristic_Pair_get_max_range(Heuristic_Pair *pair,
 /**/
 
 Heuristic *Heuristic_create(C4_Model *model){
-    register Heuristic *heuristic = g_new(Heuristic, 1);
-    register gint i, j, counter;
-    register C4_Transition *transition;
-    register C4_Portal *portal;
-    register Heuristic_Match *src, *dst;
+    Heuristic *heuristic = g_new(Heuristic, 1);
+    gint i, j, counter;
+    C4_Transition *transition;
+    C4_Portal *portal;
+    Heuristic_Match *src, *dst;
     g_assert(model);
     g_assert(!model->is_open);
     g_assert(model->portal_list->len); /* Must have a portal */
@@ -828,7 +828,7 @@ Heuristic *Heuristic_create(C4_Model *model){
     }
 
 void Heuristic_destroy(Heuristic *heuristic){
-    register gint i, j;
+    gint i, j;
     g_assert(heuristic);
     if(--heuristic->ref_count)
         return;
@@ -860,13 +860,13 @@ Heuristic *Heuristic_share(Heuristic *heuristic){
 /**/
 
 GPtrArray *Heuristic_get_Optimal_list(Heuristic *heuristic){
-    register gint i, j, k;
-    register Heuristic_Match *match;
-    register Heuristic_Terminal *heuristic_terminal;
-    register Heuristic_Pair *match_pair;
-    register Heuristic_Join *heuristic_join;
-    register Heuristic_Span *heuristic_span;
-    register GPtrArray *optimal_list = g_ptr_array_new();
+    gint i, j, k;
+    Heuristic_Match *match;
+    Heuristic_Terminal *heuristic_terminal;
+    Heuristic_Pair *match_pair;
+    Heuristic_Join *heuristic_join;
+    Heuristic_Span *heuristic_span;
+    GPtrArray *optimal_list = g_ptr_array_new();
     g_assert(heuristic);
 #if 0
     /* Refinement optimal is not included here,

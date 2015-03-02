@@ -22,7 +22,7 @@
 
 static gchar *read_next_line(gchar *prompt){
     gchar buffer[1024];
-    register gchar *msg = NULL;
+    gchar *msg = NULL;
     g_print("%s", prompt);
     if(!fgets(buffer, 1024, stdin))
           g_error("Didn't read anything");
@@ -34,8 +34,8 @@ static gchar *read_next_line(gchar *prompt){
     }
 
 static void run_client(gchar *host, gint port){
-    register SocketClient *sc = SocketClient_create(host, port);
-    register gchar *msg, *reply;
+    SocketClient *sc = SocketClient_create(host, port);
+    gchar *msg, *reply;
     while(TRUE){
         msg = read_next_line("> ");
         g_message("client going to send [%s]", msg);
@@ -63,7 +63,7 @@ static gboolean test_server_func(gchar *msg, gchar **reply,
     }
 
 static void run_server(gint port){
-    register SocketServer *ss = SocketServer_create(port, 2,
+    SocketServer *ss = SocketServer_create(port, 2,
                         test_server_func, NULL, NULL, NULL);
     while(SocketServer_listen(ss));
     SocketServer_destroy(ss);
@@ -71,9 +71,9 @@ static void run_server(gint port){
     }
 
 int main(int argc, char **argv){
-    register gboolean be_client;
-    register gint port;
-    register gchar *host;
+    gboolean be_client;
+    gint port;
+    gchar *host;
     if(argc != 4){
         g_warning("Usage: socket.test <c|s> host port");
         return 0; /* exit quietly to please make check */

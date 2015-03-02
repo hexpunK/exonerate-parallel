@@ -25,14 +25,14 @@ typedef struct {
 static void test_hsp_set(Match_Type match_type,
                          gchar *qy_seq, gchar *tg_seq,
                          TestHSPseed *seed, gint seed_total){
-    register Sequence *query = Sequence_create("qy", NULL, qy_seq, 0,
+    Sequence *query = Sequence_create("qy", NULL, qy_seq, 0,
                                 Sequence_Strand_UNKNOWN, NULL),
                       *target = Sequence_create("tg", NULL, tg_seq, 0,
                                 Sequence_Strand_UNKNOWN, NULL);
-    register Match *match = Match_find(match_type);
-    register HSP_Param *hsp_param = HSP_Param_create(match, TRUE);
-    register HSPset *hsp_set = HSPset_create(query, target, hsp_param);
-    register gint i;
+    Match *match = Match_find(match_type);
+    HSP_Param *hsp_param = HSP_Param_create(match, TRUE);
+    HSPset *hsp_set = HSPset_create(query, target, hsp_param);
+    gint i;
     for(i = 0; i < seed_total; i++)
         HSPset_seed_hsp(hsp_set, seed[i].query_start,
                                  seed[i].target_start);
@@ -46,13 +46,13 @@ static void test_hsp_set(Match_Type match_type,
     }
 
 gint Argument_main(Argument *arg){
-    register gchar
+    gchar
     *ntnt_qy = "AAAAGTGAGAGAGAGAGAGAGGCGAAAAAAAAAACCCCCCCCCCACCCCGCGA",
 /*                  ||||||| | ||||||||||          |||||||||| ||||||| */
     *ntnt_tg = "TTTTGTGAGAGTGTGAGAGAGGCGTTTTTTTTTTCCCCCCCCCCTCCCCGCCT";
 /*              0         1         2         3         4         5  */
 /*              01234567890123456789012345678901234567890123456789012*/
-    register gchar *aant_qy = "PNKDEGSCPIECDFLCRHQYISDP",
+    gchar *aant_qy = "PNKDEGSCPIECDFLCRHQYISDP",
      *aant_tg =
      "ACGTACGTACGTACGAGTGCGTGCCCCCTTNNNTGTGACTACATCTGCAAAACGTACGTACGT";
     HSPset_ArgumentSet_create(arg);

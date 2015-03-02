@@ -17,7 +17,7 @@
 #include "threadref.h"
 
 int main(void){
-    register ThreadRef *tr = ThreadRef_create(), *tr2;
+    ThreadRef *tr = ThreadRef_create(), *tr2;
     tr2 = ThreadRef_share(tr);
     ThreadRef_destroy(tr2);
     ThreadRef_lock(tr);

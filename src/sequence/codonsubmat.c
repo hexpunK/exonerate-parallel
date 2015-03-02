@@ -631,10 +631,10 @@ static gint CodonSubmat_round(gdouble num){
 /* Not perfect, but portable */
 
 CodonSubmat *CodonSubmat_create(){
-    register CodonSubmat *cs = g_new(CodonSubmat, 1);
-    register guchar *alphabet = (guchar*)"ACGTN";
-    register gint i, j, a, b, c, freq, m, n, total = 0;
-    register gdouble ratio, logbase = log(10.0), prob, chance;
+    CodonSubmat *cs = g_new(CodonSubmat, 1);
+    guchar *alphabet = (guchar*)"ACGTN";
+    gint i, j, a, b, c, freq, m, n, total = 0;
+    gdouble ratio, logbase = log(10.0), prob, chance;
     gint codon_freq_acgtn[CODON_ALPHABETSIZE_ACGTN] = {0};
     gint red_codon[CODON_ALPHABETSIZE_ACGT][8];
     gint count_acgtn[CODON_ALPHABETSIZE_ACGTN]
@@ -727,7 +727,7 @@ CodonSubmat *CodonSubmat_share(CodonSubmat *cs){
     }
 
 gint CodonSubmat_max_score(CodonSubmat *cs){
-    register gint i, j, max;
+    gint i, j, max;
     g_assert(cs);
     max = cs->codon_submat[0][0];
     for(i = 0; i < CODON_ALPHABETSIZE_ACGTN; i++)
@@ -738,9 +738,9 @@ gint CodonSubmat_max_score(CodonSubmat *cs){
     }
 
 void CodonSubmat_add_nucleic(CodonSubmat *cs, Submat *nucleic){
-    register gint a, b, c, d, e, f, codon_a, codon_b;
-    register gchar *alphabet = "ACGTN";
-    register gint score;
+    gint a, b, c, d, e, f, codon_a, codon_b;
+    gchar *alphabet = "ACGTN";
+    gint score;
     for(a = 0; a < 5; a++){
         for(b = 0; b < 5; b++){
             for(c = 0; c < 5; c++){

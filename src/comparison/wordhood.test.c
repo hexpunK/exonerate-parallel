@@ -19,17 +19,17 @@
 
 static gboolean wordhood_test_func(gchar *word, gint score,
                                    gpointer user_data){
-    register gint *count = user_data;
+    gint *count = user_data;
     g_message("id [%d] word [%s] score [%d]", ++(*count), word, score);
     return FALSE;
     }
 
 int Argument_main(Argument *arg){
-    register gchar *seq = "AAACCCGGGTTT";
-    register Submat *s = Submat_create("nucleic");
-    register CodonSubmat *cs = CodonSubmat_create();
-    register WordHood_Alphabet *wha;
-    register WordHood *wh;
+    gchar *seq = "AAACCCGGGTTT";
+    Submat *s = Submat_create("nucleic");
+    CodonSubmat *cs = CodonSubmat_create();
+    WordHood_Alphabet *wha;
+    WordHood *wh;
     gint count;
     /**/
     g_message("using nucleic submat");

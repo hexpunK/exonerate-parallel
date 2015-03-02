@@ -18,7 +18,7 @@
 /**/
 
 BSDP_ArgumentSet *BSDP_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static BSDP_ArgumentSet bas = {0};
     if(arg){
         as = ArgumentSet_create("BSDP algorithm options");
@@ -34,7 +34,7 @@ BSDP_ArgumentSet *BSDP_ArgumentSet_create(Argument *arg){
 
 static BSDP_Edge *BSDP_Edge_create(BSDP *bsdp, gpointer edge_data,
              BSDP_Node *dst, C4_Score bound_score){
-    register BSDP_Edge *bsdp_edge
+    BSDP_Edge *bsdp_edge
         = RecycleBin_alloc(bsdp->edge_recycle);
     g_assert(dst);
     bsdp_edge->edge_data = edge_data;
@@ -60,7 +60,7 @@ static BSDP_Node *BSDP_Node_create(gpointer node_data,
                                    gboolean is_valid_end,
                                    C4_Score start_bound,
                                    C4_Score end_bound){
-    register BSDP_Node *bsdp_node = g_new(BSDP_Node, 1);
+    BSDP_Node *bsdp_node = g_new(BSDP_Node, 1);
     bsdp_node->mask = BSDP_Node_Mask_IS_NEW;
     if(is_valid_start){
         bsdp_node->mask |= BSDP_Node_Mask_IS_VALID_START;
@@ -82,14 +82,14 @@ static BSDP_Node *BSDP_Node_create(gpointer node_data,
 
 static void BSDP_Node_destroy_pqueue_func(gpointer data,
                                           gpointer user_data){
-    register BSDP *bsdp = user_data;
-    register BSDP_Edge *bsdp_edge = (BSDP_Edge*)data;
+    BSDP *bsdp = user_data;
+    BSDP_Edge *bsdp_edge = (BSDP_Edge*)data;
     BSDP_Edge_destroy(bsdp, bsdp_edge);
     return;
     }
 
 static void BSDP_Node_destroy(BSDP *bsdp, BSDP_Node *bsdp_node){
-    register gint i;
+    gint i;
     if(bsdp_node->mask & BSDP_Node_Mask_IS_USED){
         if(bsdp_node->edge.used) /* Can be NULL if alignment end */
             BSDP_Edge_destroy(bsdp, bsdp_node->edge.used);
@@ -114,7 +114,7 @@ static void BSDP_Node_destroy(BSDP *bsdp, BSDP_Node *bsdp_node){
 static gboolean BSDP_Node_pqueue_compare(gpointer low,
                                          gpointer high,
                                          gpointer user_data){
-    register BSDP_Node *low_node = low, *high_node = high;
+    BSDP_Node *low_node = low, *high_node = high;
     return low_node->stored_total > high_node->stored_total;
     }
 
@@ -127,7 +127,7 @@ BSDP *BSDP_create(BSDP_ConfirmEdgeFunc confirm_edge_func,
                   BSDP_DestroyFunc destroy_node_data_func,
                   BSDP_DestroyFunc destroy_edge_data_func,
                   gpointer user_data){
-    register BSDP *bsdp = g_new(BSDP, 1);
+    BSDP *bsdp = g_new(BSDP, 1);
     g_assert(confirm_edge_func);
     g_assert(confirm_start_func);
     g_assert(confirm_end_func);
@@ -161,7 +161,7 @@ BSDP *BSDP_create(BSDP_ConfirmEdgeFunc confirm_edge_func,
     }
 
 void BSDP_destroy(BSDP *bsdp){
-    register gint i;
+    gint i;
     if(bsdp->node_list)
         for(i = 0; i < bsdp->node_list->len; i++)
             BSDP_Node_destroy(bsdp, bsdp->node_list->pdata[i]);
@@ -186,7 +186,7 @@ gint BSDP_add_node(BSDP *bsdp, gpointer node_data,
                                gboolean is_valid_end,
                                C4_Score start_bound,
                                C4_Score end_bound){
-    register BSDP_Node *bsdp_node;
+    BSDP_Node *bsdp_node;
     g_assert(node_data);
     bsdp_node = BSDP_Node_create(node_data, node_score,
                                  is_valid_start, is_valid_end,
@@ -200,13 +200,13 @@ gint BSDP_add_node(BSDP *bsdp, gpointer node_data,
 static gboolean BSDP_Potential_pqueue_compare(gpointer low,
                                               gpointer high,
                                               gpointer user_data){
-    register BSDP_Potential *low_potential= low,
+    BSDP_Potential *low_potential= low,
                             *high_potential = high;
     return low_potential->score > high_potential->score;
     }
 
 static BSDP_Edge_Filter *BSDP_Edge_Filter_create(BSDP *bsdp){
-    register BSDP_Edge_Filter *edge_filter = g_new(BSDP_Edge_Filter, 1);
+    BSDP_Edge_Filter *edge_filter = g_new(BSDP_Edge_Filter, 1);
     edge_filter->src_edge_pqueue = PQueue_create(bsdp->pqueue_set,
                                 BSDP_Potential_pqueue_compare, NULL);
     edge_filter->dst_edge_pqueue = PQueue_create(bsdp->pqueue_set,
@@ -226,7 +226,7 @@ static void BSDP_Edge_Filter_destroy(BSDP_Edge_Filter *edge_filter){
 static BSDP_Potential *BSDP_Potential_create(BSDP *bsdp,
                                              BSDP_Node *bsdp_node,
                                              BSDP_Edge *bsdp_edge){
-    register BSDP_Potential *bsdp_potential
+    BSDP_Potential *bsdp_potential
         = RecycleBin_alloc(bsdp->potential_recycle);
     g_assert(bsdp);
     g_assert(bsdp_node);
@@ -261,7 +261,7 @@ static void BSDP_Potential_destroy(BSDP *bsdp,
 
 static BSDP_Edge *BSDP_Potential_release(BSDP *bsdp,
                                    BSDP_Potential *bsdp_potential){
-    register BSDP_Edge *bsdp_edge;
+    BSDP_Edge *bsdp_edge;
     g_assert(bsdp_potential);
     bsdp_edge = bsdp_potential->bsdp_edge;
     RecycleBin_recycle(bsdp->potential_recycle, bsdp_potential);
@@ -270,7 +270,7 @@ static BSDP_Edge *BSDP_Potential_release(BSDP *bsdp,
 
 static void BSDP_Potential_submit_queue(BSDP *bsdp,
             BSDP_Potential *bsdp_potential, PQueue *pqueue){
-    register BSDP_Potential *top, *prev;
+    BSDP_Potential *top, *prev;
     /* Admit extra edge for tie-breaker removal */
     if(PQueue_total(pqueue) <= bsdp->bas->join_filter){
         PQueue_push(pqueue, bsdp_potential);
@@ -292,9 +292,9 @@ static void BSDP_Potential_submit_queue(BSDP *bsdp,
 static void BSDP_Edge_submit(BSDP *bsdp,
                              BSDP_Edge *bsdp_edge,
                              gint src_node_id, gint dst_node_id){
-    register BSDP_Edge_Filter *src_filter, *dst_filter;
-    register BSDP_Node *src = bsdp->node_list->pdata[src_node_id];
-    register BSDP_Potential *bsdp_potential
+    BSDP_Edge_Filter *src_filter, *dst_filter;
+    BSDP_Node *src = bsdp->node_list->pdata[src_node_id];
+    BSDP_Potential *bsdp_potential
            = BSDP_Potential_create(bsdp, src, bsdp_edge);
     g_assert(bsdp);
     g_assert(bsdp_edge);
@@ -324,8 +324,8 @@ static void BSDP_Edge_submit(BSDP *bsdp,
 void BSDP_add_edge(BSDP *bsdp, gpointer edge_data,
                    gint src_node_id, gint dst_node_id,
                    C4_Score bound_score){
-    register BSDP_Edge *bsdp_edge;
-    register BSDP_Node *src, *dst;
+    BSDP_Edge *bsdp_edge;
+    BSDP_Node *src, *dst;
     g_assert(bsdp);
     g_assert(edge_data);
     g_assert(src_node_id >= 0);
@@ -360,8 +360,8 @@ static void BSDP_update(BSDP *bsdp,
 
 static C4_Score BSDP_Node_top_partial(BSDP *bsdp, BSDP_Node *bsdp_node,
                                       gboolean update){
-    register BSDP_Edge *bsdp_edge;
-    register C4_Score score = C4_IMPOSSIBLY_LOW_SCORE;
+    BSDP_Edge *bsdp_edge;
+    C4_Score score = C4_IMPOSSIBLY_LOW_SCORE;
     g_assert(bsdp_node);
     g_assert(bsdp_node->mask & BSDP_Node_Mask_IS_INITIALISED);
     g_assert(!(bsdp_node->mask & BSDP_Node_Mask_IS_USED));
@@ -434,14 +434,14 @@ static void BSDP_update(BSDP *bsdp,
 static gboolean BSDP_Edge_pqueue_compare(gpointer low,
                                          gpointer high,
                                          gpointer user_data){
-    register BSDP_Edge *low_edge = low, *high_edge = high;
+    BSDP_Edge *low_edge = low, *high_edge = high;
     return low_edge->stored_partial > high_edge->stored_partial;
     }
 
 static void BSDP_initialise_recur(BSDP *bsdp, BSDP_Node *bsdp_node){
-    register gint i;
-    register BSDP_Edge *bsdp_edge;
-    register GPtrArray *edge_list;
+    gint i;
+    BSDP_Edge *bsdp_edge;
+    GPtrArray *edge_list;
     if(bsdp_node->mask & BSDP_Node_Mask_IS_INITIALISED)
         return;
     edge_list = bsdp_node->edge.list;
@@ -462,8 +462,8 @@ static void BSDP_initialise_recur(BSDP *bsdp, BSDP_Node *bsdp_node){
 
 static void BSDP_initialise_remove_tiebreakers(BSDP *bsdp,
                                                PQueue *pqueue){
-    register BSDP_Potential *bsdp_potential;
-    register C4_Score score;
+    BSDP_Potential *bsdp_potential;
+    C4_Score score;
     g_assert(pqueue);
     if(PQueue_total(pqueue) > bsdp->bas->join_filter){
         bsdp_potential = PQueue_pop(pqueue);
@@ -482,8 +482,8 @@ static void BSDP_initialise_remove_tiebreakers(BSDP *bsdp,
     }
 
 static void BSDP_initialise_filter(BSDP *bsdp, PQueue *pqueue){
-    register BSDP_Potential *bsdp_potential;
-    register BSDP_Node *bsdp_node;
+    BSDP_Potential *bsdp_potential;
+    BSDP_Node *bsdp_node;
     g_assert(pqueue);
     while((bsdp_potential = PQueue_pop(pqueue))){
         if(bsdp_potential->ref_count == 2){ /* In src + dst */
@@ -504,9 +504,9 @@ static void BSDP_initialise_filter(BSDP *bsdp, PQueue *pqueue){
     }
 
 void BSDP_initialise(BSDP *bsdp, C4_Score threshold){
-    register gint i;
-    register BSDP_Node *bsdp_node;
-    register BSDP_Edge_Filter *edge_filter;
+    gint i;
+    BSDP_Node *bsdp_node;
+    BSDP_Edge_Filter *edge_filter;
     if(!bsdp->node_list)
         return;
     if(bsdp->edge_filter){
@@ -564,7 +564,7 @@ void BSDP_initialise(BSDP *bsdp, C4_Score threshold){
 
 static void BSDP_path_validate_recur(BSDP *bsdp,
                                      BSDP_Node *bsdp_node){
-    register BSDP_Edge *bsdp_edge;
+    BSDP_Edge *bsdp_edge;
     g_assert(bsdp_node->mask & BSDP_Node_Mask_IS_INITIALISED);
     g_assert(!(bsdp_node->mask & BSDP_Node_Mask_IS_USED));
     if(bsdp_node->mask & BSDP_Node_Mask_SCORED_TERMINAL)
@@ -585,9 +585,9 @@ static void BSDP_path_validate_recur(BSDP *bsdp,
 
 static gboolean BSDP_path_is_validated(BSDP *bsdp,
                                        C4_Score threshold){
-    register BSDP_Node *bsdp_node = PQueue_top(bsdp->node_pqueue);
-    register BSDP_Edge *bsdp_edge;
-    register C4_Score score, check_score;
+    BSDP_Node *bsdp_node = PQueue_top(bsdp->node_pqueue);
+    BSDP_Edge *bsdp_edge;
+    C4_Score score, check_score;
     g_assert(bsdp_node);
     g_assert(bsdp_node->mask & BSDP_Node_Mask_IS_VALID_START);
     score = bsdp_node->stored_total;
@@ -612,7 +612,7 @@ static gboolean BSDP_path_is_validated(BSDP *bsdp,
     }
 
 static gboolean BSDP_path_validate(BSDP *bsdp, C4_Score threshold){
-    register BSDP_Node *bsdp_node;
+    BSDP_Node *bsdp_node;
     if(bsdp->node_pqueue){
         do {
             bsdp_node = PQueue_pop(bsdp->node_pqueue);
@@ -636,11 +636,11 @@ static gboolean BSDP_path_validate(BSDP *bsdp, C4_Score threshold){
     }
 
 static gint BSDP_path_confirm(BSDP *bsdp){
-    register BSDP_Node *first_node = PQueue_top(bsdp->node_pqueue),
+    BSDP_Node *first_node = PQueue_top(bsdp->node_pqueue),
                        *bsdp_node = first_node;
-    register BSDP_Edge *bsdp_edge;
-    register C4_Score prev_score, confirmed_score;
-    register gint confirm_count = 0;
+    BSDP_Edge *bsdp_edge;
+    C4_Score prev_score, confirmed_score;
+    gint confirm_count = 0;
     do {
         g_assert(bsdp_node->node_data);
         g_assert(bsdp_node->mask & BSDP_Node_Mask_IS_INITIALISED);
@@ -734,7 +734,7 @@ static gint BSDP_path_confirm(BSDP *bsdp){
     }
 
 static BSDP_Path *BSDP_Path_create(void){
-    register BSDP_Path *bsdp_path = g_new(BSDP_Path, 1);
+    BSDP_Path *bsdp_path = g_new(BSDP_Path, 1);
     bsdp_path->node_list = g_ptr_array_new();
     return bsdp_path;
     }
@@ -746,9 +746,9 @@ void BSDP_Path_destroy(BSDP_Path *bsdp_path){
     }
 
 static gboolean BSDP_Path_check(BSDP_Path *bsdp_path){
-    register C4_Score check_score = 0;
-    register BSDP_Node *start_node, *end_node, *bsdp_node;
-    register gint i;
+    C4_Score check_score = 0;
+    BSDP_Node *start_node, *end_node, *bsdp_node;
+    gint i;
     g_assert(bsdp_path->node_list->len);
     /* Check start node */
     start_node = bsdp_path->node_list->pdata[0];
@@ -778,9 +778,9 @@ static gboolean BSDP_Path_check(BSDP_Path *bsdp_path){
     }
 
 static BSDP_Path *BSDP_path_extract(BSDP *bsdp){
-    register BSDP_Path *bsdp_path = BSDP_Path_create();
-    register BSDP_Node *bsdp_node = PQueue_top(bsdp->node_pqueue);
-    register BSDP_Edge *bsdp_edge;
+    BSDP_Path *bsdp_path = BSDP_Path_create();
+    BSDP_Node *bsdp_node = PQueue_top(bsdp->node_pqueue);
+    BSDP_Edge *bsdp_edge;
     bsdp_path->score = bsdp_node->stored_total;
     g_assert(bsdp_node->mask & BSDP_Node_Mask_CONFIRMED_START);
     bsdp_node->mask |= BSDP_Node_Mask_USED_AS_START;
@@ -808,7 +808,7 @@ static BSDP_Path *BSDP_path_extract(BSDP *bsdp){
     }
 
 BSDP_Path *BSDP_next_path(BSDP *bsdp, C4_Score threshold){
-    register BSDP_Path *bsdp_path;
+    BSDP_Path *bsdp_path;
     do {
         if(!BSDP_path_validate(bsdp, threshold))
             return NULL;

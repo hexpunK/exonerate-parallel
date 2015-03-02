@@ -67,7 +67,7 @@ typedef enum {
 } Ipcress_Type;
 
 static gchar *Ipcress_Type_get_description(Ipcress_Type ipcress_type){
-    register gchar *description = NULL;
+    gchar *description = NULL;
     switch(ipcress_type){
         case Ipcress_Type_FORWARD:
             description = "forward";
@@ -90,10 +90,10 @@ static gchar *Ipcress_Type_get_description(Ipcress_Type ipcress_type){
 
 static Ipcress_Type Ipcress_Type_create(PCR_Probe *probe_a,
                                         PCR_Probe *probe_b){
-    register Ipcress_Type ipcress_type;
-    register PCR_Primer *primer_a = probe_a->pcr_primer,
+    Ipcress_Type ipcress_type;
+    PCR_Primer *primer_a = probe_a->pcr_primer,
                         *primer_b = probe_b->pcr_primer;
-    register PCR_Experiment *pcr_experiment = primer_a->pcr_experiment;
+    PCR_Experiment *pcr_experiment = primer_a->pcr_experiment;
     if((primer_a == pcr_experiment->primer_a)
     && (primer_b == pcr_experiment->primer_b))
         ipcress_type = Ipcress_Type_FORWARD;
@@ -111,17 +111,17 @@ static Ipcress_Type Ipcress_Type_create(PCR_Probe *probe_a,
 static gboolean Ipcress_report_product(Sequence *sequence,
                  PCR_Match *match_a, PCR_Match *match_b,
                  gint product_length, gpointer user_data){
-    register PCR_Probe  *probe_a = match_a->pcr_probe,
+    PCR_Probe  *probe_a = match_a->pcr_probe,
                         *probe_b = match_b->pcr_probe;
-    register PCR_Primer *primer_a = probe_a->pcr_primer,
+    PCR_Primer *primer_a = probe_a->pcr_primer,
                         *primer_b = probe_b->pcr_primer;
-    register PCR_Experiment *pcr_experiment = primer_a->pcr_experiment;
-    register Ipcress *ipcress = user_data;
-    register gint i;
-    register Ipcress_Type ipcress_type = Ipcress_Type_create(probe_a,
+    PCR_Experiment *pcr_experiment = primer_a->pcr_experiment;
+    Ipcress *ipcress = user_data;
+    gint i;
+    Ipcress_Type ipcress_type = Ipcress_Type_create(probe_a,
                                                              probe_b);
-    register gchar *description, *s;
-    register Sequence *subseq, *seq;
+    gchar *description, *s;
+    Sequence *subseq, *seq;
     g_assert(probe_a->strand == Sequence_Strand_FORWARD);
     g_assert(probe_b->strand == Sequence_Strand_REVCOMP);
     g_assert(pcr_experiment == primer_b->pcr_experiment);
@@ -234,7 +234,7 @@ static Ipcress *Ipcress_create(gchar *ipcress_path, gint mismatches,
                                gint seed_length, gint memory_limit,
                                gboolean display_pretty,
                                gboolean display_products){
-    register Ipcress *ipcress = g_new(Ipcress, 1);
+    Ipcress *ipcress = g_new(Ipcress, 1);
     ipcress->input_fp = fopen(ipcress_path, "r");
     if(!ipcress->input_fp)
         g_error("Could not open ipcress file [%s]", ipcress_path);
@@ -248,13 +248,13 @@ static Ipcress *Ipcress_create(gchar *ipcress_path, gint mismatches,
     }
 
 static PCR *Ipcress_prepare_PCR(Ipcress *ipcress){
-    register PCR *pcr = PCR_create(Ipcress_report_product, ipcress,
+    PCR *pcr = PCR_create(Ipcress_report_product, ipcress,
                                    ipcress->mismatches,
                                    ipcress->seed_length);
-    register gsize memory_usage;
-    register gint experiment_count = 0, word_count;
-    register gchar *id, *primer_a, *primer_b;
-    register gint min_product_len, max_product_len;
+    gsize memory_usage;
+    gint experiment_count = 0, word_count;
+    gchar *id, *primer_a, *primer_b;
+    gint min_product_len, max_product_len;
     /* Read as many experiments as possible into memory */
     while((word_count = LineParse_word(ipcress->input_lp)) != EOF){
         if(word_count == 0)
@@ -287,13 +287,13 @@ static PCR *Ipcress_prepare_PCR(Ipcress *ipcress){
 
 static void Ipcress_analyse(Ipcress *ipcress,
                             GPtrArray *sequence_path_list){
-    register PCR *pcr;
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    PCR *pcr;
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register FastaDB *fdb = FastaDB_open_list(sequence_path_list,
+    FastaDB *fdb = FastaDB_open_list(sequence_path_list,
                                               alphabet);
-    register FastaDB_Seq *fdbs;
-    register Sequence *seq;
+    FastaDB_Seq *fdbs;
+    Sequence *seq;
     /* While not at the end of the input file */
     while((pcr = Ipcress_prepare_PCR(ipcress))){
         /* Analyse each sequence in DB */
@@ -324,11 +324,11 @@ int Argument_main(Argument *arg){
     gint mismatches, memory_limit, seed_length;
     gboolean display_pretty, display_products;
     /**/
-    register ArgumentSet *as_input
+    ArgumentSet *as_input
            = ArgumentSet_create("File input options");
-    register ArgumentSet *as_parameter
+    ArgumentSet *as_parameter
            = ArgumentSet_create("Ipcress parameters");
-    register Ipcress *ipcress;
+    Ipcress *ipcress;
     /**/
     ArgumentSet_add_option(as_input, 'i', "input", "ipcress file",
           "Primer data in IPCRESS file format", NULL,

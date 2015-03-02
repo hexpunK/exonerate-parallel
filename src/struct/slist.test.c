@@ -22,7 +22,7 @@ typedef struct {
 } SList_TestInfo;
 
 static gboolean slist_test_traverse(gpointer data, gpointer user_data){
-    register gchar *word = data;
+    gchar *word = data;
     SList_TestInfo *sti = user_data;
     g_message("Word [%5s] crib[%5s] count[%d]",
               word, sti->crib[sti->count], sti->count);
@@ -32,8 +32,8 @@ static gboolean slist_test_traverse(gpointer data, gpointer user_data){
     }
 
 int main(void){
-    register SListSet *slist_set = SListSet_create();
-    register SList *a = SList_create(slist_set),
+    SListSet *slist_set = SListSet_create();
+    SList *a = SList_create(slist_set),
                    *b = SList_create(slist_set), *c;
     SList_TestInfo sti = { {"The", "quick", "brown", "fox",
                             "jumps", "over", "a", "lazy", "dog"},

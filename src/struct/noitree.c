@@ -26,7 +26,7 @@ typedef struct {
 
 static gint NOI_Tree_compare_func(gpointer data_a, gpointer data_b,
                                   gpointer user_data){
-    register NOI_Tree_Interval *int_a = data_a, *int_b = data_b;
+    NOI_Tree_Interval *int_a = data_a, *int_b = data_b;
     if(NOI_Tree_Interval_end(int_a) < int_b->start)
         return -1; /* a before b */
     if(NOI_Tree_Interval_end(int_b) < int_a->start)
@@ -35,7 +35,7 @@ static gint NOI_Tree_compare_func(gpointer data_a, gpointer data_b,
     }
 
 static void NOI_Tree_free_func(gpointer data, gpointer user_data){
-    register NOI_Tree_Interval *interval = data;
+    NOI_Tree_Interval *interval = data;
     g_free(interval);
     return;
     }
@@ -46,8 +46,8 @@ typedef struct {
 } NOI_Tree_Traverse_Data;
 
 NOI_Tree_Set *NOI_Tree_Set_create(gpointer user_data){
-    register NOI_Tree_Set *nts = g_new(NOI_Tree_Set, 1);
-    register NOI_Tree_Traverse_Data *nttd = g_new(NOI_Tree_Traverse_Data, 1);
+    NOI_Tree_Set *nts = g_new(NOI_Tree_Set, 1);
+    NOI_Tree_Traverse_Data *nttd = g_new(NOI_Tree_Traverse_Data, 1);
     nttd->user_data = user_data;
     nttd->ntf = NULL;
     nts->sts = SplayTree_Set_create(NOI_Tree_compare_func,
@@ -56,7 +56,7 @@ NOI_Tree_Set *NOI_Tree_Set_create(gpointer user_data){
     }
 
 void NOI_Tree_Set_destroy(NOI_Tree_Set *nts){
-    register NOI_Tree_Traverse_Data *nttd = nts->sts->user_data;
+    NOI_Tree_Traverse_Data *nttd = nts->sts->user_data;
     g_free(nttd);
     SplayTree_Set_destroy(nts->sts);
     g_free(nts);
@@ -66,7 +66,7 @@ void NOI_Tree_Set_destroy(NOI_Tree_Set *nts){
 /**/
 
 NOI_Tree *NOI_Tree_create(NOI_Tree_Set *nts){
-    register NOI_Tree *nt = g_new(NOI_Tree, 1);
+    NOI_Tree *nt = g_new(NOI_Tree, 1);
     nt->st = NULL;
     nt->delta = NULL;
     return nt;
@@ -82,7 +82,7 @@ void NOI_Tree_destroy(NOI_Tree *nt, NOI_Tree_Set *nts){
 
 static NOI_Tree_Interval *NOI_Tree_Interval_merge(NOI_Tree_Interval *int_a,
                                                   NOI_Tree_Interval *int_b){
-    register gint start = MIN(int_a->start, int_b->start),
+    gint start = MIN(int_a->start, int_b->start),
                     end = MAX(NOI_Tree_Interval_end(int_a),
                               NOI_Tree_Interval_end(int_b));
     /*
@@ -100,8 +100,8 @@ static NOI_Tree_Interval *NOI_Tree_Interval_merge(NOI_Tree_Interval *int_a,
 void NOI_Tree_insert(NOI_Tree *nt, NOI_Tree_Set *nts,
                      gint start, gint length){
     NOI_Tree_Interval *result = NULL, *prev = NULL;
-    register NOI_Tree_Interval *interval = g_new(NOI_Tree_Interval, 1);
-    register gint cursor = start;
+    NOI_Tree_Interval *interval = g_new(NOI_Tree_Interval, 1);
+    gint cursor = start;
     /*
     g_message("[%s], (%d,%d) [%p] [%p]", __FUNCTION__, start, length,
                                          nt, interval);
@@ -160,8 +160,8 @@ void NOI_Tree_insert(NOI_Tree *nt, NOI_Tree_Set *nts,
 
 static gboolean NOI_Tree_SplayTree_traverse_func(gpointer data,
                                                  gpointer user_data){
-    register NOI_Tree_Interval *interval = data;
-    register NOI_Tree_Traverse_Data *nttd = user_data;
+    NOI_Tree_Interval *interval = data;
+    NOI_Tree_Traverse_Data *nttd = user_data;
     g_assert(nttd->ntf);
     nttd->ntf(interval->start, interval->length, nttd->user_data);
     return FALSE;
@@ -169,7 +169,7 @@ static gboolean NOI_Tree_SplayTree_traverse_func(gpointer data,
 
 void NOI_Tree_traverse(NOI_Tree *nt, NOI_Tree_Set *nts,
                        NOI_Tree_Traverse_Func ntf){
-    register NOI_Tree_Traverse_Data *nttd = nts->sts->user_data;
+    NOI_Tree_Traverse_Data *nttd = nts->sts->user_data;
     g_assert(!nttd->ntf);
     nttd->ntf = ntf;
     SplayTree_traverse(nt->st, nts->sts, NOI_Tree_SplayTree_traverse_func);

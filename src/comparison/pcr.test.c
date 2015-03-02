@@ -23,10 +23,10 @@ static gboolean pcr_test_report_func(Sequence *sequence,
     }
 
 gint Argument_main(Argument *arg){
-    register PCR *pcr = PCR_create(pcr_test_report_func, NULL, 1, 0);
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    PCR *pcr = PCR_create(pcr_test_report_func, NULL, 1, 0);
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register Sequence *sequence = Sequence_create("testseq",
+    Sequence *sequence = Sequence_create("testseq",
             NULL,
             "NNNNACGTNNNAACCNNNNNNNNNNNNNNNNNNNNNNNNNCCGGNNGGTTNN", 0,
             Sequence_Strand_FORWARD, alphabet);

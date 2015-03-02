@@ -16,7 +16,7 @@
 #include "pqueue.h"
 
 PQueueSet *PQueueSet_create(void){
-    register PQueueSet *pq_set = g_new(PQueueSet, 1);
+    PQueueSet *pq_set = g_new(PQueueSet, 1);
     pq_set->pq_recycle = RecycleBin_create("PQueue",
                                            sizeof(PQueue), 64);
     pq_set->node_recycle = RecycleBin_create("PQueue_Node",
@@ -35,7 +35,7 @@ void PQueueSet_destroy(PQueueSet *pq_set){
 PQueue *PQueue_create(PQueueSet *pq_set,
                       PQueue_Compare_Func comp_func,
                       gpointer user_data){
-    register PQueue *pq;
+    PQueue *pq;
     g_assert(pq_set);
     g_assert(comp_func);
     pq = RecycleBin_alloc(pq_set->pq_recycle);
@@ -87,7 +87,7 @@ void PQueue_destroy(PQueue *pq, PQueue_Free_Func free_func,
 
 static PQueue_Node *PQueue_Node_order(PQueue *pq,
                     PQueue_Node *a, PQueue_Node *b){
-    register PQueue_Node *tmp;
+    PQueue_Node *tmp;
     g_assert(a);
     g_assert(b);
     if(pq->comp_func(a->data, b->data, pq->user_data)){
@@ -108,7 +108,7 @@ static PQueue_Node *PQueue_Node_order(PQueue *pq,
     }
 
 PQueue_Node *PQueue_push(PQueue *pq, gpointer data){
-    register PQueue_Node *pqn = RecycleBin_alloc(pq->set->node_recycle);
+    PQueue_Node *pqn = RecycleBin_alloc(pq->set->node_recycle);
     /* Create empty heap and meld with existing heap */
     pqn->data = data;
     pqn->left = pqn->next = pqn->prev = NULL;
@@ -140,7 +140,7 @@ void PQueue_raise(PQueue *pq, PQueue_Node *pqn){
     }
 
 void PQueue_change(PQueue *pq, PQueue_Node *pqn){
-    register PQueue_Node *npqn;
+    PQueue_Node *npqn;
     npqn = PQueue_push(pq, PQueue_remove(pq, pqn));
     g_assert(npqn == pqn);
     return;
@@ -148,9 +148,9 @@ void PQueue_change(PQueue *pq, PQueue_Node *pqn){
 
 static PQueue_Node *PQueue_Node_combine(PQueue *pq,
                                         PQueue_Node *pqn){
-    register gint i, count;
-    register GPtrArray *combine;
-    register PQueue_Node *npqn;
+    gint i, count;
+    GPtrArray *combine;
+    PQueue_Node *npqn;
     if(!pqn->next){ /* Single member */
         return pqn;
         }
@@ -176,8 +176,8 @@ static PQueue_Node *PQueue_Node_combine(PQueue *pq,
     }
 
 gpointer PQueue_pop(PQueue *pq){
-    register PQueue_Node *pqn = pq->root;
-    register gpointer data;
+    PQueue_Node *pqn = pq->root;
+    gpointer data;
     if(!pq->root)
         return NULL; /* Queue is empty */
     data = pq->root->data;
@@ -203,8 +203,8 @@ PQueue *PQueue_join(PQueue *a, PQueue *b){
     }
 
 gpointer PQueue_remove(PQueue *pq, PQueue_Node *pqn){
-    register gpointer data = pqn->data;
-    register PQueue_Node *nb;
+    gpointer data = pqn->data;
+    PQueue_Node *nb;
     g_assert(pqn);
     g_assert(pq->root);
     if(pqn == pq->root)

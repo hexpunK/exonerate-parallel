@@ -20,9 +20,9 @@
 #include "alphabet.h"
 
 gchar *Alphabet_Argument_parse_alphabet_type(gchar *arg_string, gpointer data){
-    register Alphabet_Type *dst_type = (Alphabet_Type*)data;
+    Alphabet_Type *dst_type = (Alphabet_Type*)data;
     gchar *type_str;
-    register gchar *ret_val = Argument_parse_string(arg_string, &type_str);
+    gchar *ret_val = Argument_parse_string(arg_string, &type_str);
     if(ret_val)
         return ret_val;
     (*dst_type) = Alphabet_name_get_type(type_str);
@@ -35,8 +35,8 @@ Alphabet_Type Alphabet_Type_guess(gchar *str){
     "-A-C---G------N-----T------------A-C---G------N-----T-----------"
     "----------------------------------------------------------------"
     "----------------------------------------------------------------";
-    register gint count = 0, len;
-    register Alphabet_Type type;
+    gint count = 0, len;
+    Alphabet_Type type;
     for(len = 0; str[len]; len++)
         if(index[(guchar)str[len]] != '-')
             count++;
@@ -48,7 +48,7 @@ Alphabet_Type Alphabet_Type_guess(gchar *str){
     }
 
 Alphabet_ArgumentSet *Alphabet_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Alphabet_ArgumentSet aas = {TRUE};
     if(arg){
         as = ArgumentSet_create("Alphabet Options");
@@ -149,7 +149,7 @@ static guchar *Alphabet_Filter_get(Alphabet_Filter type){
 /**/
 
 Alphabet *Alphabet_create(Alphabet_Type type, gboolean is_soft_masked){
-    register Alphabet *a = g_new0(Alphabet, 1);
+    Alphabet *a = g_new0(Alphabet, 1);
     a->ref_count = 1;
     a->type = type;
     a->is_soft_masked = is_soft_masked;
@@ -228,7 +228,7 @@ Alphabet *Alphabet_share(Alphabet *a){
 
 guchar *Alphabet_get_filter_by_type(Alphabet *alphabet,
                                     Alphabet_Filter_Type filter_type){
-    register guchar *filter = NULL;
+    guchar *filter = NULL;
     g_assert(filter_type >= 0);
     g_assert(filter_type < Alphabet_Filter_Type_NUMBER_OF_TYPES);
     switch(filter_type){
@@ -262,7 +262,7 @@ guchar *Alphabet_get_filter_by_type(Alphabet *alphabet,
     }
 
 gchar *Alphabet_Filter_Type_get_name(Alphabet_Filter_Type filter_type){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     g_assert(filter_type >= 0);
     g_assert(filter_type < Alphabet_Filter_Type_NUMBER_OF_TYPES);
     switch(filter_type){
@@ -310,7 +310,7 @@ gchar *Alphabet_Type_get_name(Alphabet_Type type){
     }
 
 Alphabet_Type Alphabet_name_get_type(gchar *name){
-    register gint i;
+    gint i;
     gchar *dna_string[5] = {"d", "dna", "n", "nt", "nucleotide"},
           *protein_string[4] = {"p", "protein", "aa", "aminoacid"},
           *unknown_string[3] = {"?", "unknown", "-"};
@@ -328,7 +328,7 @@ Alphabet_Type Alphabet_name_get_type(gchar *name){
     }
 
 gchar *Alphabet_aa2tla(gchar aa){
-    register Alphabet_ArgumentSet *aas
+    Alphabet_ArgumentSet *aas
            = Alphabet_ArgumentSet_create(NULL);
     static gchar *tla_names[25] = {
         "Ala", "Arg", "Asn", "Asp", "Cys", "Gln",

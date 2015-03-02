@@ -24,8 +24,8 @@
 
 FSM *FSM_create(gchar *alphabet, FSM_Join_Func merge_func,
                 FSM_Join_Func combine_func, gpointer user_data){
-    register FSM *f = g_new0(FSM, 1);
-    register guchar *p;
+    FSM *f = g_new0(FSM, 1);
+    guchar *p;
     g_assert(alphabet);
     g_assert(merge_func);
     g_assert(combine_func);
@@ -78,8 +78,8 @@ void FSM_destroy(FSM *f){
 static void FSM_destroy_with_data_recur(FSM *f, FSM_Node *n,
                                         FSM_Destroy_Func fdf,
                                         gpointer user_data){
-    register gint i;
-    register FSM_Node *t;
+    gint i;
+    FSM_Node *t;
     for(i = 1; i < f->width; i++){
         if(n[i].data){
             fdf(n[i].data, user_data);
@@ -102,8 +102,8 @@ void FSM_destroy_with_data(FSM *f, FSM_Destroy_Func fdf,
     }
 
 gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
-    register FSM_Node **ptp, *n = f->root;
-    register guchar *useq, *end;
+    FSM_Node **ptp, *n = f->root;
+    guchar *useq, *end;
     g_assert(!f->is_compiled);
     for(useq = (guchar*)seq, end = useq+len-1; useq < end; useq++){
         if(!f->insertion_filter[*useq])
@@ -140,10 +140,10 @@ gpointer FSM_add(FSM *f, gchar *seq, guint len, gpointer node_data){
    7: This algorithm is linear with the number of states.
 */
 void FSM_compile(FSM *f){
-    register gint i;
+    gint i;
     FSM_Node a;
-    register FSM_Node *suffix, *prev;
-    register FSM_Node *out = &a, *in = out;
+    FSM_Node *suffix, *prev;
+    FSM_Node *out = &a, *in = out;
     g_assert(!f->is_compiled);
     out->next = in;              /* Initialise queue */
     f->root->next = f->root;
@@ -185,9 +185,9 @@ void FSM_compile(FSM *f){
 
 void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
                   gpointer user_data){
-    register FSM_Node *n = f->root;
-    register guchar *p = (guchar*)seq;
-    register gint c;
+    FSM_Node *n = f->root;
+    guchar *p = (guchar*)seq;
+    gint c;
     g_assert(f->is_compiled);
     do {
         if(n[c = f->traversal_filter[*p]].data) {
@@ -199,7 +199,7 @@ void FSM_traverse(FSM *f, gchar *seq, FSM_Traverse_Func ftf,
     }
 
 static void FSM_add_filter(FSM *f, guchar *src, guchar *dst){
-    register gint i;
+    gint i;
     if(dst){ /* Merge filter */
         for(i = 0; i < ALPHABETSIZE; i++)
             dst[i] = dst[src[i]];

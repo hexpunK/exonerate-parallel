@@ -19,10 +19,10 @@
 #include "match.h"
 
 gint Argument_main(Argument *arg){
-    register Region *region = Region_create_blank();
-    register C4_Model *model = C4_Model_create("test");
-    register Alignment *alignment;
-    register Match *match;
+    Region *region = Region_create_blank();
+    C4_Model *model = C4_Model_create("test");
+    Alignment *alignment;
+    Match *match;
     Match_ArgumentSet_create(arg);
     Argument_process(arg, "alignment.test", NULL, NULL);
     match = Match_find(Match_Type_DNA2DNA);

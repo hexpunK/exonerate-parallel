@@ -23,14 +23,14 @@ FILE *file;
 static void test_alignment(C4_Model *model,
                            Sequence *query, Sequence *target,
                            Protein2Genome_Data *p2gd){
-    register C4_Score score;
-    register Alignment *alignment;
-    register Optimal *optimal = Optimal_create(model,
+    C4_Score score;
+    Alignment *alignment;
+    Optimal *optimal = Optimal_create(model,
                                                NULL,
                                                Optimal_Type_SCORE
                                               |Optimal_Type_PATH,
                                               FALSE);
-    register Region *region = Region_create(0, 0,
+    Region *region = Region_create(0, 0,
                                            query->len, target->len);
     score = Optimal_find_score(optimal, region, p2gd, NULL);
     g_message("Score is [%d] (expect 125)", score);
@@ -50,9 +50,9 @@ static void test_alignment(C4_Model *model,
     }
 
 static void test_protein2genome(Sequence *query, Sequence *target){
-    register C4_Model *protein2genome =
+    C4_Model *protein2genome =
         Protein2Genome_create(Affine_Model_Type_LOCAL);
-    register Protein2Genome_Data *p2gd
+    Protein2Genome_Data *p2gd
            = Protein2Genome_Data_create(query, target);
     test_alignment(protein2genome, query, target,
                    p2gd);
@@ -63,11 +63,11 @@ static void test_protein2genome(Sequence *query, Sequence *target){
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register Alphabet *dna_alphabet
+    Alphabet *dna_alphabet
            = Alphabet_create(Alphabet_Type_DNA, FALSE),
              *protein_alphabet
            = Alphabet_create(Alphabet_Type_PROTEIN, FALSE);
-    register Sequence
+    Sequence
         *protein = Sequence_create("protein", NULL,
                      "MADQLTEQIAEFKEAFSLFDKDGDGTITT", 0,
                      Sequence_Strand_UNKNOWN, protein_alphabet),

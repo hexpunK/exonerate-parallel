@@ -21,9 +21,9 @@ static gchar *file_argument_handler(gchar *arg_string, gpointer data){
     }
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as_a = ArgumentSet_create("Arg set one");
-    register ArgumentSet *as_b = ArgumentSet_create("Arg set two");
-    register gint i;
+    ArgumentSet *as_a = ArgumentSet_create("Arg set one");
+    ArgumentSet *as_b = ArgumentSet_create("Arg set two");
+    gint i;
     GPtrArray *argument_list;
     gboolean bool_A, bool_B;
     ArgumentSet_add_option(as_a, 'f', "file", "path name",

@@ -28,7 +28,7 @@
 #include "genome2genome.h"
 
 gchar *Model_Type_to_string(Model_Type type){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     switch(type){
         case Model_Type_UNGAPPED:
             name = "ungapped";
@@ -117,7 +117,7 @@ Model_Type Model_Type_from_string(gchar *str){
           Model_Type_CODING2GENOME,
           Model_Type_CDNA2GENOME,
           Model_Type_GENOME2GENOME};
-    register gint i;
+    gint i;
     for(i = 0; i < Model_Type_TOTAL; i++)
         if(!strcasecmp(name[i], str))
             return type[i];
@@ -225,8 +225,8 @@ static void Model_Type_check_input(Model_Type type,
 C4_Model *Model_Type_get_model(Model_Type type,
                                Alphabet_Type query_type,
                                Alphabet_Type target_type){
-    register C4_Model *model = NULL;
-    register Match_Type match_type;
+    C4_Model *model = NULL;
+    Match_Type match_type;
     Model_Type_check_input(type, query_type, target_type);
     switch(type){
         case Model_Type_UNGAPPED:
@@ -294,8 +294,8 @@ C4_Model *Model_Type_get_model(Model_Type type,
 
 gpointer Model_Type_create_data(Model_Type type,
                                 Sequence *query, Sequence *target){
-    register gpointer model_data = NULL;
-    register Match_Type match_type;
+    gpointer model_data = NULL;
+    Match_Type match_type;
     switch(type){
         case Model_Type_UNGAPPED:
             match_type = Match_Type_find(query->alphabet->type,

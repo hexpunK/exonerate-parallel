@@ -16,15 +16,15 @@
 #include "sequence.h"
 
 gint Argument_main(Argument *arg){
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   TRUE);
-    register gchar *seq = "CGTATGACGtagctagctGCAGATAGC";
-    register Sequence *s = Sequence_create("testseq", NULL, seq, 0,
+    gchar *seq = "CGTATGACGtagctagctGCAGATAGC";
+    Sequence *s = Sequence_create("testseq", NULL, seq, 0,
                                            Sequence_Strand_FORWARD,
                                            alphabet);
-    register Sequence *s2, *s3, *s4;
-    register gchar *result;
-    register Translate *translate = Translate_create(FALSE);
+    Sequence *s2, *s3, *s4;
+    gchar *result;
+    Translate *translate = Translate_create(FALSE);
     s2 = Sequence_revcomp(s);
     s3 = Sequence_translate(s2, translate, 1);
     s4 = Sequence_mask(s3);

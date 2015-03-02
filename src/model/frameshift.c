@@ -17,7 +17,7 @@
 #include "ungapped.h"
 
 Frameshift_ArgumentSet *Frameshift_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Frameshift_ArgumentSet fas;
     if(arg){
         as = ArgumentSet_create("Frameshift Options");
@@ -35,7 +35,7 @@ Frameshift_ArgumentSet *Frameshift_ArgumentSet_create(Argument *arg){
 /**/
 
 Frameshift_Data *Frameshift_Data_create(void){
-    register Frameshift_Data *fd = g_new0(Frameshift_Data, 1);
+    Frameshift_Data *fd = g_new0(Frameshift_Data, 1);
     fd->fas = Frameshift_ArgumentSet_create(NULL);
     return fd;
     }
@@ -50,8 +50,8 @@ void Frameshift_Data_destroy(Frameshift_Data *fd){
 static C4_Score frameshift_penalty_calc_func(gint query_pos,
                                              gint target_pos,
                                              gpointer user_data){
-    register Ungapped_Data *ud = user_data;
-    register Frameshift_Data *fd
+    Ungapped_Data *ud = user_data;
+    Frameshift_Data *fd
             = Ungapped_Data_get_Frameshift_Data(ud);
     return fd->fas->frameshift_penalty;
     }
@@ -62,8 +62,8 @@ static gchar *frameshift_penalty_calc_macro
 /**/
 
 static C4_Calc *Frameshift_find_existing_calc(C4_Model *model){
-    register gint i;
-    register C4_Calc *calc;
+    gint i;
+    C4_Calc *calc;
     for(i = 0; i < model->calc_list->len; i++){
         calc = model->calc_list->pdata[i];
         if(calc->calc_func == frameshift_penalty_calc_func)
@@ -74,15 +74,15 @@ static C4_Calc *Frameshift_find_existing_calc(C4_Model *model){
 
 void Frameshift_add(C4_Model *model, C4_State *match_state,
                     gchar *suffix, gboolean apply_to_query){
-    register gchar *frameshift_name = g_strconcat("frameshift ",
+    gchar *frameshift_name = g_strconcat("frameshift ",
                                                   suffix, NULL);
-    register C4_State *frameshift_state = C4_Model_add_state(model,
+    C4_State *frameshift_state = C4_Model_add_state(model,
                                               frameshift_name);
-    register C4_Calc *frameshift_calc
+    C4_Calc *frameshift_calc
              = Frameshift_find_existing_calc( model);
-    register Frameshift_ArgumentSet *fas
+    Frameshift_ArgumentSet *fas
            = Frameshift_ArgumentSet_create(NULL);
-    register gchar *name;
+    gchar *name;
     if(!frameshift_calc)
         frameshift_calc = C4_Model_add_calc(model, "frameshift",
                 fas->frameshift_penalty,
@@ -118,7 +118,7 @@ void Frameshift_add(C4_Model *model, C4_State *match_state,
             NULL, C4_Label_FRAMESHIFT, NULL);
     g_free(name);
     C4_Model_append_codegen(model, NULL,
-            "register Frameshift_Data *fd = ud->frameshift_data;\n",
+            "Frameshift_Data *fd = ud->frameshift_data;\n",
             NULL);
     g_free(frameshift_name);
     return;

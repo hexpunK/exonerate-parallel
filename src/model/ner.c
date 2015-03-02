@@ -18,7 +18,7 @@
 #include "ner.h"
 
 NER_ArgumentSet *NER_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static NER_ArgumentSet nas;
     if(arg){
         as = ArgumentSet_create("NER Model Options");
@@ -37,7 +37,7 @@ NER_ArgumentSet *NER_ArgumentSet_create(Argument *arg){
     }
 
 NER_Data *NER_Data_create(Sequence *query, Sequence *target){
-    register NER_Data *nd = g_new0(NER_Data, 1);
+    NER_Data *nd = g_new0(NER_Data, 1);
     Affine_Data_init(&nd->ad, query, target, FALSE);
     nd->nas = NER_ArgumentSet_create(NULL);
     return nd;
@@ -54,7 +54,7 @@ void NER_Data_destroy(NER_Data *nd){
 static C4_Score ner_ner_open_calc_func(gint query_pos,
                                                gint target_pos,
                                                gpointer user_data){
-    register NER_Data *nd = (NER_Data*)user_data;
+    NER_Data *nd = (NER_Data*)user_data;
     return nd->nas->ner_open_penalty;
     }
 
@@ -65,15 +65,15 @@ static gchar *ner_ner_open_calc_macro
 
 C4_Model *NER_create(Alphabet_Type query_type,
                      Alphabet_Type target_type){
-    register C4_Model *ner = Affine_create(Affine_Model_Type_LOCAL,
+    C4_Model *ner = Affine_create(Affine_Model_Type_LOCAL,
                                            query_type, target_type,
                                            FALSE);
-    register C4_State *ner_state;
-    register C4_Calc *ner_open_calc;
-    register NER_ArgumentSet *nas
+    C4_State *ner_state;
+    C4_Calc *ner_open_calc;
+    NER_ArgumentSet *nas
            = NER_ArgumentSet_create(NULL);
-    register C4_Transition *match_transition;
-    register gchar *model_name = g_strdup_printf("NER:%s", ner->name);
+    C4_Transition *match_transition;
+    gchar *model_name = g_strdup_printf("NER:%s", ner->name);
     C4_Model_rename(ner, model_name);
     g_free(model_name);
     C4_Model_open(ner);
@@ -108,7 +108,7 @@ C4_Model *NER_create(Alphabet_Type query_type,
 /**/
     C4_Model_append_codegen(ner,
         "#include \"ner.h\"\n",
-        "register NER_Data *nd = (NER_Data*)user_data;\n", NULL);
+        "NER_Data *nd = (NER_Data*)user_data;\n", NULL);
     C4_Model_close(ner);
     return ner;
     }

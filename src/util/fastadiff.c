@@ -22,7 +22,7 @@
 
 static gint fasta_diff_ambig_strcmp(const gchar *s1,
                                     const gchar *s2){
-    register gchar c1, c2;
+    gchar c1, c2;
     while(*s1 && *s2){
         c1 = toupper(*s1);
         c2 = toupper(*s2);
@@ -38,7 +38,7 @@ static gint fasta_diff_ambig_strcmp(const gchar *s1,
 
 static gint fasta_diff_ambig_strcasecmp(const gchar *s1,
                                         const gchar *s2){
-    register gchar c1, c2;
+    gchar c1, c2;
     while(*s1 && *s2){
         c1 = toupper(*s1);
         c2 = toupper(*s2);
@@ -58,12 +58,12 @@ typedef gint (*fasta_diff_compare_func)(const gchar *s1,
 static gint fasta_diff(gchar *first_path, gchar *second_path,
                    gboolean allow_ambiguity, gboolean ignore_case,
                    gboolean check_ids){
-    register FastaDB *fdb_a, *fdb_b;
-    register FastaDB_Seq *fdbs_a = NULL, *fdbs_b = NULL;
-    register gint ret_val = 0;
-    register FastaDB_Mask mask = FastaDB_Mask_ID|FastaDB_Mask_SEQ;
-    register fasta_diff_compare_func comp = NULL;
-    register gchar *seq_a, *seq_b;
+    FastaDB *fdb_a, *fdb_b;
+    FastaDB_Seq *fdbs_a = NULL, *fdbs_b = NULL;
+    gint ret_val = 0;
+    FastaDB_Mask mask = FastaDB_Mask_ID|FastaDB_Mask_SEQ;
+    fasta_diff_compare_func comp = NULL;
+    gchar *seq_a, *seq_b;
     if(ignore_case){
         if(allow_ambiguity){
             comp = fasta_diff_ambig_strcasecmp;
@@ -137,7 +137,7 @@ static gint fasta_diff(gchar *first_path, gchar *second_path,
     }
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *first_path, *second_path;
     gboolean allow_ambiguity, ignore_case, check_ids;

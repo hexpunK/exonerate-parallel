@@ -18,7 +18,7 @@
 #include "c4.h"
 
 int main(void){
-    register C4_Model *model = C4_Model_create("test model");
+    C4_Model *model = C4_Model_create("test model");
     C4_Model_destroy(model);
     return 0;
     }

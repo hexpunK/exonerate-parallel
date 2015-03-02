@@ -29,7 +29,7 @@ void Coding2Coding_Data_init(Coding2Coding_Data *c2cd,
 
 Coding2Coding_Data *Coding2Coding_Data_create(
                       Sequence *query, Sequence *target){
-    register Coding2Coding_Data *c2cd = g_new0(Coding2Coding_Data, 1);
+    Coding2Coding_Data *c2cd = g_new0(Coding2Coding_Data, 1);
     Coding2Coding_Data_init(c2cd, query, target);
     return c2cd;
     }
@@ -48,9 +48,9 @@ void Coding2Coding_Data_destroy(Coding2Coding_Data *c2cd){
     }
 
 C4_Model *Coding2Coding_create(void){
-    register gchar *name = "coding2coding";
-    register C4_Model *model = NULL;
-    register C4_Transition *match_transition;
+    gchar *name = "coding2coding";
+    C4_Model *model = NULL;
+    C4_Transition *match_transition;
     model = Affine_create(Affine_Model_Type_LOCAL,
                           Alphabet_Type_DNA, Alphabet_Type_DNA, TRUE);
     g_assert(model);

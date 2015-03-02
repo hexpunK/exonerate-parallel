@@ -21,7 +21,7 @@
 /**/
 
 SDP_ArgumentSet *SDP_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static SDP_ArgumentSet sas = {30};
     if(arg){
         as = ArgumentSet_create("Seeded Dynamic Programming options");
@@ -47,9 +47,9 @@ typedef struct {
 
 static Scheduler_Seed_List *Scheduler_Seed_List_create(SDP_Pair *sdp_pair,
                                                        gboolean is_forward){
-    register Scheduler_Seed_List *seed_info_list
+    Scheduler_Seed_List *seed_info_list
         = g_new(Scheduler_Seed_List, 1);
-    register C4_Model *model = sdp_pair->sdp->model;
+    C4_Model *model = sdp_pair->sdp->model;
     seed_info_list->seed_list = sdp_pair->seed_list;
     seed_info_list->seed_pos = 0;
     if(is_forward){
@@ -68,21 +68,21 @@ static void Scheduler_Seed_List_destroy(
     }
 
 static void Scheduler_Seed_List_init_forward(gpointer seed_data){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
+    Scheduler_Seed_List *seed_info_list = seed_data;
     g_assert(seed_info_list);
     seed_info_list->seed_pos = 0;
     return;
     }
 
 static void Scheduler_Seed_List_init_reverse(gpointer seed_data){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
+    Scheduler_Seed_List *seed_info_list = seed_data;
     g_assert(seed_info_list);
     seed_info_list->seed_pos = seed_info_list->seed_list->len - 1;
     return;
     }
 
 static void Scheduler_Seed_List_next_forward(gpointer seed_data){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
+    Scheduler_Seed_List *seed_info_list = seed_data;
     g_assert(seed_info_list);
     g_assert(seed_info_list->seed_pos < seed_info_list->seed_list->len);
     seed_info_list->seed_pos++;
@@ -90,7 +90,7 @@ static void Scheduler_Seed_List_next_forward(gpointer seed_data){
     }
 
 static void Scheduler_Seed_List_next_reverse(gpointer seed_data){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
+    Scheduler_Seed_List *seed_info_list = seed_data;
     g_assert(seed_info_list);
     g_assert(seed_info_list->seed_pos >= 0);
     seed_info_list->seed_pos--;
@@ -99,8 +99,8 @@ static void Scheduler_Seed_List_next_reverse(gpointer seed_data){
 
 static gboolean Scheduler_Seed_List_get_forward(gpointer seed_data,
                                       Scheduler_Seed *seed_info){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
-    register SDP_Seed *seed;
+    Scheduler_Seed_List *seed_info_list = seed_data;
+    SDP_Seed *seed;
     g_assert(seed_info_list);
     if(seed_info_list->seed_pos >= seed_info_list->seed_list->len)
         return FALSE;
@@ -115,8 +115,8 @@ static gboolean Scheduler_Seed_List_get_forward(gpointer seed_data,
 
 static gboolean Scheduler_Seed_List_get_reverse(gpointer seed_data,
                                       Scheduler_Seed *seed_info){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
-    register SDP_Seed *seed;
+    Scheduler_Seed_List *seed_info_list = seed_data;
+    SDP_Seed *seed;
     g_assert(seed_info_list);
     if(seed_info_list->seed_pos < 0)
         return FALSE;
@@ -133,8 +133,8 @@ static void Scheduler_Seed_List_start_func(gpointer seed_data,
                                            gint start_query_pos,
                                            gint start_target_pos,
                                            STraceback_Cell *stcell){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
-    register SDP_Seed *seed;
+    Scheduler_Seed_List *seed_info_list = seed_data;
+    SDP_Seed *seed;
     g_assert(seed_info_list);
     g_assert(seed_info_list->seed_list);
     g_assert(seed_id < seed_info_list->sdp_pair->seed_list->len);
@@ -157,8 +157,8 @@ static void Scheduler_Seed_List_end_func(gpointer seed_data,
                                          gint end_query_pos,
                                          gint end_target_pos,
                                          STraceback_Cell *stcell){
-    register Scheduler_Seed_List *seed_info_list = seed_data;
-    register SDP_Seed *seed;
+    Scheduler_Seed_List *seed_info_list = seed_data;
+    SDP_Seed *seed;
     g_assert(seed_info_list);
     g_assert(seed_info_list->seed_list);
     g_assert(seed_id < seed_info_list->sdp_pair->seed_list->len);
@@ -189,7 +189,7 @@ typedef struct {
 static Scheduler_Seed_Boundary *Scheduler_Seed_Boundary_create(
                                  Boundary *boundary,
                                  SDP_Pair *sdp_pair){
-    register Scheduler_Seed_Boundary *seed_info_boundary
+    Scheduler_Seed_Boundary *seed_info_boundary
         = g_new(Scheduler_Seed_Boundary, 1);
     seed_info_boundary->boundary = Boundary_share(boundary);
     seed_info_boundary->curr_row = 0;
@@ -210,7 +210,7 @@ static void Scheduler_Seed_Boundary_destroy(
     }
 
 static void Scheduler_Seed_Boundary_init_forward(gpointer seed_data){
-    register Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
+    Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
     g_assert(seed_info_boundary);
     seed_info_boundary->curr_row = 0;
     seed_info_boundary->curr_interval = 0;
@@ -220,11 +220,11 @@ static void Scheduler_Seed_Boundary_init_forward(gpointer seed_data){
     }
 
 static void Scheduler_Seed_Boundary_next_forward(gpointer seed_data){
-    register Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
-    register Boundary_Row *boundary_row
+    Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
+    Boundary_Row *boundary_row
         = seed_info_boundary->boundary->row_list->pdata
          [seed_info_boundary->curr_row];
-    register Boundary_Interval *interval
+    Boundary_Interval *interval
         = boundary_row->interval_list->pdata
          [seed_info_boundary->curr_interval];
     /* If more seeds in interval, move curr_pos */
@@ -253,15 +253,15 @@ static void Scheduler_Seed_Boundary_next_forward(gpointer seed_data){
 
 static gboolean Scheduler_Seed_Boundary_get_forward(gpointer seed_data,
                                           Scheduler_Seed *seed_info){
-    register Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
-    register Boundary_Row *boundary_row
+    Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
+    Boundary_Row *boundary_row
         = seed_info_boundary->boundary->row_list->pdata
          [seed_info_boundary->curr_row];
     /* FIXME: fails when boundary is empty */
-    register Boundary_Interval *interval
+    Boundary_Interval *interval
         = boundary_row->interval_list->pdata
          [seed_info_boundary->curr_interval];
-    register SDP_Seed *seed;
+    SDP_Seed *seed;
     if(seed_info_boundary->is_finished)
         return FALSE;
     g_assert(interval->seed_id < seed_info_boundary->sdp_pair->seed_list->len);
@@ -279,8 +279,8 @@ static void Scheduler_Seed_Boundary_end_func(gpointer seed_data,
                                            gint end_query_pos,
                                            gint end_target_pos,
                                            STraceback_Cell *stcell){
-    register Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
-    register SDP_Seed *seed
+    Scheduler_Seed_Boundary *seed_info_boundary = seed_data;
+    SDP_Seed *seed
         = seed_info_boundary->sdp_pair->seed_list->pdata[seed_id];
     /* Is best end for this seed */
     if(seed->max_end->score < score){
@@ -297,8 +297,8 @@ static void Scheduler_Seed_Boundary_end_func(gpointer seed_data,
 /**/
 
 SDP *SDP_create(C4_Model *model){
-    register SDP *sdp = g_new0(SDP, 1);
-    register C4_Portal *portal;
+    SDP *sdp = g_new0(SDP, 1);
+    C4_Portal *portal;
     /**/
     sdp->thread_ref = ThreadRef_create();
     sdp->sas = SDP_ArgumentSet_create(NULL);
@@ -377,7 +377,7 @@ void SDP_destroy(SDP *sdp){
 
 static void SDP_add_codegen(Scheduler *scheduler,
                             GPtrArray *codegen_list){
-    register Codegen *codegen;
+    Codegen *codegen;
     if(scheduler){
         codegen = Scheduler_make_Codegen(scheduler);
         g_ptr_array_add(codegen_list, codegen);
@@ -386,7 +386,7 @@ static void SDP_add_codegen(Scheduler *scheduler,
     }
 
 GPtrArray *SDP_get_codegen_list(SDP *sdp){
-    register GPtrArray *codegen_list = g_ptr_array_new();
+    GPtrArray *codegen_list = g_ptr_array_new();
     SDP_add_codegen(sdp->find_starts_scheduler, codegen_list);
     SDP_add_codegen(sdp->find_ends_scheduler, codegen_list);
     g_assert(codegen_list->len);
@@ -396,7 +396,7 @@ GPtrArray *SDP_get_codegen_list(SDP *sdp){
 /**/
 
 static SDP_Terminal *SDP_Terminal_create(void){
-    register SDP_Terminal *terminal = g_new(SDP_Terminal, 1);
+    SDP_Terminal *terminal = g_new(SDP_Terminal, 1);
     terminal->query_pos = 0;
     terminal->target_pos = 0;
     terminal->score = C4_IMPOSSIBLY_LOW_SCORE;
@@ -415,7 +415,7 @@ static void SDP_Terminal_destroy(SDP_Terminal *terminal,
 /**/
 
 static SDP_Seed *SDP_Seed_create(HSP *hsp, gint id){
-    register SDP_Seed *seed = g_new(SDP_Seed, 1);
+    SDP_Seed *seed = g_new(SDP_Seed, 1);
     seed->seed_id = id;
     seed->hsp = hsp;
     seed->max_start = SDP_Terminal_create();
@@ -438,9 +438,9 @@ static void SDP_Seed_destroy(SDP_Seed *seed, STraceback *fwd_straceback,
 
 static int SDP_compare_HSP_cobs_in_forward_dp_order(const void *a,
                                                     const void *b){
-    register HSP **hsp_a = (HSP**)a,
+    HSP **hsp_a = (HSP**)a,
                  **hsp_b = (HSP**)b;
-    register gint target_diff = HSP_target_cobs(*hsp_a)
+    gint target_diff = HSP_target_cobs(*hsp_a)
                               - HSP_target_cobs(*hsp_b);
     if(!target_diff)
         return HSP_query_cobs(*hsp_a)
@@ -449,10 +449,10 @@ static int SDP_compare_HSP_cobs_in_forward_dp_order(const void *a,
     }
 
 static GPtrArray *SDP_Pair_create_seed_list(Comparison *comparison){
-    register gint i;
-    register SDP_Seed *seed;
-    register HSP *hsp, *prev_hsp = NULL;
-    register GPtrArray *hsp_list = g_ptr_array_new(),
+    gint i;
+    SDP_Seed *seed;
+    HSP *hsp, *prev_hsp = NULL;
+    GPtrArray *hsp_list = g_ptr_array_new(),
                        *seed_list = g_ptr_array_new();
     g_assert(Comparison_has_hsps(comparison));
     /* Build a combined HSP list */
@@ -496,7 +496,7 @@ static GPtrArray *SDP_Pair_create_seed_list(Comparison *comparison){
 SDP_Pair *SDP_Pair_create(SDP *sdp, SubOpt *subopt,
                           Comparison *comparison,
                           gpointer user_data){
-    register SDP_Pair *sdp_pair = g_new(SDP_Pair, 1);
+    SDP_Pair *sdp_pair = g_new(SDP_Pair, 1);
     g_assert(sdp);
     sdp_pair->sdp = SDP_share(sdp);
     g_assert(comparison);
@@ -515,8 +515,8 @@ SDP_Pair *SDP_Pair_create(SDP *sdp, SubOpt *subopt,
     }
 
 void SDP_Pair_destroy(SDP_Pair *sdp_pair){
-    register gint i;
-    register SDP_Seed *seed;
+    gint i;
+    SDP_Seed *seed;
     g_assert(sdp_pair);
     Comparison_destroy(sdp_pair->comparison);
     SDP_destroy(sdp_pair->sdp);
@@ -540,10 +540,10 @@ void SDP_Pair_destroy(SDP_Pair *sdp_pair){
 /**/
 
 static Boundary *SDP_Pair_find_start_points(SDP_Pair *sdp_pair){
-    register Scheduler_Seed_List *seed_info_list
+    Scheduler_Seed_List *seed_info_list
            = Scheduler_Seed_List_create(sdp_pair, FALSE);
-    register Boundary *boundary = NULL;
-    register Scheduler_Pair *spair;
+    Boundary *boundary = NULL;
+    Scheduler_Pair *spair;
     if(sdp_pair->sdp->use_boundary)
         boundary = Boundary_create();
     spair = Scheduler_Pair_create(sdp_pair->sdp->find_starts_scheduler,
@@ -561,9 +561,9 @@ static Boundary *SDP_Pair_find_start_points(SDP_Pair *sdp_pair){
     }
 
 static void SDP_Pair_find_end_points(SDP_Pair *sdp_pair){
-    register Scheduler_Pair *spair;
-    register Scheduler_Seed_List *seed_info_list = NULL;
-    register Scheduler_Seed_Boundary *seed_info_boundary = NULL;
+    Scheduler_Pair *spair;
+    Scheduler_Seed_List *seed_info_list = NULL;
+    Scheduler_Seed_Boundary *seed_info_boundary = NULL;
     if(sdp_pair->boundary){
         g_assert(sdp_pair->boundary->row_list->len);
         seed_info_boundary = Scheduler_Seed_Boundary_create(sdp_pair->boundary,
@@ -600,8 +600,8 @@ static void SDP_Pair_find_end_points(SDP_Pair *sdp_pair){
 /**/
 
 static Boundary *SDP_Pair_update_starts(SDP_Pair *sdp_pair){
-    register gint i;
-    register SDP_Seed *seed;
+    gint i;
+    SDP_Seed *seed;
     g_assert(sdp_pair->seed_list->len);
     /* Set max start scores low */
     for(i = 0; i < sdp_pair->seed_list->len; i++){
@@ -618,8 +618,8 @@ static Boundary *SDP_Pair_update_starts(SDP_Pair *sdp_pair){
     }
 
 static void SDP_Pair_update_ends(SDP_Pair *sdp_pair){
-    register gint i;
-    register SDP_Seed *seed;
+    gint i;
+    SDP_Seed *seed;
     g_assert(sdp_pair->seed_list->len);
     /* Set max end scores low */
     for(i = 0; i < sdp_pair->seed_list->len; i++){
@@ -640,11 +640,11 @@ static void SDP_Pair_update_ends(SDP_Pair *sdp_pair){
 static void SDP_Pair_add_traceback(SDP_Pair *sdp_pair, SDP_Seed *best_seed,
                                    gboolean is_forward,
                                    Alignment *alignment){
-    register STraceback_List *stlist = NULL;
-    register gint i;
-    register STraceback_Operation *operation;
-    register AlignmentOperation *last;
-    register STraceback_Operation *first;
+    STraceback_List *stlist = NULL;
+    gint i;
+    STraceback_Operation *operation;
+    AlignmentOperation *last;
+    STraceback_Operation *first;
     g_assert(best_seed);
     if(is_forward){
         g_assert(best_seed->max_end);
@@ -686,7 +686,7 @@ static void SDP_Pair_add_traceback(SDP_Pair *sdp_pair, SDP_Seed *best_seed,
     }
 
 static void SDP_Seed_find_start(SDP_Seed *best_seed, C4_Model *model){
-    register STraceback_Cell *stcell;
+    STraceback_Cell *stcell;
     best_seed->max_start->query_pos
         = best_seed->max_end->query_pos;
     best_seed->max_start->target_pos
@@ -707,8 +707,8 @@ static void SDP_Seed_find_start(SDP_Seed *best_seed, C4_Model *model){
 static Alignment *SDP_Pair_find_path(SDP_Pair *sdp_pair,
                                      SDP_Seed *best_seed,
                                      Boundary *boundary){
-    register Region *alignment_region;
-    register Alignment *alignment;
+    Region *alignment_region;
+    Alignment *alignment;
     /**/
     if(sdp_pair->sdp->use_boundary)
         SDP_Seed_find_start(best_seed, sdp_pair->sdp->model);
@@ -734,16 +734,16 @@ static Alignment *SDP_Pair_find_path(SDP_Pair *sdp_pair,
 
 static int SDP_compare_SDP_Seed_by_score(const void *a,
                                          const void *b){
-    register SDP_Seed **seed_a = (SDP_Seed**)a,
+    SDP_Seed **seed_a = (SDP_Seed**)a,
                       **seed_b = (SDP_Seed**)b;
     return (*seed_b)->max_end->score
          - (*seed_a)->max_end->score;
     }
 
 Alignment *SDP_Pair_next_path(SDP_Pair *sdp_pair, C4_Score threshold){
-    register SDP_Seed *seed, *best_seed = NULL;
-    register Alignment *alignment = NULL;
-    register gint i;
+    SDP_Seed *seed, *best_seed = NULL;
+    Alignment *alignment = NULL;
+    gint i;
     /* Make the start and end points up to date */
     if(sdp_pair->alignment_count){
         if(!sdp_pair->sdp->sas->single_pass_subopt){ /* multipass */

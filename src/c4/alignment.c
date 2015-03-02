@@ -22,7 +22,7 @@
 #include "exonerate_util.h"
 
 Alignment_ArgumentSet *Alignment_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Alignment_ArgumentSet aas = {80, TRUE};
     if(arg){
         as = ArgumentSet_create("Alignment options");
@@ -41,7 +41,7 @@ Alignment_ArgumentSet *Alignment_ArgumentSet_create(Argument *arg){
 
 Alignment *Alignment_create(C4_Model *model, Region *region,
                             C4_Score score){
-    register Alignment *alignment = g_new(Alignment, 1);
+    Alignment *alignment = g_new(Alignment, 1);
     g_assert(model);
     g_assert(region);
     alignment->ref_count = 1;
@@ -59,7 +59,7 @@ Alignment *Alignment_share(Alignment *alignment){
     }
 
 void Alignment_destroy(Alignment *alignment){
-    register gint i;
+    gint i;
     g_assert(alignment);
     if(--alignment->ref_count)
         return;
@@ -74,7 +74,7 @@ void Alignment_destroy(Alignment *alignment){
 
 void Alignment_add(Alignment *alignment, C4_Transition *transition,
                    gint length){
-    register AlignmentOperation *alignment_operation, *prev;
+    AlignmentOperation *alignment_operation, *prev;
     g_assert(alignment);
     g_assert(transition);
     if(alignment->operation_list->len){
@@ -104,7 +104,7 @@ void Alignment_add(Alignment *alignment, C4_Transition *transition,
 static gchar Alignment_match_get_symbol(Sequence *seq,
                                         gint pos, gint advance,
                                         Translate *translate){
-    register gchar symbol = '\0';
+    gchar symbol = '\0';
     switch(advance){
         case 1:
             symbol = Sequence_get_symbol(seq, pos);
@@ -126,7 +126,7 @@ static gchar Alignment_match_get_symbol(Sequence *seq,
 static gchar *Alignment_match_get_string(Sequence *seq,
                        gint pos, gint advance, gint max,
                        Translate *translate){
-    register gint ch;
+    gint ch;
     switch(max){
         case 1:
             g_assert(advance == 1);
@@ -162,8 +162,8 @@ static gchar *Alignment_match_get_string(Sequence *seq,
 /**/
 
 static gchar Alignment_get_gene_orientation(Alignment *alignment){
-    register gint i;
-    register AlignmentOperation *ao;
+    gint i;
+    AlignmentOperation *ao;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
         if(ao->transition->label == C4_Label_5SS)
@@ -179,8 +179,8 @@ static gint Alignment_get_coordinate(Alignment *alignment,
                                      Sequence *target,
                                      gboolean on_query,
                                      gboolean report_start){
-    register gint pos;
-    register Alignment_ArgumentSet *aas
+    gint pos;
+    Alignment_ArgumentSet *aas
         = Alignment_ArgumentSet_create(NULL);
     if(on_query){
         if(report_start){
@@ -212,8 +212,8 @@ static gint Alignment_convert_coordinate(Alignment *alignment,
                                          gint query_pos,
                                          gint target_pos,
                                          gboolean on_query){
-    register gint pos;
-    register Alignment_ArgumentSet *aas
+    gint pos;
+    Alignment_ArgumentSet *aas
         = Alignment_ArgumentSet_create(NULL);
     if(on_query){
         pos = query_pos;
@@ -233,15 +233,15 @@ static gint Alignment_convert_coordinate(Alignment *alignment,
 
 static gint Alignment_get_max_pos_len(Alignment *alignment,
                           Sequence *query, Sequence *target){
-    register gint qmax = MAX(
+    gint qmax = MAX(
       Alignment_get_coordinate(alignment, query, target, TRUE, TRUE),
       Alignment_get_coordinate(alignment, query, target, TRUE, FALSE));
-    register gint tmax = MAX(
+    gint tmax = MAX(
       Alignment_get_coordinate(alignment, query, target, FALSE, TRUE),
       Alignment_get_coordinate(alignment, query, target, FALSE, FALSE));
-    register gint max = MAX(qmax, tmax);
-    register gchar *tmpstr = g_strdup_printf("%d", max);
-    register gint maxlen = strlen(tmpstr);
+    gint max = MAX(qmax, tmax);
+    gchar *tmpstr = g_strdup_printf("%d", max);
+    gint maxlen = strlen(tmpstr);
     g_free(tmpstr);
     return maxlen;
     }
@@ -285,11 +285,11 @@ typedef struct {
 static AlignmentView *AlignmentView_create(Alignment *alignment,
                                            Sequence *query,
                                            Sequence *target){
-    register AlignmentView *av = g_new(AlignmentView, 1);
-    register AlignmentOperation *ao;
-    register AlignmentSeparation *curr_split_codon_separation = NULL;
-    register gint i;
-    register Alignment_ArgumentSet *aas
+    AlignmentView *av = g_new(AlignmentView, 1);
+    AlignmentOperation *ao;
+    AlignmentSeparation *curr_split_codon_separation = NULL;
+    gint i;
+    Alignment_ArgumentSet *aas
            = Alignment_ArgumentSet_create(NULL);
     av->outer_query  = g_string_sized_new(16);
     if(alignment->model->max_query_advance == 3)
@@ -349,7 +349,7 @@ static AlignmentView *AlignmentView_create(Alignment *alignment,
     }
 
 static void AlignmentView_destroy(AlignmentView *av){
-    register gint i;
+    gint i;
     for(i = 0; i < av->split_codon_separation_list->len; i++)
         g_free(av->split_codon_separation_list->pdata[i]);
     g_ptr_array_free(av->split_codon_separation_list, TRUE);
@@ -376,8 +376,8 @@ static void AlignmentView_add(AlignmentView *av,
                               gchar *inner_target_string,
                               gchar *target_string,
                               gint query_pos, gint target_pos){
-    register AlignmentPosition *apos;
-    register gint i;
+    AlignmentPosition *apos;
+    gint i;
     g_assert(strlen(query_string) == strlen(match_string));
     g_assert(strlen(match_string) == strlen(target_string));
     if(av->inner_query){
@@ -420,8 +420,8 @@ typedef struct {
 
 static void Alignment_match_translate_reverse(gchar *dna, gint length,
                                               gpointer user_data){
-    register AlignmentMatchData *amd = user_data;
-    register gint i;
+    AlignmentMatchData *amd = user_data;
+    gint i;
     for(i = 0; i < 3; i++)
         if(dna[i] == amd->codon[i])
             amd->match_string[i] = '!';
@@ -430,7 +430,7 @@ static void Alignment_match_translate_reverse(gchar *dna, gint length,
 
 static gchar Alignment_get_equiv_symbol(gchar symbol_a, gchar symbol_b,
                                         Submat *submat){
-    register gint score;
+    gint score;
     g_assert(symbol_a);
     g_assert(symbol_b);
     if(submat){
@@ -452,9 +452,9 @@ static gchar Alignment_get_equiv_symbol(gchar symbol_a, gchar symbol_b,
 
 static gchar *Alignment_get_codon_match_string(gchar *codon, gchar aa,
                         Submat *protein_submat, Translate *translate){
-    register gchar codon_aa = Translate_codon(translate, codon);
-    register gchar match_symbol;
-    register gchar *codon_match;
+    gchar codon_aa = Translate_codon(translate, codon);
+    gchar match_symbol;
+    gchar *codon_match;
     gchar aa_seq[2];
     AlignmentMatchData amd;
     g_assert(translate);
@@ -479,15 +479,15 @@ static void AlignmentView_add_MATCH(AlignmentView *av,
                 gint query_pos, gint target_pos,
                 Submat *dna_submat, Submat *protein_submat,
                 Translate *translate){
-    register gchar query_symbol, target_symbol;
-    register gchar *query_string, *target_string;
-    register gchar *inner_query_string = NULL,
+    gchar query_symbol, target_symbol;
+    gchar *query_string, *target_string;
+    gchar *inner_query_string = NULL,
                    *inner_target_string = NULL;
-    register gint max_advance;
-    register gint i;
-    register gint curr_query_pos = query_pos,
+    gint max_advance;
+    gint i;
+    gint curr_query_pos = query_pos,
                   curr_target_pos = target_pos;
-    register Match *match = (Match*)transition->label_data;
+    Match *match = (Match*)transition->label_data;
     gchar match_string[4]; /* FIXME: temp: should be max_advance long */
     for(i = 0; i < total_length; i++){
         max_advance = MAX(transition->advance_query,
@@ -536,15 +536,15 @@ static void AlignmentView_add_GAP(AlignmentView *av,
                 gint advance_query, gint advance_target,
                 gint total_length, Sequence *query, Sequence *target,
                 gint query_pos, gint target_pos, Translate *translate){
-    register gint i, j;
-    register gint curr_query_pos = query_pos,
+    gint i, j;
+    gint curr_query_pos = query_pos,
                   curr_target_pos = target_pos;
-    register gchar *seq_string = g_new(gchar, 4),
+    gchar *seq_string = g_new(gchar, 4),
                    *match_string = g_new(gchar, 4),
                    *gap_string = g_new(gchar, 4);
-    register Alphabet_Type emitted_alphabet_type;
-    register gchar tr_codon, *tr_codon_name;
-    register gboolean is_translating
+    Alphabet_Type emitted_alphabet_type;
+    gchar tr_codon, *tr_codon_name;
+    gboolean is_translating
         = ( ( (query->alphabet->type == Alphabet_Type_PROTEIN)
            && (target->alphabet->type == Alphabet_Type_DNA))
           ||( (query->alphabet->type == Alphabet_Type_DNA)
@@ -611,7 +611,7 @@ static void AlignmentView_add_GAP(AlignmentView *av,
 
 static void AlignmentView_set_consensus_ss_string(AlignmentView *av,
     gboolean is_5_prime, gchar *splice_site, gchar *consensus_string){
-    register gchar cons_a, cons_b;
+    gchar cons_a, cons_b;
     if(av->gene_orientation == '+'){
         if(is_5_prime){ /* FWD: gt..ag */
             cons_a = 'G';
@@ -646,7 +646,7 @@ static void AlignmentView_add_SPLICE_SITE(AlignmentView *av,
                 gint total_length, Sequence *query, Sequence *target,
                 gint query_pos, gint target_pos, gboolean is_5_prime,
                 C4_Transition *last_match){
-    register gchar *gap_string = "  ";
+    gchar *gap_string = "  ";
     static gchar qy_seq_string[3], tg_seq_string[3],
                  qy_cons_string[3], tg_cons_string[3];
     qy_cons_string[0] = qy_cons_string[1] = ' ';
@@ -707,9 +707,9 @@ static void AlignmentView_add_INTRON(AlignmentView *av,
                 Sequence *query, Sequence *target,
                 gint query_pos, gint target_pos,
                 C4_Transition *last_match){
-    register gchar *dir_sign = "????", *label = NULL;
-    register gint fill, intron_count = 0;
-    register gchar *name_string, *middle_string, *gap_string,
+    gchar *dir_sign = "????", *label = NULL;
+    gint fill, intron_count = 0;
+    gchar *name_string, *middle_string, *gap_string,
                    *pad_string, *intron_name;
     g_assert(last_match);
     if(av->gene_orientation == '+'){
@@ -774,15 +774,15 @@ static void AlignmentView_add_INTRON(AlignmentView *av,
 static void AlignmentView_add_NER(AlignmentView *av,
                           gint advance_query, gint advance_target,
                           gint query_pos, gint target_pos){
-    register gchar
+    gchar
         *upper_string  = g_strdup_printf("%d", advance_query),
         *middle_string = g_strdup_printf("NER %d", ++av->ner_count),
         *lower_string  = g_strdup_printf("%d", advance_target);
-    register gint upper_len = strlen(upper_string),
+    gint upper_len = strlen(upper_string),
                   middle_len = strlen(middle_string),
                   lower_len = strlen(lower_string),
                   max_len;
-    register gchar *upper_padded, *middle_padded, *lower_padded;
+    gchar *upper_padded, *middle_padded, *lower_padded;
     max_len = upper_len;
     if(max_len < middle_len)
         max_len = middle_len;
@@ -819,19 +819,19 @@ static void AlignmentView_add_SPLIT_CODON(AlignmentView *av,
             gint advance_query, gint advance_target,
             gint query_pos, gint target_pos,
             Submat *protein_submat, Translate *translate){
-    register gchar *query_string = NULL, *target_string = NULL,
+    gchar *query_string = NULL, *target_string = NULL,
                    *match_string = NULL, *codon_match;
-    register gchar qy_aa_symbol = '\0', tg_aa_symbol = '\0',
+    gchar qy_aa_symbol = '\0', tg_aa_symbol = '\0',
                   *qy_aa_name = NULL, *tg_aa_name = NULL,
                    *tr_codon_name;
-    register gchar *inner_query_string = NULL,
+    gchar *inner_query_string = NULL,
                    *inner_target_string = NULL;
-    register gint pos_to_start = -1, num_to_print;
-    register gint qp0 = 0, qp1 = 0, qp2 = 0,
+    gint pos_to_start = -1, num_to_print;
+    gint qp0 = 0, qp1 = 0, qp2 = 0,
                   tp0 = 0, tp1 = 0, tp2 = 0;
-    register gboolean query_is_dna, target_is_dna, before_intron;
+    gboolean query_is_dna, target_is_dna, before_intron;
     gchar qy_codon[4], tg_codon[4];
-    register AlignmentSeparation *as
+    AlignmentSeparation *as
         = av->split_codon_separation_list->pdata
          [av->curr_split_codon_count >> 1];
     g_assert(advance_query || advance_target);
@@ -1041,11 +1041,11 @@ static void AlignmentView_add_FRAMESHIFT(AlignmentView *av,
                 gint advance_query, gint advance_target,
                 gint total_length, Sequence *query, Sequence *target,
                 gint query_pos, gint target_pos, Translate *translate){
-    register gint i, j;
-    register gint curr_query_pos = query_pos,
+    gint i, j;
+    gint curr_query_pos = query_pos,
                   curr_target_pos = target_pos;
     static gchar seq_string[4], match_string[4], gap_string[4];
-    register Alphabet_Type emitted_alphabet_type;
+    Alphabet_Type emitted_alphabet_type;
     g_assert(!(advance_query && advance_target));
     match_string[0] = '#'; /* Frameshift */
     gap_string[0] = '-';
@@ -1185,12 +1185,12 @@ static void AlignmentView_prepare(AlignmentView *av,
                        Sequence *query, Sequence *target,
                        Submat *dna_submat, Submat *protein_submat,
                        Translate *translate){
-    register gint i;
-    register gint query_pos = alignment->region->query_start,
+    gint i;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register AlignmentPosition *apos;
-    register AlignmentOperation *ao, *prev_ao;
-    register gint total_length;
+    AlignmentPosition *apos;
+    AlignmentOperation *ao, *prev_ao;
+    gint total_length;
     C4_Transition *last_match = NULL;
     apos = g_new(AlignmentPosition, 1);
     apos->query_pos  = alignment->region->query_start-1;
@@ -1232,7 +1232,7 @@ static void AlignmentView_prepare(AlignmentView *av,
 
 static gboolean AlignmentView_string_is_empty(GString *str, gint pos,
                                               gint width){
-    register gint i;
+    gint i;
     for(i = 0; i < width; i++)
         if(str->str[pos+i] != ' ')
             return FALSE;
@@ -1241,8 +1241,8 @@ static gboolean AlignmentView_string_is_empty(GString *str, gint pos,
 
 static void AlignmentView_prepare_seq(GString *outer, GString *inner,
                                       gint pos, gint width){
-    register gint i;
-    register gchar t;
+    gint i;
+    gchar t;
     for(i = 0; i < width; i++){
         if(inner->str[pos+i] == ' '){ /* Swap empty */
              t = inner->str[pos+i];
@@ -1257,7 +1257,7 @@ static void AlignmentView_prepare_seq(GString *outer, GString *inner,
     }
 
 static void AlignmentView_replace_padding(GString *str, gint pos, gint width){
-    register gint i;
+    gint i;
     for(i = 0; i < width; i++){
         if(str->str[pos+i] == '^')
             str->str[pos+i] = ' ';
@@ -1268,12 +1268,12 @@ static void AlignmentView_replace_padding(GString *str, gint pos, gint width){
 static void AlignmentView_display_row(AlignmentView *av,
             gint row, gint pos, gint width, gint maxposlen,
             Sequence *query, Sequence *target, FILE *fp){
-    register AlignmentPosition *apos1 = av->row_marker->pdata[row],
+    AlignmentPosition *apos1 = av->row_marker->pdata[row],
                                *apos2 = av->row_marker->pdata[row+1];
-    register gint p1q, p1t, p2q, p2t;
-    register Alignment_ArgumentSet *aas
+    gint p1q, p1t, p2q, p2t;
+    Alignment_ArgumentSet *aas
         = Alignment_ArgumentSet_create(NULL);
-    register gboolean show_inner_query = FALSE,
+    gboolean show_inner_query = FALSE,
                       show_inner_target = FALSE;
     p1q = apos1->query_pos+1;
     p2q = apos2->query_pos+1;
@@ -1323,7 +1323,7 @@ static void AlignmentView_display_row(AlignmentView *av,
 static void AlignmentView_display(AlignmentView *av,
                                   Sequence *query, Sequence *target,
                                   FILE *fp){
-    register gint pos = 0, pause, row = 0;
+    gint pos = 0, pause, row = 0;
     pause = av->outer_query->len-av->width;
     while(pos < pause){
         AlignmentView_display_row(av, row, pos, av->width,
@@ -1344,7 +1344,7 @@ void Alignment_display(Alignment *alignment,
                        Sequence *query, Sequence *target,
                        Submat *dna_submat, Submat *protein_submat,
                        Translate *translate, FILE *fp){
-    register AlignmentView *av = AlignmentView_create(alignment,
+    AlignmentView *av = AlignmentView_create(alignment,
                                                       query, target);
     g_assert(alignment);
     g_assert(!alignment->model->is_open);
@@ -1383,11 +1383,11 @@ static gint Alignment_get_equivalenced_matching(Alignment *alignment,
               Sequence *query, Sequence *target,
               Translate *translate, gboolean report_id,
               gpointer user_data){
-    register gint i, j, match = 0;
-    register AlignmentOperation *ao;
-    register gint query_pos = alignment->region->query_start,
+    gint i, j, match = 0;
+    AlignmentOperation *ao;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register gchar qy_symbol, tg_symbol;
+    gchar qy_symbol, tg_symbol;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
         if(ao->transition->label == C4_Label_MATCH){
@@ -1426,11 +1426,11 @@ static gint Alignment_get_equivalenced_matching_region(Alignment *alignment,
               Sequence *query, Sequence *target,
               Translate *translate, gboolean report_id,
               gpointer user_data, gint exon_query_start, gint exon_query_end){
-    register gint i, j, match = 0;
-    register AlignmentOperation *ao;
-    register gint query_pos = alignment->region->query_start,
+    gint i, j, match = 0;
+    AlignmentOperation *ao;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register gchar qy_symbol, tg_symbol;
+    gchar qy_symbol, tg_symbol;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
         if(ao->transition->label == C4_Label_MATCH){
@@ -1470,8 +1470,8 @@ static gint Alignment_get_equivalenced_matching_region(Alignment *alignment,
  */
 
 static gint Alignment_get_equivalenced_total(Alignment *alignment){
-    register gint i, total = 0;
-    register AlignmentOperation *ao;
+    gint i, total = 0;
+    AlignmentOperation *ao;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
         if(ao->transition->label == C4_Label_MATCH)
@@ -1494,10 +1494,10 @@ static int Alignment_get_gaps(Alignment *alignment){
 
 static gint Alignment_get_equivalenced_total_region(Alignment *alignment,
                           gint exon_query_start, gint exon_query_end){
-    register gint i, j, total = 0;
-    register gint query_pos = alignment->region->query_start,
+    gint i, j, total = 0;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register AlignmentOperation *ao;
+    AlignmentOperation *ao;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
         if(ao->transition->label == C4_Label_MATCH){
@@ -1563,10 +1563,10 @@ static gfloat Alignment_get_percent_score(Alignment *alignment,
 static gint Alignment_get_match_score(Alignment *alignment,
                                       Sequence *query, Sequence *target,
                                       gpointer user_data){
-    register gint i, j;
-    register AlignmentOperation *ao;
-    register C4_Score score = 0;
-    register gint query_pos = alignment->region->query_start,
+    gint i, j;
+    AlignmentOperation *ao;
+    C4_Score score = 0;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
     for(i = 0;  i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
@@ -1586,10 +1586,10 @@ static gint Alignment_get_match_score(Alignment *alignment,
 static gint Alignment_get_self_match_score(Alignment *alignment,
                                      Sequence *query, Sequence *target,
                                      gpointer self_data){
-    register gint i, j;
-    register AlignmentOperation *ao;
-    register C4_Score score = 0;
-    register gint query_pos = alignment->region->query_start;
+    gint i, j;
+    AlignmentOperation *ao;
+    C4_Score score = 0;
+    gint query_pos = alignment->region->query_start;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
         for(j = 0; j < ao->length; j++){
@@ -1655,10 +1655,10 @@ static gchar Alignment_get_cigar_type(AlignmentOperation *ao,
 
 static void Alignment_print_cigar_block(Alignment *alignment,
             Sequence *query, Sequence *target, FILE *fp){
-    register gint i = 0;
-    register gchar *gap = "";
-    register AlignmentOperation *ao;
-    register gchar type, next_type;
+    gint i = 0;
+    gchar *gap = "";
+    AlignmentOperation *ao;
+    gchar type, next_type;
     gint move, next_move;
     ao = alignment->operation_list->pdata[i];
     type = Alignment_get_cigar_type(ao, &move);
@@ -1682,12 +1682,12 @@ static void Alignment_print_cigar_block(Alignment *alignment,
 
 static void Alignment_print_vulgar_block(Alignment *alignment,
             Sequence *query, Sequence *target, FILE *fp){
-    register gint i;
-    register gchar *gap = "";
-    register C4_Label curr_label;
-    register gint curr_advance_query, curr_advance_target;
-    register AlignmentOperation *ao;
-    register gboolean curr_is_codon = FALSE;
+    gint i;
+    gchar *gap = "";
+    C4_Label curr_label;
+    gint curr_advance_query, curr_advance_target;
+    AlignmentOperation *ao;
+    gboolean curr_is_codon = FALSE;
     ao = alignment->operation_list->pdata[0];
     curr_label = ao->transition->label;
     curr_advance_query = (ao->transition->advance_query * ao->length);
@@ -1827,7 +1827,7 @@ typedef struct {
 
 static Alignment_RYO_ComplexToken *Alignment_RYO_ComplexToken_create(
        Alignment_RYO_Token token, gchar *str, gboolean on_query){
-    register Alignment_RYO_ComplexToken *rct
+    Alignment_RYO_ComplexToken *rct
      = g_new(Alignment_RYO_ComplexToken, 1);
     rct->token = token;
     if(str)
@@ -1847,7 +1847,7 @@ static void Alignment_RYO_ComplexToken_destroy(
     }
 
 static void Alignment_RYO_add_string(GPtrArray *token_list, gchar *str){
-    register Alignment_RYO_ComplexToken *rct = NULL;
+    Alignment_RYO_ComplexToken *rct = NULL;
     if(token_list->len){
         rct = token_list->pdata[token_list->len-1];
         if(rct->token != Alignment_RYO_TOKEN_STRING)
@@ -1867,7 +1867,7 @@ static void Alignment_RYO_add_string(GPtrArray *token_list, gchar *str){
 static void Alignment_RYO_add_token(GPtrArray *token_list,
                                     Alignment_RYO_Token token,
                                     gboolean on_query){
-    register Alignment_RYO_ComplexToken *rct
+    Alignment_RYO_ComplexToken *rct
      = Alignment_RYO_ComplexToken_create(token, NULL, on_query);
     g_ptr_array_add(token_list, rct);
     return;
@@ -1875,7 +1875,7 @@ static void Alignment_RYO_add_token(GPtrArray *token_list,
 
 static gint Alignment_RYO_tokenise_strand(GPtrArray *token_list,
                            gchar *format, gint pos, gboolean on_query){
-    register gint move = 1;
+    gint move = 1;
     switch(format[pos]){
         case 'i':
             Alignment_RYO_add_token(token_list,
@@ -1964,7 +1964,7 @@ static gint Alignment_RYO_tokenise_strand(GPtrArray *token_list,
 
 static gint Alignment_RYO_tokenise_PTO_strand(GPtrArray *token_list,
                            gchar *format, gint pos, gboolean on_query){
-    register gint move = 1;
+    gint move = 1;
     switch(format[pos]){
         case 's':
             Alignment_RYO_add_token(token_list,
@@ -1992,7 +1992,7 @@ static gint Alignment_RYO_tokenise_PTO_strand(GPtrArray *token_list,
 
 static gint Alignment_RYO_tokenise_PTO(GPtrArray *token_list,
                            gchar *format, gint pos){
-    register gint move = 1;
+    gint move = 1;
     switch(format[pos]){
         case 'q':
             move += Alignment_RYO_tokenise_PTO_strand(token_list,
@@ -2023,8 +2023,8 @@ static gint Alignment_RYO_tokenise_PTO(GPtrArray *token_list,
     }
 
 static GPtrArray *Alignment_RYO_tokenise(gchar *format){
-    register gint i;
-    register GPtrArray *token_list = g_ptr_array_new();
+    gint i;
+    GPtrArray *token_list = g_ptr_array_new();
     gchar mini_str[2];
     mini_str[1] = '\0';
     for(i = 0; format[i]; i++){
@@ -2209,8 +2209,8 @@ static GPtrArray *Alignment_RYO_tokenise(gchar *format){
  */
 
 static void Alignment_RYO_token_list_destroy(GPtrArray *token_list){
-    register gint i;
-    register Alignment_RYO_ComplexToken *rct;
+    gint i;
+    Alignment_RYO_ComplexToken *rct;
     for(i = 0; i < token_list->len; i++){
         rct = token_list->pdata[i];
         Alignment_RYO_ComplexToken_destroy(rct);
@@ -2236,11 +2236,11 @@ typedef struct {
 
 static Alignment_Position *Alignment_Position_create(
                     Alignment *alignment, gpointer user_data){
-    register Alignment_Position *ap = g_new(Alignment_Position, 1);
-    register gint i;
-    register gint shadow_total
+    Alignment_Position *ap = g_new(Alignment_Position, 1);
+    gint i;
+    gint shadow_total
                     = 1 + alignment->model->total_shadow_designations;
-    register C4_Calc *calc;
+    C4_Calc *calc;
     ap->alignment = Alignment_share(alignment);
     ap->ao = alignment->operation_list->pdata[0];
     ap->operation_id = 0;
@@ -2266,8 +2266,8 @@ static Alignment_Position *Alignment_Position_create(
     }
 
 static void Alignment_Position_destroy(Alignment_Position *ap){
-    register gint i;
-    register C4_Calc *calc;
+    gint i;
+    C4_Calc *calc;
     for(i = 0; i < ap->alignment->model->calc_list->len; i++){
         calc = ap->alignment->model->calc_list->pdata[i];
         if(calc && calc->exit_func)
@@ -2282,9 +2282,9 @@ static void Alignment_Position_destroy(Alignment_Position *ap){
     }
 
 static void Alignment_Position_set_shadows(Alignment_Position *ap){
-    register gint i;
-    register C4_State *state = ap->ao->transition->input;
-    register C4_Shadow *shadow;
+    gint i;
+    C4_State *state = ap->ao->transition->input;
+    C4_Shadow *shadow;
     for(i = 0; i < state->src_shadow_list->len; i++){
         shadow = state->src_shadow_list->pdata[i];
         ap->cell[1 + shadow->designation] = shadow->start_func(
@@ -2332,12 +2332,12 @@ static Alignment_Coding *Alignment_Coding_create(Alignment *alignment,
                                                  Sequence *target,
                                                  gpointer user_data,
                                                  gboolean on_query){
-    register Alignment_Coding *ac = g_new(Alignment_Coding, 1);
-    register Alignment_Position *ap
+    Alignment_Coding *ac = g_new(Alignment_Coding, 1);
+    Alignment_Position *ap
         = Alignment_Position_create(alignment, user_data);
-    register Sequence *src = NULL;
-    register GString *seq = g_string_sized_new(1024);
-    register gint i, advance, pos;
+    Sequence *src = NULL;
+    GString *seq = g_string_sized_new(1024);
+    gint i, advance, pos;
     if(on_query){
         g_assert(query->alphabet->type == Alphabet_Type_DNA);
         src = query;
@@ -2403,11 +2403,11 @@ static void Alignment_RYO_token_list_print(GPtrArray *token_list,
             Alignment *alignment, Sequence *query, Sequence *target,
             Translate *translate, gint rank,
             gpointer user_data, gpointer self_data, FILE *fp){
-    register gint i, j, pto_start = -1;
-    register Alignment_RYO_ComplexToken *rct;
-    register Sequence *seq, *subseq;
-    register Alignment_Position *ap = NULL;
-    register Alignment_Coding *qy_ac = NULL, *tg_ac = NULL, *ac;
+    gint i, j, pto_start = -1;
+    Alignment_RYO_ComplexToken *rct;
+    Sequence *seq, *subseq;
+    Alignment_Position *ap = NULL;
+    Alignment_Coding *qy_ac = NULL, *tg_ac = NULL, *ac;
     for(i = 0; i < token_list->len; i++){
         rct = token_list->pdata[i];
         seq = rct->on_query?query:target;
@@ -2660,7 +2660,7 @@ void Alignment_display_ryo(Alignment *alignment,
         Sequence *query, Sequence *target, gchar *format,
         Translate *translate, gint rank,
         gpointer user_data, gpointer self_data, FILE *fp){
-    register GPtrArray *token_list = Alignment_RYO_tokenise(format);
+    GPtrArray *token_list = Alignment_RYO_tokenise(format);
     Alignment_RYO_token_list_print(token_list, alignment,
                                    query, target, translate, rank,
                                    user_data, self_data, fp);
@@ -2710,7 +2710,7 @@ void Alignment_display_vulgar(Alignment *alignment,
 static void Alignment_display_gff_header(Alignment *alignment,
         Sequence *query, Sequence *target, gboolean report_on_query, FILE *fp){
     time_t timenow = time(NULL);
-    register struct tm *tm_ptr = localtime(&timenow);
+    struct tm *tm_ptr = localtime(&timenow);
     gchar curr_time_str[12];
     strftime(curr_time_str, 30, "%Y-%m-%d", tm_ptr);
     fprintf(fp, "#\n"
@@ -2744,9 +2744,9 @@ static void Alignment_display_gff_line(Alignment *alignment,
     /* <seqname> <source> <feature> <start> <end> <score> <strand> <frame>
      * [attributes] [comments]
      */
-    register Sequence *seq;
-    register gint i, start, end, t;
-    register gchar *attribute;
+    Sequence *seq;
+    gint i, start, end, t;
+    gchar *attribute;
     if(report_on_query){
         seq = query;
         start = query_start;
@@ -2794,7 +2794,7 @@ static void Alignment_display_gff_line(Alignment *alignment,
     }
 
 static void Alignment_free_attribute_list(GPtrArray *attribute_list){
-    register gint i;
+    gint i;
     for(i = 0; i < attribute_list->len; i++)
         g_free(attribute_list->pdata[i]);
     g_ptr_array_free(attribute_list, TRUE);
@@ -2815,7 +2815,7 @@ static void Alignment_display_gff_exon(Alignment *alignment,
                                        gint exon_query_frameshift,
                                        gint exon_target_frameshift,
                                        gpointer user_data, FILE *fp){
-    register GPtrArray *attribute_list = g_ptr_array_new();
+    GPtrArray *attribute_list = g_ptr_array_new();
     g_ptr_array_add(attribute_list,
                     g_strdup_printf("insertions %d",
                                     report_on_query?exon_query_gap
@@ -2864,7 +2864,7 @@ static void Alignment_display_gff_utr(Alignment *alignment,
                             gint cds_query_end, gint cds_target_end,
                             gint exon_query_start, gint exon_target_start,
                             gint query_pos, gint target_pos, FILE *fp){
-    register gint curr_cds_query_start, curr_cds_target_start,
+    gint curr_cds_query_start, curr_cds_target_start,
                   curr_utr_query_start, curr_utr_target_start;
     if(post_cds){
         curr_utr_query_start = MAX(exon_query_start, cds_query_end);
@@ -2898,21 +2898,21 @@ static void Alignment_display_gff_gene(Alignment *alignment,
         Sequence *query, Sequence *target, Translate *translate,
         gboolean report_on_query,
         gint result_id, gpointer user_data, FILE *fp){
-    register gint i;
-    register gint query_pos = alignment->region->query_start,
+    gint i;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register gint intron_id = 0, intron_length = 0;
-    register gint exon_query_start = 0, exon_target_start = 0;
-    register gint exon_query_gap = 0, exon_target_gap = 0;
-    register gint exon_query_frameshift = 0, exon_target_frameshift = 0;
-    register gint cds_query_start = -1, cds_target_start = -1,
+    gint intron_id = 0, intron_length = 0;
+    gint exon_query_start = 0, exon_target_start = 0;
+    gint exon_query_gap = 0, exon_target_gap = 0;
+    gint exon_query_frameshift = 0, exon_target_frameshift = 0;
+    gint cds_query_start = -1, cds_target_start = -1,
                   cds_query_end = -1, cds_target_end = -1;
-    register gboolean in_exon = FALSE, post_cds = FALSE;
-    register AlignmentOperation *ao;
-    register gchar gene_orientation
+    gboolean in_exon = FALSE, post_cds = FALSE;
+    AlignmentOperation *ao;
+    gchar gene_orientation
                = Alignment_get_gene_orientation(alignment);
-    register GPtrArray *attribute_list = g_ptr_array_new();
-    register gint curr_utr_query_start, curr_utr_target_start;
+    GPtrArray *attribute_list = g_ptr_array_new();
+    gint curr_utr_query_start, curr_utr_target_start;
     /**/
     g_ptr_array_add(attribute_list,
                     g_strdup_printf("gene_id %d", result_id));
@@ -3144,11 +3144,11 @@ static void Alignment_display_gff_gene(Alignment *alignment,
 static void Alignment_display_gff_similarity(Alignment *alignment,
         Sequence *query, Sequence *target, gboolean report_on_query,
         gint result_id, FILE *fp){
-    register gint i, qp, tp;
-    register gint query_pos = alignment->region->query_start,
+    gint i, qp, tp;
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register AlignmentOperation *ao;
-    register GPtrArray *attribute_list = g_ptr_array_new();
+    AlignmentOperation *ao;
+    GPtrArray *attribute_list = g_ptr_array_new();
     g_ptr_array_add(attribute_list,
                     g_strdup_printf("alignment_id %d", result_id));
     if(report_on_query)
@@ -3239,16 +3239,16 @@ features: gene,intron,exon,splice[35],similarity
 #ifndef G_DISABLE_ASSERT
 static gboolean Alignment_has_valid_alignment(Alignment *alignment,
                                               gpointer user_data){
-    register gint query_pos = alignment->region->query_start,
+    gint query_pos = alignment->region->query_start,
                   target_pos = alignment->region->target_start;
-    register C4_Score score;
-    register C4_Calc *calc;
-    register AlignmentOperation *alignment_operation;
-    register C4_State *state;
-    register C4_Transition *transition;
-    register C4_Shadow *shadow;
-    register gint i, j, k, t;
-    register C4_Score *start_cell, *cell
+    C4_Score score;
+    C4_Calc *calc;
+    AlignmentOperation *alignment_operation;
+    C4_State *state;
+    C4_Transition *transition;
+    C4_Shadow *shadow;
+    gint i, j, k, t;
+    C4_Score *start_cell, *cell
      = g_new0(C4_Score, 1+alignment->model->total_shadow_designations);
 /* FIXME: temp */
 /* #define DEBUG */
@@ -3375,9 +3375,9 @@ static gboolean Alignment_has_valid_alignment(Alignment *alignment,
 #endif /* G_DISABLE_ASSERT */
 
 static gboolean Alignment_has_valid_path(Alignment *alignment){
-    register C4_State *first_state, *last_state;
-    register AlignmentOperation *alignment_operation, *prev;
-    register gint i;
+    C4_State *first_state, *last_state;
+    AlignmentOperation *alignment_operation, *prev;
+    gint i;
     g_assert(alignment);
     g_assert(alignment->operation_list);
     g_assert(alignment->operation_list->len > 0);
@@ -3399,7 +3399,7 @@ static gboolean Alignment_has_valid_path(Alignment *alignment){
 
 static gboolean Alignment_is_within_scope(Alignment *alignment,
                                           Region *seq_region){
-    register gboolean start_at_query_edge,
+    gboolean start_at_query_edge,
                       start_at_target_edge,
                       end_at_query_edge,
                       end_at_target_edge;
@@ -3462,9 +3462,9 @@ gboolean Alignment_is_valid(Alignment *alignment, Region *seq_region,
 void Alignment_import_derived(Alignment *alignment,
                               Alignment *to_add,
                               C4_DerivedModel *derived_model){
-    register gint i;
-    register AlignmentOperation *alignment_operation;
-    register C4_Transition *transition;
+    gint i;
+    AlignmentOperation *alignment_operation;
+    C4_Transition *transition;
     g_assert(alignment->model == derived_model->original);
     g_assert(to_add->model == derived_model->derived);
     for(i = 0; i < to_add->operation_list->len; i++){

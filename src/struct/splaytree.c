@@ -18,7 +18,7 @@
 SplayTree_Set *SplayTree_Set_create(SplayTree_CompareFunc compare_func,
                                     SplayTree_FreeFunc free_func,
                                     gpointer user_data){
-    register SplayTree_Set *sts = g_new(SplayTree_Set, 1);
+    SplayTree_Set *sts = g_new(SplayTree_Set, 1);
     sts->recycle = RecycleBin_create("SplayTree", sizeof(SplayTree), 1024);
     g_assert(compare_func);
     sts->compare_func = compare_func;
@@ -38,8 +38,8 @@ gsize SplayTree_Set_memory_usage(SplayTree_Set *sts){
     }
 
 SplayTree *SplayTree_splay(SplayTree *st, SplayTree_Set *sts, gpointer data){
-    register SplayTree *l, *r, *t;
-    register gint comp;
+    SplayTree *l, *r, *t;
+    gint comp;
     SplayTree n;
     if(!st)
         return st;
@@ -86,8 +86,8 @@ SplayTree *SplayTree_splay(SplayTree *st, SplayTree_Set *sts, gpointer data){
     }
 
 SplayTree *SplayTree_insert(SplayTree *st, SplayTree_Set *sts, gpointer data){
-    register SplayTree *n;
-    register gint comp;
+    SplayTree *n;
+    gint comp;
     if(!st){
         n = RecycleBin_alloc(sts->recycle);
         n->data = data;
@@ -116,8 +116,8 @@ SplayTree *SplayTree_insert(SplayTree *st, SplayTree_Set *sts, gpointer data){
 
 SplayTree *SplayTree_remove(SplayTree *st, SplayTree_Set *sts,
                             gpointer data, gpointer *result){
-    register SplayTree *n;
-    register gint comp;
+    SplayTree *n;
+    gint comp;
     if(!st)
         return NULL;
     st = SplayTree_splay(st, sts, data);

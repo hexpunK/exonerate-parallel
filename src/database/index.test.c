@@ -17,9 +17,9 @@
 #include "index.h"
 
 gint Argument_main(Argument *arg){
-    register Index *index;
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA, FALSE);
-    register Sequence *query = Sequence_create("query", NULL,
+    Index *index;
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA, FALSE);
+    Sequence *query = Sequence_create("query", NULL,
             /* "ATGCAGCCCCGG", */
             /* "ACGTAGAGGCCGAGGATGCCTCCCATTCTCAGCT", */
             /* "ATGCAGCCCCGGGTACTCCTTGTTGTTGCCCTCCTGGCGCTCCTGGCCTCTGCCC", */
@@ -36,12 +36,12 @@ gint Argument_main(Argument *arg){
                "ATTTGGGTTTTTTCN",
                */
             0, Sequence_Strand_FORWARD, alphabet);
-    register Match *match;
-    register HSP_Param *hsp_param;
-    register ArgumentSet *as = ArgumentSet_create("Input options");
-    register GPtrArray *index_hsp_set_list;
-    register Index_HSPset *index_hsp_set;
-    register gint i;
+    Match *match;
+    HSP_Param *hsp_param;
+    ArgumentSet *as = ArgumentSet_create("Input options");
+    GPtrArray *index_hsp_set_list;
+    Index_HSPset *index_hsp_set;
+    gint i;
     gchar *path;
     ArgumentSet_add_option(as, 'i', "index", "path",
             "exonerate sequence index file (.esi)", "none",

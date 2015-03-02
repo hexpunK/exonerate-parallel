@@ -19,9 +19,9 @@
 
 static gchar *Match_Argument_parse_submat(gchar *arg_string,
                                           gpointer data){
-    register Submat **submat = (Submat**)data;
+    Submat **submat = (Submat**)data;
     gchar *submat_str;
-    register gchar *ret_val = Argument_parse_string(arg_string,
+    gchar *ret_val = Argument_parse_string(arg_string,
                                                    &submat_str);
     if(ret_val)
         return ret_val;
@@ -35,7 +35,7 @@ static void Match_Argument_cleanup(gpointer user_data){
     }
 
 Match_ArgumentSet *Match_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Match_ArgumentSet mas = {0};
     if(arg){
         as = ArgumentSet_create("Symbol Comparison Options");
@@ -72,7 +72,7 @@ Match_ArgumentSet *Match_ArgumentSet_create(Argument *arg){
 Match_Type Match_Type_find(Alphabet_Type query_type,
                            Alphabet_Type target_type,
                            gboolean translate_both){
-    register Match_Type type = 0;
+    Match_Type type = 0;
     switch(Match_Type_pair(query_type, target_type)){
         case Match_Type_pair(Alphabet_Type_DNA, Alphabet_Type_DNA):
             type = translate_both?Match_Type_CODON2CODON
@@ -100,7 +100,7 @@ Match_Type Match_Type_find(Alphabet_Type query_type,
     }
 
 gchar *Match_Type_get_name(Match_Type type){
-    register gchar *name = NULL;
+    gchar *name = NULL;
     switch(type){
         case Match_Type_DNA2DNA:
             name = "dna2dna";
@@ -125,7 +125,7 @@ gchar *Match_Type_get_name(Match_Type type){
     }
 
 static Match_Type Match_Type_mirror(Match_Type type){
-    register Match_Type mirror = 0;
+    Match_Type mirror = 0;
     switch(type){
         case Match_Type_DNA2DNA:         /*fallthrough*/
         case Match_Type_PROTEIN2PROTEIN: /*fallthrough*/
@@ -161,7 +161,7 @@ static gboolean Match_Strand_pos_is_valid(Match_Strand *strand,
 
 static Match_Score Match_1_dna_self_func(Match_Strand *strand,
                                          Sequence *seq, guint pos){
-    register gchar symbol;
+    gchar symbol;
     g_assert(Match_Strand_pos_is_valid(strand, pos, seq->len));
     symbol = Sequence_get_symbol(seq, pos);
     return Submat_lookup(strand->match->mas->dna_submat, symbol, symbol);
@@ -169,7 +169,7 @@ static Match_Score Match_1_dna_self_func(Match_Strand *strand,
 
 static Match_Score Match_1_protein_self_func(Match_Strand *strand,
                                              Sequence *seq, guint pos){
-    register gchar symbol;
+    gchar symbol;
     g_assert(Match_Strand_pos_is_valid(strand, pos, seq->len));
     symbol = Sequence_get_symbol(seq, pos);
     return Submat_lookup(strand->match->mas->protein_submat, symbol, symbol);
@@ -185,7 +185,7 @@ static gboolean Match_1_mask_func(Match_Strand *strand,
 
 static Match_Score Match_3_translate_self_func(Match_Strand *strand,
                                             Sequence *seq, guint pos){
-    register gchar symbol;
+    gchar symbol;
     g_assert(Match_Strand_pos_is_valid(strand, pos, seq->len));
     symbol = Translate_base(strand->match->mas->translate,
                             Sequence_get_symbol(seq, pos),
@@ -198,7 +198,7 @@ static Match_Score Match_3_translate_self_func(Match_Strand *strand,
 #if 0
 static Match_Score Match_3_codon_self_func(Match_Strand *strand,
                                            Sequence *seq, guint pos){
-    register gint codon;
+    gint codon;
     g_assert(Match_Strand_pos_is_valid(strand, pos, seq->len));
     codon = CodonSubmat_get_codon_base(strand->match->mas->codon_submat,
                                        Sequence_get_symbol(seq, pos),
@@ -224,7 +224,7 @@ static gboolean Match_3_mask_func(Match_Strand *strand,
 static gchar Match_get_display_symbol(Submat *submat,
                                       gchar query_symbol,
                                       gchar target_symbol){
-    register gint score;
+    gint score;
     if(toupper(query_symbol) == toupper(target_symbol))
         return '|';
     score = Submat_lookup(submat, query_symbol, target_symbol);
@@ -315,7 +315,7 @@ static void Match_1_1_display_func(Match *match,
                                    Sequence *query, Sequence *target,
                                    guint query_pos, guint target_pos,
                                    gchar *display_str){
-    register Submat *submat = (match->type == Match_Type_DNA2DNA)
+    Submat *submat = (match->type == Match_Type_DNA2DNA)
                             ? match->mas->dna_submat
                             : match->mas->protein_submat;
     g_assert(Match_pos_pair_is_valid(match, query, target,
@@ -333,7 +333,7 @@ static Match_Score Match_1_3_split_score_func(Match *match,
                               Sequence *query, Sequence *target,
                               guint qp1, guint qp2, guint qp3,
                               guint tp1, guint tp2, guint tp3){
-    register gchar query_symbol, target_symbol;
+    gchar query_symbol, target_symbol;
     /* FIXME: need CDS checks here */
     query_symbol = Sequence_get_symbol(query, qp1);
     target_symbol = Translate_base(match->mas->translate,
@@ -372,7 +372,7 @@ typedef struct {
 
 static void Match_1_3_display_reverse_translate(gchar *dna, gint length,
                                                 gpointer user_data){
-    register Match_RT_Data *mrtd = user_data;
+    Match_RT_Data *mrtd = user_data;
     if(dna[0] == mrtd->codon_a)
         mrtd->display_string[0] = '!';
     if(dna[1] == mrtd->codon_b)
@@ -387,7 +387,7 @@ static void Match_1_3_split_display_func(Match *match,
                               guint qp1, guint qp2, guint qp3,
                               guint tp1, guint tp2, guint tp3,
                               gchar *display_str){
-    register gchar query_symbol, target_symbol, display_symbol;
+    gchar query_symbol, target_symbol, display_symbol;
     Match_RT_Data mrtd;
     gchar aaseq[2];
     query_symbol = Sequence_get_symbol(query, qp1);
@@ -509,7 +509,7 @@ static Match_Score Match_3_3_split_score_func(Match *match,
                               Sequence *query, Sequence *target,
                               guint qp1, guint qp2, guint qp3,
                               guint tp1, guint tp2, guint tp3){
-    register gchar query_symbol, target_symbol;
+    gchar query_symbol, target_symbol;
     if(query->annotation)
         if(query->alphabet->type == Alphabet_Type_DNA)
             if((qp1 < query->annotation->cds_start)
@@ -591,7 +591,7 @@ static void Match_3_3_split_display_func(Match *match,
                               guint qp1, guint qp2, guint qp3,
                               guint tp1, guint tp2, guint tp3,
                               gchar *display_str){
-    register gchar query_symbol, target_symbol, display_symbol;
+    gchar query_symbol, target_symbol, display_symbol;
     query_symbol = Translate_base(match->mas->translate,
                        Sequence_get_symbol(query, qp1),
                        Sequence_get_symbol(query, qp2),
@@ -658,7 +658,7 @@ static void Match_3_3_display_func(Match *match,
 static Match_Strand *Match_Strand_create(Alphabet_Type alphabet_type,
        gboolean is_softmasked, gboolean is_translated,
        guint advance, Match *match){
-    register Match_Strand *strand = g_new(Match_Strand, 1);
+    Match_Strand *strand = g_new(Match_Strand, 1);
     strand->alphabet = Alphabet_create(alphabet_type, is_softmasked);
     strand->advance = advance;
     strand->is_translated = is_translated;
@@ -694,7 +694,7 @@ static void Match_Strand_destroy(Match_Strand *strand){
 
 void Match_Strand_get_raw(Match_Strand *strand, Sequence *sequence,
                           guint pos, gchar *result){
-    register gint i;
+    gint i;
     g_assert(result);
     for(i = 0; i < strand->advance; i++)
         result[i] = Sequence_get_symbol(sequence, pos+i);
@@ -705,7 +705,7 @@ void Match_Strand_get_raw(Match_Strand *strand, Sequence *sequence,
 /**/
 
 gchar *Match_Type_get_score_macro(Match_Type type){
-    register gchar *macro = NULL;
+    gchar *macro = NULL;
     switch(type){
         case Match_Type_DNA2DNA:
             macro = Match_1_1_dna_score_macro();
@@ -733,8 +733,8 @@ gchar *Match_Type_get_score_macro(Match_Type type){
 /**/
 
 static Match *Match_create_without_mirror(Match_Type type){
-    register Match *match = g_new(Match, 1);
-    register gboolean softmask_comparison;
+    Match *match = g_new(Match, 1);
+    gboolean softmask_comparison;
     match->mas = Match_ArgumentSet_create(NULL);
     match->type = type;
     g_assert(match->mas->dna_submat);
@@ -829,8 +829,8 @@ static Match *Match_create_without_mirror(Match_Type type){
 static Match *local_match_cache[Match_Type_TOTAL] = {0};
 
 static Match *Match_create(Match_Type type){
-    register Match *match;
-    register Match_Type mirror_type = Match_Type_mirror(type);
+    Match *match;
+    Match_Type mirror_type = Match_Type_mirror(type);
     match = Match_create_without_mirror(type);
     match->mirror = Match_create_without_mirror(mirror_type);
     match->mirror->mirror = match;
@@ -865,8 +865,8 @@ static void Match_destroy(Match *match){
     }
 
 void Match_destroy_all(void){
-    register gint i;
-    register Match *match;
+    gint i;
+    Match *match;
     for(i = 0; i < Match_Type_TOTAL; i++){
         match = local_match_cache[i];
         if(match){

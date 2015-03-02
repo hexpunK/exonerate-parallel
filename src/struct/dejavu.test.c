@@ -20,8 +20,8 @@
 static void test_display_repeat(gint first_pos, gint curr_pos,
                                 gint length, gchar *seq, gint len,
                                 gpointer user_data){
-    register gint i;
-    register gint *total = user_data;
+    gint i;
+    gint *total = user_data;
     g_print(">repeat_%d (%d, %d, %d)\n[",
             (*total)++, first_pos, curr_pos, length);
     for(i = 0; i < length; i++)
@@ -31,9 +31,9 @@ static void test_display_repeat(gint first_pos, gint curr_pos,
     }
 
 int main(void){
-    register gchar *seq = "TAGACTGTAAGTCCTCTGTGTAAGCTCGTTA";
-    register gint min_wordlen = 1, max_wordlen = 7;
-    register DejaVu *dv = DejaVu_create(seq, strlen(seq));
+    gchar *seq = "TAGACTGTAAGTCCTCTGTGTAAGCTCGTTA";
+    gint min_wordlen = 1, max_wordlen = 7;
+    DejaVu *dv = DejaVu_create(seq, strlen(seq));
     gint total = 0;
     DejaVu_traverse(dv, min_wordlen, max_wordlen,
                     test_display_repeat, &total, NULL, 1);

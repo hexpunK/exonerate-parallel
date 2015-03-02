@@ -30,8 +30,8 @@
 static gchar Phase_calc_get_aa(Sequence *seq, gint pos, gint phase,
                  gboolean has_intron, Translate *translate,
                  Intron_ChainData *intron_chain_data){
-    register gchar aa = '\0';
-    register gint codon_1, codon_2, codon_3;
+    gchar aa = '\0';
+    gint codon_1, codon_2, codon_3;
     g_assert(has_intron?(seq->alphabet->type == Alphabet_Type_DNA)
                        :TRUE);
     g_assert(seq->alphabet->type != Alphabet_Type_UNKNOWN);
@@ -89,12 +89,12 @@ static gboolean Phase_calc_is_valid(Sequence *seq, gint pos, gint phase,
 static C4_Score Phase_calc_general(gint query_pos, gint target_pos,
                     gpointer user_data, gint phase,
                     gboolean intron_on_query){
-    register Ungapped_Data *ud = user_data;
-    register Sequence *query = Ungapped_Data_get_query(ud),
+    Ungapped_Data *ud = user_data;
+    Sequence *query = Ungapped_Data_get_query(ud),
                       *target = Ungapped_Data_get_target(ud);
-    register Translate *translate = Ungapped_Data_get_translate(ud);
-    register Submat *submat = Ungapped_Data_get_protein_submat(ud);
-    register gchar qy_aa, tg_aa;
+    Translate *translate = Ungapped_Data_get_translate(ud);
+    Submat *submat = Ungapped_Data_get_protein_submat(ud);
+    gchar qy_aa, tg_aa;
     if((!Phase_calc_is_valid(query, query_pos, phase,
              intron_on_query, ud->intron_data->query_data))
     || (!Phase_calc_is_valid(target, target_pos, phase,
@@ -189,8 +189,8 @@ static gboolean Phase_calc_is_valid(Sequence *seq, gint pos, gint phase,
 static C4_Score                                                        \
 Phase_##phase##_##type##_##qy_intron##_##tg_intron##_calc_func(        \
                 gint query_pos, gint target_pos, gpointer user_data){  \
-    register Ungapped_Data *ud = user_data;                            \
-    register Match *match = ud->match_list[Match_Type_##type];         \
+    Ungapped_Data *ud = user_data;                            \
+    Match *match = ud->match_list[Match_Type_##type];         \
     gint qp1, qp2, qp3, tp1, tp2, tp3;                                 \
     if((!Phase_calc_is_valid(ud->query, query_pos, phase,              \
              qy_intron, ud->intron_data->query_data))                  \
@@ -221,9 +221,9 @@ Phase_CalcFunc(CODON2CODON, 2, FALSE, TRUE)
 
 static gchar *Phase_get_calc_aa_macro(Alphabet_Type type, gint phase,
                   gboolean is_query, gboolean has_intron){
-    register gchar *macro, *codon_1, *codon_2, *codon_3;
-    register gchar *chain_name = is_query?"query":"target";
-    register gchar chain_symbol = is_query?'Q':'T';
+    gchar *macro, *codon_1, *codon_2, *codon_3;
+    gchar *chain_name = is_query?"query":"target";
+    gchar chain_symbol = is_query?'Q':'T';
     g_assert(has_intron?(type == Alphabet_Type_DNA):TRUE);
     g_assert(type != Alphabet_Type_UNKNOWN);
     if(type == Alphabet_Type_PROTEIN){
@@ -280,7 +280,7 @@ static gchar *Phase_get_calc_aa_macro(Alphabet_Type type, gint phase,
 
 static gchar *Phase_get_calc_is_valid_macro_chain(Alphabet_Type type,
                   gboolean is_query, gint phase, gboolean has_intron){
-    register gchar *macro = NULL;
+    gchar *macro = NULL;
     if(type == Alphabet_Type_PROTEIN)
         return NULL;
     if(has_intron){
@@ -297,7 +297,7 @@ static gchar *Phase_get_calc_is_valid_macro(Match *match,
                                             gint phase,
                                             gboolean on_query,
                                             gboolean on_target){
-    register gchar *query_macro, *target_macro, *macro = NULL;
+    gchar *query_macro, *target_macro, *macro = NULL;
     query_macro = Phase_get_calc_is_valid_macro_chain(
                       match->query->alphabet->type, TRUE, phase, on_query);
     target_macro = Phase_get_calc_is_valid_macro_chain(
@@ -323,8 +323,8 @@ static gchar *Phase_get_calc_is_valid_macro(Match *match,
 
 static gchar *Phase_get_calc_macro(Match *match, gint phase,
                                    gboolean on_query, gboolean on_target){
-    register gchar *qy_pos_macro, *tg_pos_macro, *macro;
-    register gchar *is_valid_macro
+    gchar *qy_pos_macro, *tg_pos_macro, *macro;
+    gchar *is_valid_macro
         = Phase_get_calc_is_valid_macro(match, phase, on_query, on_target);
     qy_pos_macro = Phase_get_calc_aa_macro(match->query->alphabet->type,
                                            phase, TRUE, on_query);
@@ -353,24 +353,24 @@ static gchar *Phase_get_calc_macro(Match *match, gint phase,
 
 C4_Model *Phase_create(gchar *suffix, Match *match,
                        gboolean on_query, gboolean on_target){
-    register gchar *name, *intron_name, *calc_name;
-    register C4_Model *model,
+    gchar *name, *intron_name, *calc_name;
+    C4_Model *model,
         *intron_model_00, *intron_model_12, *intron_model_21;
-    register C4_Calc *phase1post_to_dst_calc,
+    C4_Calc *phase1post_to_dst_calc,
                      *phase2post_to_dst_calc;
-    register C4_State *phase1pre_state, *phase1post_state,
+    C4_State *phase1pre_state, *phase1post_state,
                       *phase2pre_state, *phase2post_state;
-    register gint pre1_qa = 0, pre1_ta = 0, post2_qa = 0, post2_ta = 0,
+    gint pre1_qa = 0, pre1_ta = 0, post2_qa = 0, post2_ta = 0,
                   pre2_qa = 0, pre2_ta = 0, post1_qa = 0, post1_ta = 0;
-    register C4_CalcFunc phase1_calc_func = NULL,
+    C4_CalcFunc phase1_calc_func = NULL,
                          phase2_calc_func = NULL;
-    register C4_Transition *phase1post_transition,
+    C4_Transition *phase1post_transition,
                            *phase2post_transition;
-    register C4_Shadow *shadow;
-    register gchar *phase1_calc_macro = NULL,
+    C4_Shadow *shadow;
+    gchar *phase1_calc_macro = NULL,
                    *phase2_calc_macro = NULL;
-    register gchar *full_suffix = NULL;
-    register gboolean against_peptide
+    gchar *full_suffix = NULL;
+    gboolean against_peptide
         = ((match->query->alphabet->type == Alphabet_Type_PROTEIN)
         || (match->target->alphabet->type == Alphabet_Type_PROTEIN));
     g_assert(on_query || on_target);

@@ -17,15 +17,15 @@
 #include "jobqueue.h"
 
 static void test_run_func(gpointer job_data){
-    register gchar *name = job_data;
+    gchar *name = job_data;
     g_message("running job [%s]", name);
     usleep(1000000); /* test job length */
     return;
     }
 
 int main(void){
-    register gint i;
-    register JobQueue *jq = JobQueue_create(2);
+    gint i;
+    JobQueue *jq = JobQueue_create(2);
     gchar *test_str[10] = {"one", "two", "three", "four", "five",
                            "six", "seven", "eight", "nine", "ten"};
 

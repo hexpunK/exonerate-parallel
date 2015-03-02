@@ -33,7 +33,7 @@ typedef struct {
 } NRDB_Data;
 
 static NRDB_Data *NRDB_Data_create(FastaDB_Seq *fdbs){
-    register NRDB_Data *nd = g_new(NRDB_Data, 1);
+    NRDB_Data *nd = g_new(NRDB_Data, 1);
     nd->length = fdbs->seq->len;
     nd->checksum = Sequence_checksum(fdbs->seq);
     nd->key = FastaDB_Seq_get_key(fdbs);
@@ -52,7 +52,7 @@ static void NRDB_Data_destroy(NRDB_Data *nd){
 
 static int NRDB_Data_sort_checksum_function(const void *a,
                                             const void *b){
-    register NRDB_Data **nd_a = (NRDB_Data**)a,
+    NRDB_Data **nd_a = (NRDB_Data**)a,
                        **nd_b = (NRDB_Data**)b;
     return (*nd_a)->checksum-(*nd_b)->checksum;
     }
@@ -70,11 +70,11 @@ typedef struct {
 
 static gboolean fasta_nrdb_traverse_func(FastaDB_Seq *fdbs,
                                          gpointer user_data){
-    register NRDB_Info *ni = user_data;
-    register NRDB_Data *nd = NRDB_Data_create(fdbs);
-    register FastaDB_Seq *revcomp_fdbs;
-    register NRDB_Data *revcomp_nd;
-    register gchar *seq, *rseq;
+    NRDB_Info *ni = user_data;
+    NRDB_Data *nd = NRDB_Data_create(fdbs);
+    FastaDB_Seq *revcomp_fdbs;
+    NRDB_Data *revcomp_nd;
+    gchar *seq, *rseq;
     g_ptr_array_add(ni->nrdb_data_list, nd);
     if(ni->check_revcomp){
         revcomp_fdbs = FastaDB_Seq_revcomp(fdbs);
@@ -95,13 +95,13 @@ static gboolean fasta_nrdb_traverse_func(FastaDB_Seq *fdbs,
 /**/
 
 static void NRDB_Data_report_redundant_set(GPtrArray *redundant_set){
-    register gint i;
-    register GPtrArray *forward_list = g_ptr_array_new(),
+    gint i;
+    GPtrArray *forward_list = g_ptr_array_new(),
                        *reverse_list = g_ptr_array_new();
-    register FastaDB_Seq *fdbs, *first_forward = NULL;
-    register GString *merge_def;
-    register gchar *curr_def;
-    register FastaDB_Mask mask = FastaDB_Mask_ID
+    FastaDB_Seq *fdbs, *first_forward = NULL;
+    GString *merge_def;
+    gchar *curr_def;
+    FastaDB_Mask mask = FastaDB_Mask_ID
                                | FastaDB_Mask_DEF
                                | FastaDB_Mask_SEQ;
     for(i = 0; i < redundant_set->len; i++){
@@ -141,11 +141,11 @@ static void NRDB_Data_report_redundant_set(GPtrArray *redundant_set){
     }
 
 static void NRDB_Data_merge_and_print(NRDB_Info *ni, FastaDB *fdb){
-    register gint i, j;
-    register NRDB_Data *nd_a, *nd_b;
-    register FastaDB_Seq *fdbs_a, *fdbs_b;
-    register GPtrArray *redundant_set = g_ptr_array_new();
-    register gchar *seq_a, *seq_b;
+    gint i, j;
+    NRDB_Data *nd_a, *nd_b;
+    FastaDB_Seq *fdbs_a, *fdbs_b;
+    GPtrArray *redundant_set = g_ptr_array_new();
+    gchar *seq_a, *seq_b;
     for(i = 0; i < ni->nrdb_data_list->len; i++){
         nd_a = ni->nrdb_data_list->pdata[i];
         if(!nd_a) /* Already used */
@@ -189,10 +189,10 @@ static void NRDB_Data_merge_and_print(NRDB_Info *ni, FastaDB *fdb){
 /**/
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    register Alphabet *alphabet;
+    Alphabet *alphabet;
     NRDB_Info ni;
     gchar *query_path, *outputFile;
     ArgumentSet_add_option(as, 'f', "fasta", "path",

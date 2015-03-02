@@ -18,9 +18,9 @@
 
 static void Seeder_Test_report_func(Comparison *comparison,
                                     gpointer user_data){
-    register gint *count = user_data;
-    register gint i;
-    register HSP *hsp;
+    gint *count = user_data;
+    gint i;
+    HSP *hsp;
     g_message("Have comparison with [%d] DNA hsps",
               comparison->dna_hspset->hsp_list->len);
     for(i = 0; i < comparison->dna_hspset->hsp_list->len; i++){
@@ -32,13 +32,13 @@ static void Seeder_Test_report_func(Comparison *comparison,
     }
 
 gint Argument_main(Argument *arg){
-    register Match *match;
-    register HSP_Param *dna_hsp_param;
-    register Comparison_Param *comparison_param;
-    register Seeder *seeder;
-    register Alphabet *dna_alphabet = Alphabet_create(Alphabet_Type_DNA,
+    Match *match;
+    HSP_Param *dna_hsp_param;
+    Comparison_Param *comparison_param;
+    Seeder *seeder;
+    Alphabet *dna_alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register Sequence *query = Sequence_create("qy", NULL,
+    Sequence *query = Sequence_create("qy", NULL,
         "ACGTAACCGGTTAGCT", 0,
         Sequence_Strand_FORWARD, dna_alphabet),
                   *target = Sequence_create("tg", NULL,

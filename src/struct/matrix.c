@@ -17,8 +17,8 @@
 
 static void Matrix_layout(gpointer *index, gint length,
                           gchar *data, gsize block){
-    register gint i;
-    register gchar *p;
+    gint i;
+    gchar *p;
     g_assert(index);
     g_assert(data);
     g_assert(length > 0);
@@ -33,11 +33,11 @@ static void Matrix_layout(gpointer *index, gint length,
 /**/
 
 gsize Matrix2d_size(gint a, gint b, gsize cell){
-    register gulong index_size = a * sizeof(gpointer),
+    gulong index_size = a * sizeof(gpointer),
                     row_size = b * cell,
                     data_size = a * row_size,
                     total_size = index_size + data_size;
-    register gdouble check_index_size = a * sizeof(gpointer),
+    gdouble check_index_size = a * sizeof(gpointer),
                      check_row_size = b * cell,
                      check_data_size = a * check_row_size,
                      check_total_size = check_index_size
@@ -56,8 +56,8 @@ void Matrix2d_init(gchar **m, gint a, gint b, gsize cell){
     }
 
 gpointer *Matrix2d_create(gint a, gint b, gsize cell){
-    register gchar **m;
-    register gulong index_size = a * sizeof(gpointer),
+    gchar **m;
+    gulong index_size = a * sizeof(gpointer),
                     row_size = b * cell,
                     data_size = a * row_size;
     g_assert(a > 0);
@@ -72,13 +72,13 @@ gpointer *Matrix2d_create(gint a, gint b, gsize cell){
 /**/
 
 gsize Matrix3d_size(gint a, gint b, gint c, gsize cell){
-    register gulong primary_index_size = a * sizeof(gpointer),
+    gulong primary_index_size = a * sizeof(gpointer),
                     secondary_index_size = b * sizeof(gpointer),
                     row_size  = c * cell,
                     block_size = secondary_index_size
                                + (b * row_size),
                     total_size;
-    register gdouble check_primary_index_size = a * sizeof(gpointer),
+    gdouble check_primary_index_size = a * sizeof(gpointer),
                      check_secondary_index_size = b * sizeof(gpointer),
                      check_row_size  = c * cell,
                      check_block_size = check_secondary_index_size
@@ -99,9 +99,9 @@ gsize Matrix3d_size(gint a, gint b, gint c, gsize cell){
     }
 
 gpointer **Matrix3d_create(gint a, gint b, gint c, gsize cell){
-    register gint i;
-    register gchar ***m;
-    register gulong primary_index_size = a * sizeof(gpointer),
+    gint i;
+    gchar ***m;
+    gulong primary_index_size = a * sizeof(gpointer),
                     secondary_index_size = b * sizeof(gpointer),
                     row_size  = c * cell,
                     block_size = secondary_index_size
@@ -126,14 +126,14 @@ gpointer **Matrix3d_create(gint a, gint b, gint c, gsize cell){
 /**/
 
 gsize Matrix4d_size(gint a, gint b, gint c, gint d, gsize cell){
-    register gulong primary_index_size = a * sizeof(gpointer),
+    gulong primary_index_size = a * sizeof(gpointer),
                     secondary_index_size = b * sizeof(gpointer),
                     tertiary_index_size = c * sizeof(gpointer),
                     row_size  = d * cell,
                     block_size = tertiary_index_size
                                + (c * row_size),
                     sheet_size, total_size;
-    register gdouble check_primary_index_size = a * sizeof(gpointer),
+    gdouble check_primary_index_size = a * sizeof(gpointer),
                      check_secondary_index_size = b * sizeof(gpointer),
                      check_tertiary_index_size = c * sizeof(gpointer),
                      check_row_size  = d * cell,
@@ -161,10 +161,10 @@ gsize Matrix4d_size(gint a, gint b, gint c, gint d, gsize cell){
     }
 
 gpointer ***Matrix4d_create(gint a, gint b, gint c, gint d, gsize cell){
-    register gint i, j;
-    register gchar ***m;
-    register gpointer *ptr;
-    register gulong primary_index_size = a * sizeof(gpointer),
+    gint i, j;
+    gchar ***m;
+    gpointer *ptr;
+    gulong primary_index_size = a * sizeof(gpointer),
                     secondary_index_size = b * sizeof(gpointer),
                     tertiary_index_size = c * sizeof(gpointer),
                     row_size  = d * cell,

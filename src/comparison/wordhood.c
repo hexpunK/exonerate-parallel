@@ -37,7 +37,7 @@ static gint WordHood_Submat_index_func(WordHood_Alphabet *wha,
 
 static void WordHood_Alphabet_fill_index(gint *index, gchar *alphabet,
                                          gboolean case_sensitive_input){
-    register gint i;
+    gint i;
     for(i = 0; i < ALPHABETSIZE; i++)
         index[i] = -1;
     for(i = 0; alphabet[i]; i++){
@@ -55,7 +55,7 @@ static WordHood_Alphabet *WordHood_Alphabet_create(gint advance,
                                         gchar *input_alphabet,
                                         gchar *output_alphabet,
                                         gboolean case_sensitive_input){
-    register WordHood_Alphabet *wha = g_new(WordHood_Alphabet, 1);
+    WordHood_Alphabet *wha = g_new(WordHood_Alphabet, 1);
     g_assert(input_alphabet);
     wha->ref_count = 1;
     wha->advance = advance;
@@ -71,9 +71,9 @@ WordHood_Alphabet *WordHood_Alphabet_create_from_Submat(
                       gchar *input_alphabet,
                       gchar *output_alphabet, Submat *submat,
                       gboolean case_sensitive_input){
-    register WordHood_Alphabet *wha = WordHood_Alphabet_create(1,
+    WordHood_Alphabet *wha = WordHood_Alphabet_create(1,
             input_alphabet, output_alphabet, case_sensitive_input);
-    register gint i;
+    gint i;
     g_assert(submat);
     g_assert(output_alphabet);
     wha->submat = Submat_share(submat);
@@ -121,10 +121,10 @@ static gint WordHood_CodonSubmat_index_func(WordHood_Alphabet *wha,
 
 WordHood_Alphabet *WordHood_Alphabet_create_from_CodonSubmat(
                     CodonSubmat *cs, gboolean case_sensitive_input){
-    register gint a, b, c;
-    register gchar *input_alphabet = "ABCDGHKMNRSTVWY",
+    gint a, b, c;
+    gchar *input_alphabet = "ABCDGHKMNRSTVWY",
                    *output_alphabet = "ACGT";
-    register WordHood_Alphabet *wha = WordHood_Alphabet_create(3,
+    WordHood_Alphabet *wha = WordHood_Alphabet_create(3,
             input_alphabet, output_alphabet, case_sensitive_input);
     wha->submat = NULL;
     wha->codon_submat = CodonSubmat_share(cs);
@@ -147,7 +147,7 @@ WordHood_Alphabet *WordHood_Alphabet_share(WordHood_Alphabet *wha){
     }
 
 void WordHood_Alphabet_destroy(WordHood_Alphabet *wha){
-    register gint i;
+    gint i;
     if(--wha->ref_count)
         return;
     if(wha->submat)
@@ -167,7 +167,7 @@ void WordHood_Alphabet_destroy(WordHood_Alphabet *wha){
 
 WordHood *WordHood_create(WordHood_Alphabet *wha,
                           gint threshold, gboolean use_dropoff){
-    register WordHood *wh = g_new(WordHood, 1);
+    WordHood *wh = g_new(WordHood, 1);
     wh->wha = WordHood_Alphabet_share(wha);
     wh->threshold = threshold;
     wh->use_dropoff = use_dropoff;
@@ -191,7 +191,7 @@ void WordHood_destroy(WordHood *wh){
 
 static void WordHood_set_word(WordHood *wh, gchar *word, gint len,
                               gint threshold){
-    register gint i;
+    gint i;
     g_assert(len > 0);
     g_assert(!(len % wh->wha->advance));
     wh->orig_word = word;
@@ -301,7 +301,7 @@ static void WordHood_traverse_word(WordHood *wh, WordHood_Traverse_Func whtf,
 /**/
 
 static gboolean WordHood_word_is_valid(WordHood *wh){
-    register gint i;
+    gint i;
     g_assert(wh->orig_word);
     for(i = 0; i < wh->curr_len; i += wh->wha->advance)
         if(!wh->wha->is_valid_func(wh->wha, wh->orig_word+i))
@@ -311,7 +311,7 @@ static gboolean WordHood_word_is_valid(WordHood *wh){
 /* This can reject softmasked words when the index is case-sensitive */
 
 static gint WordHood_score_word(WordHood *wh){
-    register gint i, score = 0;
+    gint i, score = 0;
     for(i = 0; i < wh->curr_len; i += wh->wha->advance)
         score += wh->wha->score_func(wh->wha, wh->orig_word+i,
                                               wh->orig_word+i);
@@ -320,7 +320,7 @@ static gint WordHood_score_word(WordHood *wh){
 
 void WordHood_traverse(WordHood *wh, WordHood_Traverse_Func whtf,
                        gchar *word, gint len, gpointer user_data){
-    register gint actual_threshold;
+    gint actual_threshold;
     g_assert(wh);
     g_assert(whtf);
     g_assert(word);

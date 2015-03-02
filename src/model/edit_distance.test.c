@@ -23,10 +23,10 @@ FILE *file;
 
 int Argument_main(Argument *arg){
     file = stdout;
-    register C4_Model *edit_distance = EditDistance_create();
-    register Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
+    C4_Model *edit_distance = EditDistance_create();
+    Alphabet *alphabet = Alphabet_create(Alphabet_Type_DNA,
                                                   FALSE);
-    register Sequence
+    Sequence
         *query = Sequence_create("qy", NULL,
                      "gtgcactacgtacgtnatcgtgcttnaacgcg"
                      "tacgtgatngtgcttgaacgtacgtacgtgatcg"
@@ -37,19 +37,19 @@ int Argument_main(Argument *arg){
                      "tacgtgancttgaacgcactacgtacgtgatcg"
                      "tgcntgaacgn", 0,
                       Sequence_Strand_UNKNOWN, alphabet);
-    register gchar *qy = Sequence_get_str(query),
+    gchar *qy = Sequence_get_str(query),
                    *tg = Sequence_get_str(target);
-    register EditDistance_Data *edd = EditDistance_Data_create(qy, tg);
+    EditDistance_Data *edd = EditDistance_Data_create(qy, tg);
 /**/
-    register C4_Score score;
-    register Alignment *alignment;
-    register Optimal *optimal = Optimal_create(edit_distance,
+    C4_Score score;
+    Alignment *alignment;
+    Optimal *optimal = Optimal_create(edit_distance,
                                                NULL,
                                                Optimal_Type_SCORE
                                               |Optimal_Type_PATH,
                                                FALSE);
 /**/
-    register Region *region = Region_create(0, 0,
+    Region *region = Region_create(0, 0,
                                      edd->query_len, edd->target_len);
     score = Optimal_find_score(optimal, region, edd, NULL);
     g_message("Score is [%d] (expect -23)", score);

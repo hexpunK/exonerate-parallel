@@ -91,8 +91,8 @@ static gboolean Layout_model_state_is_valid_input(C4_Model *model,
                              C4_State *state,
                              gint query_pos, gint target_pos,
                              gint query_length, gint target_length){
-    register gint i;
-    register C4_Transition *transition;
+    gint i;
+    C4_Transition *transition;
     if(state == model->start_state->state)
         return TRUE;
     for(i = 0; i < state->input_transition_list->len; i++){
@@ -157,9 +157,9 @@ gboolean Layout_is_transition_valid(Layout *layout, C4_Model *model,
                               C4_Transition *transition,
                               gint dst_query_pos, gint dst_target_pos,
                               gint query_length, gint target_length){
-    register Layout_Row *row;
-    register Layout_Cell *cell;
-    register Layout_Mask *mask;
+    Layout_Row *row;
+    Layout_Cell *cell;
+    Layout_Mask *mask;
     g_assert(layout);
     row = layout->row_list->pdata[MIN(dst_target_pos,
                                      (layout->row_list->len-1))];
@@ -210,9 +210,9 @@ FIXME: should change Layout to allow for faster lookup here.
 static Layout_Mask *Layout_Mask_create(C4_Model *model,
                             gint query_pos, gint target_pos,
                             gint query_length, gint target_length){
-    register Layout_Mask *mask = g_new(Layout_Mask, 1);
-    register gint i;
-    register C4_Transition *transition;
+    Layout_Mask *mask = g_new(Layout_Mask, 1);
+    gint i;
+    C4_Transition *transition;
     gboolean is_valid;
     mask->transition_mask = g_array_new(FALSE, TRUE, sizeof(gboolean));
     for(i = 0; i < model->transition_list->len; i++){
@@ -231,8 +231,8 @@ static void Layout_Mask_destroy(Layout_Mask *mask){
     }
 
 static gboolean Layout_Mask_is_same(Layout_Mask *a, Layout_Mask *b){
-    register gint i;
-    register gboolean value_a, value_b;
+    gint i;
+    gboolean value_a, value_b;
     if(!(a || b))
         return TRUE;
     if(!(a && b))
@@ -250,8 +250,8 @@ static gboolean Layout_Mask_is_same(Layout_Mask *a, Layout_Mask *b){
 
 static void Layout_Mask_info(Layout_Mask *mask, C4_Model *model,
                              gchar *name){
-    register gint i, count = 0;
-    register gboolean is_valid;
+    gint i, count = 0;
+    gboolean is_valid;
     if(!mask)
         return;
     g_assert(mask->transition_mask->len == model->transition_list->len);
@@ -274,7 +274,7 @@ static void Layout_Mask_info(Layout_Mask *mask, C4_Model *model,
 static Layout_Cell *Layout_Cell_create(C4_Model *model,
                             gint query_pos, gint target_pos,
                             gint query_length, gint target_length){
-    register Layout_Cell *cell = g_new(Layout_Cell, 1);
+    Layout_Cell *cell = g_new(Layout_Cell, 1);
     cell->normal = Layout_Mask_create(model,
                         query_pos, target_pos,
                         query_length, target_length);
@@ -361,8 +361,8 @@ static void Layout_Cell_info(Layout_Cell *cell, C4_Model *model){
 
 static Layout_Row *Layout_Row_create(C4_Model *model,
                gint row_number, gint query_length, gint target_length){
-    register Layout_Row *row = g_new(Layout_Row, 1);
-    register Layout_Cell *cell;
+    Layout_Row *row = g_new(Layout_Row, 1);
+    Layout_Cell *cell;
     row->cell_list = g_ptr_array_new();
     do {
         cell = Layout_Cell_create(model, row->cell_list->len,
@@ -380,7 +380,7 @@ static Layout_Row *Layout_Row_create(C4_Model *model,
     }
 
 static void Layout_Row_destroy(Layout_Row *row){
-    register gint i;
+    gint i;
     for(i = 0; i < row->cell_list->len; i++)
         Layout_Cell_destroy(row->cell_list->pdata[i]);
     g_ptr_array_free(row->cell_list, TRUE);
@@ -389,8 +389,8 @@ static void Layout_Row_destroy(Layout_Row *row){
     }
 
 static gboolean Layout_Row_is_same(Layout_Row *a, Layout_Row *b){
-    register gint i;
-    register Layout_Cell *cell_a, *cell_b;
+    gint i;
+    Layout_Cell *cell_a, *cell_b;
     g_assert(a);
     g_assert(b);
     if(a->cell_list->len != b->cell_list->len)
@@ -405,7 +405,7 @@ static gboolean Layout_Row_is_same(Layout_Row *a, Layout_Row *b){
     }
 
 static void Layout_Row_info(Layout_Row *row, C4_Model *model){
-    register gint i;
+    gint i;
     g_print("Layout_Cell count: [%d]\n", row->cell_list->len);
     for(i = 0; i < row->cell_list->len; i++){
         g_print("Layout_Cell [%d]:\n", i);
@@ -417,8 +417,8 @@ static void Layout_Row_info(Layout_Row *row, C4_Model *model){
 /**/
 
 Layout *Layout_create(C4_Model *model){
-    register Layout *layout = g_new(Layout, 1);
-    register Layout_Row *row;
+    Layout *layout = g_new(Layout, 1);
+    Layout_Row *row;
     g_assert(model);
     g_assert(!model->is_open);
     layout->row_list = g_ptr_array_new();
@@ -442,7 +442,7 @@ Layout *Layout_create(C4_Model *model){
  */
 
 void Layout_destroy(Layout *layout){
-    register gint i;
+    gint i;
     for(i = 0; i < layout->row_list->len; i++)
         Layout_Row_destroy(layout->row_list->pdata[i]);
     g_ptr_array_free(layout->row_list, TRUE);
@@ -451,8 +451,8 @@ void Layout_destroy(Layout *layout){
     }
 
 void Layout_info(Layout *layout, C4_Model *model){
-    register gint i;
-    register C4_Transition *transition;
+    gint i;
+    C4_Transition *transition;
     g_print("Layout for model [%s]\n", model->name);
     for(i = 0; i < model->transition_list->len; i++){
         transition = model->transition_list->pdata[i];

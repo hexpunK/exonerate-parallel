@@ -18,7 +18,7 @@
 #include "subopt.h"
 
 SubOpt *SubOpt_create(gint query_length, gint target_length){
-    register SubOpt *subopt = g_new(SubOpt, 1);
+    SubOpt *subopt = g_new(SubOpt, 1);
     subopt->ref_count = 1;
     subopt->query_length = query_length;
     subopt->target_length = target_length;
@@ -42,7 +42,7 @@ void SubOpt_destroy(SubOpt *subopt){
 
 /* Greatest Common Divisor : Euclid's algorithm */
 static gint SubOpt_get_gcd(gint a, gint b){
-    register gint t;
+    gint t;
     g_assert(a > 0);
     g_assert(b > 0);
     while(a > 0){
@@ -64,13 +64,13 @@ static gboolean SubOpt_check_pos(SubOpt *subopt,
 
 static void SubOpt_add_AlignmentOperation(SubOpt *subopt,
               AlignmentOperation *ao, gint query_pos, gint target_pos){
-    register gint i;
-    register gint gcd = SubOpt_get_gcd(ao->transition->advance_query,
+    gint i;
+    gint gcd = SubOpt_get_gcd(ao->transition->advance_query,
                                        ao->transition->advance_target);
-    register gint q_move = ao->transition->advance_query / gcd,
+    gint q_move = ao->transition->advance_query / gcd,
                   t_move = ao->transition->advance_target / gcd;
-    register gint q_limit = query_pos, t_limit = target_pos;
-    register gint qp, tp;
+    gint q_limit = query_pos, t_limit = target_pos;
+    gint qp, tp;
     /* Add operation */
     for(i = 0; i < ao->length; i++){
         /* Block positions in transition */
@@ -124,9 +124,9 @@ static void SubOpt_add_AlignmentOperation(SubOpt *subopt,
 /* FIXME: tidy */
 
 void SubOpt_add_alignment(SubOpt *subopt, Alignment *alignment){
-    register gint i;
-    register gint query_pos, target_pos;
-    register AlignmentOperation *ao;
+    gint i;
+    gint query_pos, target_pos;
+    AlignmentOperation *ao;
     query_pos = alignment->region->query_start;
     target_pos = alignment->region->target_start;
     for(i = 0; i < alignment->operation_list->len; i++){
@@ -151,8 +151,8 @@ typedef struct {
 
 static gboolean SubOpt_RangeTree_find(gint x, gint y,
                                  gpointer info, gpointer user_data){
-    register SubOpt_FindData *sufd = user_data;
-    register gint path_id = GPOINTER_TO_INT(info);
+    SubOpt_FindData *sufd = user_data;
+    gint path_id = GPOINTER_TO_INT(info);
     if(sufd->find_func(x, y, path_id, sufd->user_data))
         return TRUE;
     return FALSE;
@@ -175,10 +175,10 @@ gboolean SubOpt_find(SubOpt *subopt, Region *region,
     }
 
 gboolean SubOpt_overlaps_alignment(SubOpt *subopt, Alignment *alignment){
-    register gint i, j;
-    register AlignmentOperation *ao;
+    gint i, j;
+    AlignmentOperation *ao;
     Region region;
-    register gint qp = alignment->region->query_start,
+    gint qp = alignment->region->query_start,
                   tp = alignment->region->target_start;
     for(i = 0; i < alignment->operation_list->len; i++){
         ao = alignment->operation_list->pdata[i];
@@ -205,7 +205,7 @@ gboolean SubOpt_overlaps_alignment(SubOpt *subopt, Alignment *alignment){
 /**/
 
 static SubOpt_Index_Row *SubOpt_Index_Row_create(gint target_pos){
-    register SubOpt_Index_Row *soir = g_new(SubOpt_Index_Row, 1);
+    SubOpt_Index_Row *soir = g_new(SubOpt_Index_Row, 1);
     soir->target_pos = target_pos;
     soir->total = 0;
     soir->query_pos = NULL;
@@ -228,8 +228,8 @@ typedef struct {
 
 static gboolean SubOpt_RangeTree_traverse(gint x, gint y, gpointer info,
                                           gpointer user_data){
-    register GPtrArray *point_list = user_data;
-    register SubOpt_Point *sop = g_new(SubOpt_Point, 1);
+    GPtrArray *point_list = user_data;
+    SubOpt_Point *sop = g_new(SubOpt_Point, 1);
     sop->query_pos = x;
     sop->target_pos = y;
     g_ptr_array_add(point_list, sop);
@@ -238,9 +238,9 @@ static gboolean SubOpt_RangeTree_traverse(gint x, gint y, gpointer info,
 
 static int SubOpt_sort_by_target_then_query_pos(const void *a,
                                                 const void *b){
-    register SubOpt_Point **point_a = (SubOpt_Point**)a,
+    SubOpt_Point **point_a = (SubOpt_Point**)a,
                           **point_b = (SubOpt_Point**)b;
-    register gint target_diff = (*point_a)->target_pos
+    gint target_diff = (*point_a)->target_pos
                               - (*point_b)->target_pos;
     if(!target_diff)
         return (*point_a)->query_pos - (*point_b)->query_pos;
@@ -248,11 +248,11 @@ static int SubOpt_sort_by_target_then_query_pos(const void *a,
     }
 
 SubOpt_Index *SubOpt_Index_create(SubOpt *subopt, Region *region){
-    register SubOpt_Index *soi;
-    register GPtrArray *point_list = g_ptr_array_new();
-    register gint i, j, start;
-    register SubOpt_Point *point, *prev_point = NULL;
-    register SubOpt_Index_Row *soir = NULL;
+    SubOpt_Index *soi;
+    GPtrArray *point_list = g_ptr_array_new();
+    gint i, j, start;
+    SubOpt_Point *point, *prev_point = NULL;
+    SubOpt_Index_Row *soir = NULL;
     /* Copy all points in region into point_list */
     RangeTree_find(subopt->range_tree,
                    region->query_start, region->query_length+1,
@@ -323,8 +323,8 @@ SubOpt_Index *SubOpt_Index_create(SubOpt *subopt, Region *region){
     }
 
 void SubOpt_Index_destroy(SubOpt_Index *soi){
-    register gint i;
-    register SubOpt_Index_Row *soir;
+    gint i;
+    SubOpt_Index_Row *soir;
     /* Free all rows (including final blank row) */
     for(i = 0; i < soi->row_list->len; i++){
         soir = soi->row_list->pdata[i];
@@ -337,7 +337,7 @@ void SubOpt_Index_destroy(SubOpt_Index *soi){
     }
 
 void SubOpt_Index_set_row(SubOpt_Index *soi, gint target_pos){
-    register SubOpt_Index_Row *soir = NULL;
+    SubOpt_Index_Row *soir = NULL;
     g_assert(target_pos >= 0);
     if(!soi)
         return;

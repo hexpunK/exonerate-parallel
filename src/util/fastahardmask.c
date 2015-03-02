@@ -23,7 +23,7 @@ FILE *file;
 
 static gboolean fasta_hard_mask_traverse_func(FastaDB_Seq *fdbs,
                                               gpointer user_data){
-    register Sequence *s = Sequence_filter(fdbs->seq,
+    Sequence *s = Sequence_filter(fdbs->seq,
                                            Alphabet_Filter_Type_MASKED);
     Sequence_print_fasta(s, file, FALSE);
     Sequence_destroy(s);
@@ -31,8 +31,8 @@ static gboolean fasta_hard_mask_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
     gchar *query_path, *outputFile;
     ArgumentSet_add_option(as, 'f', "fasta", "path",

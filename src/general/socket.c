@@ -35,9 +35,9 @@
 
 static SocketConnection *SocketConnection_create(gchar *host,
                                                  gint  port){
-    register SocketConnection *connection
+    SocketConnection *connection
      = g_new(SocketConnection, 1);
-    register gint result;
+    gint result;
     int flag = 1;
     if((connection->sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
         perror("opening stream socket");
@@ -53,10 +53,10 @@ static SocketConnection *SocketConnection_create(gchar *host,
     }
 
 SocketClient *SocketClient_create(gchar *host, gint port){
-    register SocketClient *client = g_new(SocketClient, 1);
+    SocketClient *client = g_new(SocketClient, 1);
     struct sockaddr_in server;
     struct hostent *hp = gethostbyname(host);
-    register gchar *reply;
+    gchar *reply;
 #ifdef USE_PTHREADS
     pthread_mutex_init(&client->connection_mutex, NULL);
 #endif /* USE_PTHREADS */
@@ -107,10 +107,10 @@ static void SocketConnection_destroy(SocketConnection *connection){
     }
 
 static gchar *SocketConnection_read(gint sock){
-    register gint i, len = 0, line_complete = 0, line_expect = 1;
-    register gchar *reply;
-    register GString *string = g_string_sized_new(Socket_BUFSIZE);
-    register gboolean line_count_given = FALSE;
+    gint i, len = 0, line_complete = 0, line_expect = 1;
+    gchar *reply;
+    GString *string = g_string_sized_new(Socket_BUFSIZE);
+    gboolean line_count_given = FALSE;
     gchar buffer[Socket_BUFSIZE+1];
     do {
         if((len = recv(sock, buffer, Socket_BUFSIZE, 0)) <= 0)
@@ -146,7 +146,7 @@ static gchar *SocketConnection_read(gint sock){
     }
 
 static void Socket_send_msg(gint sock, gchar *msg, gchar *err_msg){
-    register gint start = 0, len, msglen = strlen(msg);
+    gint start = 0, len, msglen = strlen(msg);
     do {
         if((len = send(sock, msg+start, msglen-start, 0)) < 0){
             perror(err_msg);
@@ -172,7 +172,7 @@ static void Socket_send(gint sock, gchar *msg, gchar *err_msg){
     }
 
 gchar *SocketClient_send(SocketClient *client, gchar *msg){
-    register gchar *reply;
+    gchar *reply;
 #ifdef USE_PTHREADS
     pthread_mutex_lock(&client->connection_mutex);
 #endif /* USE_PTHREADS */
@@ -222,7 +222,7 @@ SocketServer *SocketServer_create(gint port, gint max_connections,
               SocketConnectionOpenFunc connection_open_func,
               SocketConnectionCloseFunc connection_close_func,
               gpointer user_data){
-    register SocketServer *server = g_new(SocketServer, 1);
+    SocketServer *server = g_new(SocketServer, 1);
     struct sockaddr_in sock_server;
     struct sigaction sa;
     socklen_t len = sizeof(sock_server);
@@ -268,11 +268,11 @@ SocketServer *SocketServer_create(gint port, gint max_connections,
     }
 
 static void SocketServer_process_connection(SocketServer *server, int msgsock){
-    register gpointer connection_data = server->connection_open_func
+    gpointer connection_data = server->connection_open_func
                     ? server->connection_open_func(server->user_data)
                     : NULL;
-    register gchar *msg;
-    register gboolean ok = TRUE;
+    gchar *msg;
+    gboolean ok = TRUE;
     gchar *reply;
     do {
 #ifdef USE_PTHREADS
@@ -308,7 +308,7 @@ static void SocketServer_process_connection(SocketServer *server, int msgsock){
 
 #ifdef USE_PTHREADS
 static void *SocketServer_pthread_func(void* data){
-    register SocketServer_pthread_Data *sspd = (SocketServer_pthread_Data*)data;
+    SocketServer_pthread_Data *sspd = (SocketServer_pthread_Data*)data;
     signal(SIGPIPE, SocketServer_broken_pipe);
     SocketServer_process_connection(sspd->server, sspd->msgsock);
     pthread_mutex_lock(&sspd->server->connection_mutex);
@@ -323,11 +323,11 @@ static void *SocketServer_pthread_func(void* data){
 #endif /* USE_PTHREADS */
 
 gboolean SocketServer_listen(SocketServer *server){
-    register int msgsock;
+    int msgsock;
     struct sockaddr_in client_addr;
     socklen_t client_len = sizeof(struct sockaddr_in);
 #ifdef USE_PTHREADS
-    register gint i;
+    gint i;
     pthread_attr_t pt_attr;
     pthread_attr_init(&pt_attr);
     pthread_attr_setdetachstate(&pt_attr, PTHREAD_CREATE_DETACHED);

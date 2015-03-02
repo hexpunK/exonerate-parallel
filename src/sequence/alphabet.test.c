@@ -16,7 +16,7 @@
 #include "alphabet.h"
 
 gint Argument_main(Argument *arg){
-    register Alphabet *dna_alphabet
+    Alphabet *dna_alphabet
            = Alphabet_create(Alphabet_Type_DNA, FALSE);
     Alphabet_destroy(dna_alphabet);
     return 0;

@@ -18,13 +18,13 @@
 #include "index.h"
 
 int Argument_main(Argument *arg){
-    register ArgumentSet *as
+    ArgumentSet *as
            = ArgumentSet_create("Input and Output Options");
     gchar *dataset_path, *index_path;
-    register Dataset *dataset;
-    register Index *index;
+    Dataset *dataset;
+    Index *index;
     gboolean is_translated = FALSE;
-    register gint word_length;
+    gint word_length;
     gint dna_word_length, protein_word_length,
          word_jump, word_ambiguity,
          saturate_threshold, memory_limit;

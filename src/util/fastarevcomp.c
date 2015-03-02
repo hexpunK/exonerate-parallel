@@ -21,7 +21,7 @@ FILE *file;
 
 static gboolean fasta_revcomp_traverse_func(FastaDB_Seq *fdbs,
                                            gpointer user_data){
-    register FastaDB_Seq *revcomp_fdbs = FastaDB_Seq_revcomp(fdbs);
+    FastaDB_Seq *revcomp_fdbs = FastaDB_Seq_revcomp(fdbs);
     FastaDB_Seq_print(revcomp_fdbs, file, FastaDB_Mask_ID
                                    |FastaDB_Mask_DEF
                                    |FastaDB_Mask_SEQ);
@@ -30,10 +30,10 @@ static gboolean fasta_revcomp_traverse_func(FastaDB_Seq *fdbs,
     }
 
 int Argument_main(Argument *arg){
-    register FastaDB *fdb;
-    register ArgumentSet *as
+    FastaDB *fdb;
+    ArgumentSet *as
            = ArgumentSet_create("Sequence Input Options");
-    register Alphabet *alphabet;
+    Alphabet *alphabet;
     gchar *query_path, *outputFile;
     ArgumentSet_add_option(as, 'f', "fasta", "path",
         "Fasta input file", NULL,

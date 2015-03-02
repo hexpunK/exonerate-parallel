@@ -31,7 +31,7 @@
 #include <unistd.h>     /* For stat() */
 
 Analysis_ArgumentSet *Analysis_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static Analysis_ArgumentSet aas;
     if(arg){
         as = ArgumentSet_create("Analysis Options");
@@ -74,7 +74,7 @@ typedef struct {
 
 static Analysis_HeuristicJob *Analysis_HeuristicJob_create(GAM *gam,
                                        Comparison *comparison){
-    register Analysis_HeuristicJob *ahj = g_new(Analysis_HeuristicJob, 1);
+    Analysis_HeuristicJob *ahj = g_new(Analysis_HeuristicJob, 1);
     ahj->gam = GAM_share(gam);
     ahj->comparison = Comparison_share(comparison);
     return ahj;
@@ -88,8 +88,8 @@ static void Analysis_HeuristicJob_destroy(Analysis_HeuristicJob *ahj){
     }
 
 static void Analysis_HeuristicJob_run(gpointer data){
-    register Analysis_HeuristicJob *ahj = data;
-    register GAM_Result *gam_result
+    Analysis_HeuristicJob *ahj = data;
+    GAM_Result *gam_result
            = GAM_Result_heuristic_create(ahj->gam, ahj->comparison);
     if(gam_result){
         GAM_Result_submit(gam_result);
@@ -101,9 +101,9 @@ static void Analysis_HeuristicJob_run(gpointer data){
 
 static void Analysis_report_func(Comparison *comparison,
                                  gpointer user_data){
-    register Analysis *analysis = user_data;
-    register GAM_Result *gam_result;
-    register Analysis_HeuristicJob *ahj;
+    Analysis *analysis = user_data;
+    GAM_Result *gam_result;
+    Analysis_HeuristicJob *ahj;
     g_assert(Comparison_has_hsps(comparison));
     if(analysis->scan_query){
         /* Swap back query and target after a query scan */
@@ -140,21 +140,21 @@ static void Analysis_report_func(Comparison *comparison,
 /**/
 
 static void Analysis_FastaPipe_Pair_init_func(gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     g_assert(!analysis->curr_query);
     return;
     }
 /* Called before query pipeline loading */
 
 static void Analysis_FastaPipe_Pair_prep_func(gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     g_assert(analysis->curr_query);
     return;
     }
 /* Called after query pipeline loading */
 
 static void Analysis_FastaPipe_Pair_term_func(gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     FastaDB_Seq_destroy(analysis->curr_query);
     analysis->curr_query = NULL;
     return;
@@ -163,7 +163,7 @@ static void Analysis_FastaPipe_Pair_term_func(gpointer user_data){
 
 static gboolean Analysis_FastaPipe_Pair_query_func(FastaDB_Seq *fdbs,
                                                   gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     g_assert(!analysis->curr_query);
     /*
     if(analysis->aas->use_exhaustive)
@@ -180,7 +180,7 @@ static gboolean Analysis_FastaPipe_Pair_query_func(FastaDB_Seq *fdbs,
 static void Analysis_BSAM_compare(Analysis *analysis,
                                   FastaDB_Seq *query,
                                   FastaDB_Seq *target){
-    register Comparison *comparison = BSAM_compare(analysis->bsam,
+    Comparison *comparison = BSAM_compare(analysis->bsam,
                                                    query->seq,
                                                    target->seq);
     if(comparison){
@@ -201,7 +201,7 @@ typedef struct {
 
 static Analysis_ExhaustiveJob *Analysis_ExhaustiveJob_create(GAM *gam,
                                         Sequence *query, Sequence *target){
-    register Analysis_ExhaustiveJob *aej = g_new(Analysis_ExhaustiveJob, 1);
+    Analysis_ExhaustiveJob *aej = g_new(Analysis_ExhaustiveJob, 1);
     aej->gam = GAM_share(gam);
     aej->query = Sequence_share(query);
     aej->target = Sequence_share(target);
@@ -217,8 +217,8 @@ static void Analysis_ExhaustiveJob_destroy(Analysis_ExhaustiveJob *aej){
     }
 
 static void Analysis_ExhaustiveJob_run(gpointer data){
-    register Analysis_ExhaustiveJob *aej = data;
-    register GAM_Result *gam_result;
+    Analysis_ExhaustiveJob *aej = data;
+    GAM_Result *gam_result;
     gam_result = GAM_Result_exhaustive_create(aej->gam,
                                               aej->query, aej->target);
     if(gam_result){
@@ -231,7 +231,7 @@ static void Analysis_ExhaustiveJob_run(gpointer data){
 
 static void Analysis_Pair_compare(Analysis *analysis,
                                   FastaDB_Seq *fdbs){
-    register Analysis_ExhaustiveJob *aej;
+    Analysis_ExhaustiveJob *aej;
     if(analysis->aas->use_exhaustive){
         aej = Analysis_ExhaustiveJob_create(analysis->gam,
                                             analysis->curr_query->seq,
@@ -252,7 +252,7 @@ static void Analysis_Pair_compare(Analysis *analysis,
 
 static gboolean Analysis_FastaPipe_Pair_target_func(FastaDB_Seq *fdbs,
                                                     gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     g_assert(analysis->gam);
     g_assert(analysis->curr_query);
     /*
@@ -271,9 +271,9 @@ static gboolean Analysis_FastaPipe_Pair_target_func(FastaDB_Seq *fdbs,
 /**/
 
 static void Analysis_FastaPipe_Seeder_init_func(gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     g_assert(!analysis->curr_seeder);
-    register Comparison_Param *comparison_param
+    Comparison_Param *comparison_param
            = Comparison_Param_share(analysis->comparison_param);
     if(analysis->scan_query)
         comparison_param = Comparison_Param_swap(comparison_param);
@@ -292,7 +292,7 @@ static void Analysis_FastaPipe_Seeder_prep_func(gpointer user_data){
 /* Called after query pipeline loading */
 
 static void Analysis_FastaPipe_Seeder_term_func(gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     Seeder_destroy(analysis->curr_seeder);
     if(analysis->verbosity > 2){
         g_message("### Seeder destroyed ###");
@@ -305,7 +305,7 @@ static void Analysis_FastaPipe_Seeder_term_func(gpointer user_data){
 
 static gboolean Analysis_FastaPipe_Seeder_query_func(FastaDB_Seq *fdbs,
                                                     gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     if(analysis->verbosity > 1)
         g_message("Load query for Seeder [%s] (%d)",
                 fdbs->seq->id, fdbs->seq->len);
@@ -315,7 +315,7 @@ static gboolean Analysis_FastaPipe_Seeder_query_func(FastaDB_Seq *fdbs,
 
 static gboolean Analysis_FastaPipe_Seeder_target_func(FastaDB_Seq *fdbs,
                                                     gpointer user_data){
-    register Analysis *analysis = user_data;
+    Analysis *analysis = user_data;
     if(analysis->verbosity > 1)
         g_message("Load target for Seeder [%s] (%d)",
                 fdbs->seq->id, fdbs->seq->len);
@@ -329,7 +329,7 @@ static gboolean Analysis_FastaPipe_Seeder_target_func(FastaDB_Seq *fdbs,
 static gboolean Analysis_decide_scan_query(FastaDB *query_fdb,
                                            FastaDB *target_fdb,
                                            gchar *force_scan){
-    register CompoundFile_Pos query_size, target_size;
+    CompoundFile_Pos query_size, target_size;
     if(!strcasecmp(force_scan, "none")){
         query_size = CompoundFile_get_length(query_fdb->cf);
         target_size = CompoundFile_get_length(target_fdb->cf);
@@ -352,12 +352,12 @@ static gboolean Analysis_decide_scan_query(FastaDB *query_fdb,
 static void Analysis_find_matches(Analysis *analysis,
                        Match **dna_match, Match **protein_match,
                        Match **codon_match){
-    register GPtrArray *transition_list
+    GPtrArray *transition_list
         = C4_Model_select_transitions(analysis->gam->model,
                                       C4_Label_MATCH);
-    register gint i;
-    register C4_Transition *transition;
-    register Match *match;
+    gint i;
+    C4_Transition *transition;
+    Match *match;
     for(i = 0; i < transition_list->len; i++){
         transition = transition_list->pdata[i];
         g_assert(transition);
@@ -396,10 +396,10 @@ static void Analysis_find_matches(Analysis *analysis,
 /**/
 
 static SocketClient *Analysis_Client_connect(gchar *path){
-    register SocketClient *sc;
-    register gint i, divider = 0, port;
-    register gchar *server;
-    register gint connection_attempts = 10;
+    SocketClient *sc;
+    gint i, divider = 0, port;
+    gchar *server;
+    gint connection_attempts = 10;
     for(i = 0; path[i]; i++)
         if(path[i] == ':'){
             divider = i;
@@ -423,10 +423,10 @@ static SocketClient *Analysis_Client_connect(gchar *path){
 
 static gchar *Analysis_Client_send(Analysis_Client *aclient, gchar *msg,
                                   gchar *expect, gboolean multi_line_reply){
-    register gchar *reply = SocketClient_send(aclient->sc, msg);
-    register gchar *line, *p = reply, *processed_reply;
-    register gint line_count = 0;
-    register GString *str = g_string_sized_new(64);
+    gchar *reply = SocketClient_send(aclient->sc, msg);
+    gchar *line, *p = reply, *processed_reply;
+    gint line_count = 0;
+    GString *str = g_string_sized_new(64);
     if(aclient->verbosity >= 3){
         g_print("Message: client sent message [%s]\n", msg);
         if((aclient->verbosity == 3) && (strlen(reply) >= 80))
@@ -480,8 +480,8 @@ static gchar *Analysis_Client_send(Analysis_Client *aclient, gchar *msg,
     }
 
 static void Analysis_Client_set_param(Analysis_Client *aclient, GAM *gam){
-    register HSPset_ArgumentSet *has = HSPset_ArgumentSet_create(NULL);
-    register Analysis_ArgumentSet *aas = Analysis_ArgumentSet_create(NULL);
+    HSPset_ArgumentSet *has = HSPset_ArgumentSet_create(NULL);
+    Analysis_ArgumentSet *aas = Analysis_ArgumentSet_create(NULL);
     char msg[_POSIX2_LINE_MAX], *reply;
     /**/
     if(aas->custom_server_command){
@@ -574,10 +574,10 @@ static void Analysis_Client_info(Analysis_Client *aclient){
     }
 
 static Analysis_Client *Analysis_Client_create(gchar *path, gint verbosity){
-    register Analysis_Client *aclient;
-    register SocketClient *sc = Analysis_Client_connect(path);
-    register Alphabet_Type alphabet_type;
-    register gchar *dbinfo, **dbinfo_word;
+    Analysis_Client *aclient;
+    SocketClient *sc = Analysis_Client_connect(path);
+    Alphabet_Type alphabet_type;
+    gchar *dbinfo, **dbinfo_word;
     if(!sc)
         return NULL;
     aclient = g_new(Analysis_Client, 1);
@@ -627,8 +627,8 @@ static Analysis_Client *Analysis_Client_share(Analysis_Client *aclient){
     }
 
 static void Analysis_Client_destroy(Analysis_Client *aclient){
-    register gint i;
-    register Sequence *seq;
+    gint i;
+    Sequence *seq;
     if(--aclient->ref_count)
         return;
     if(aclient->curr_query)
@@ -655,11 +655,11 @@ static void Analysis_Client_set_probe_fdb(Analysis_Client *aclient,
     }
 
 static void Analysis_Client_set_query(Analysis_Client *aclient, Sequence *seq){
-    register gchar *seq_str = Sequence_get_str(seq);
-    register gchar *msg = g_strdup_printf("set query %s", seq_str);
-    register gchar *reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
-    register gchar **word;
-    register gint len, checksum;
+    gchar *seq_str = Sequence_get_str(seq);
+    gchar *msg = g_strdup_printf("set query %s", seq_str);
+    gchar *reply = Analysis_Client_send(aclient, msg, "ok:", FALSE);
+    gchar **word;
+    gint len, checksum;
     if(strncmp(reply, "ok:", 3))
         g_error("Could not set query [%s] on server", seq->id);
     word = g_strsplit(reply+4, " ", 4);
@@ -681,9 +681,9 @@ static void Analysis_Client_set_query(Analysis_Client *aclient, Sequence *seq){
     }
 
 static void Analysis_Client_revcomp_query(Analysis_Client *aclient){
-    register gchar *reply = Analysis_Client_send(aclient,
+    gchar *reply = Analysis_Client_send(aclient,
             "revcomp query", "ok: query strand revcomp", FALSE);
-    register Sequence *curr_query;
+    Sequence *curr_query;
     curr_query = aclient->curr_query;
     aclient->curr_query = Sequence_revcomp(aclient->curr_query);
     Sequence_destroy(curr_query);
@@ -692,7 +692,7 @@ static void Analysis_Client_revcomp_query(Analysis_Client *aclient){
     }
 
 static void Analysis_Client_revcomp_target(Analysis_Client *aclient){
-    register gchar *reply = Analysis_Client_send(aclient,
+    gchar *reply = Analysis_Client_send(aclient,
             "revcomp target", "ok: target strand", FALSE);
     g_free(reply);
     return;
@@ -708,7 +708,7 @@ typedef struct {
 
 static Analysis_Client_Key *Analysis_Client_Key_create(Analysis_Client *aclient,
                                                    gint target_id, gint seq_len){
-    register Analysis_Client_Key *key = g_new(Analysis_Client_Key, 1);
+    Analysis_Client_Key *key = g_new(Analysis_Client_Key, 1);
     key->aclient = Analysis_Client_share(aclient);
     key->target_id = target_id;
     key->seq_len = seq_len;
@@ -729,13 +729,13 @@ static gpointer Analysis_Client_SparseCache_get_func(gint pos,
 
 static SparseCache_Page *Analysis_Client_SparseCache_fill_func(gint start,
                                                      gpointer user_data){
-    register Analysis_Client_Key *key = user_data;
-    register SparseCache_Page *page = g_new(SparseCache_Page, 1);
-    register gint len = MIN(SparseCache_PAGE_SIZE, key->seq_len-start),
+    Analysis_Client_Key *key = user_data;
+    SparseCache_Page *page = g_new(SparseCache_Page, 1);
+    gint len = MIN(SparseCache_PAGE_SIZE, key->seq_len-start),
                   page_len;
-    register gchar *msg = g_strdup_printf("get subseq %d %d %d",
+    gchar *msg = g_strdup_printf("get subseq %d %d %d",
             key->target_id, start, len);
-    register gchar *reply = Analysis_Client_send(key->aclient, msg,
+    gchar *reply = Analysis_Client_send(key->aclient, msg,
                                                 "subseq:", FALSE);
     if(strncmp(reply, "subseq:", 7))
         g_error("Failed to get subseq for target (%d,%d,%d) [%s]",
@@ -753,7 +753,7 @@ static SparseCache_Page *Analysis_Client_SparseCache_fill_func(gint start,
 /* FIXME: move compression stuff to SeqPage in Sequence */
 
 static void Analysis_Client_SparseCache_free_func(gpointer user_data){
-    register Analysis_Client_Key *key = user_data;
+    Analysis_Client_Key *key = user_data;
     Analysis_Client_Key_destroy(key);
     return;
     }
@@ -761,7 +761,7 @@ static void Analysis_Client_SparseCache_free_func(gpointer user_data){
 static SparseCache *Analysis_Client_get_SparseCache(
                     Analysis_Client *aclient,
                     gint sequence_id, gint len){
-    register Analysis_Client_Key *key
+    Analysis_Client_Key *key
         = Analysis_Client_Key_create(aclient, sequence_id, len);
     return SparseCache_create(len, Analysis_Client_SparseCache_fill_func,
                          NULL, Analysis_Client_SparseCache_free_func, key);
@@ -770,11 +770,11 @@ static SparseCache *Analysis_Client_get_SparseCache(
 static Sequence *Analysis_Client_get_Sequence(Analysis_Client *aclient,
                                               gint sequence_id,
                                               gboolean revcomp_target){
-    register gchar *msg, *reply, *id, *def;
-    register SparseCache *cache;
-    register Sequence *seq = aclient->seq_cache[sequence_id];
-    register gint len, checksum;
-    register gchar **seqinfo_word;
+    gchar *msg, *reply, *id, *def;
+    SparseCache *cache;
+    Sequence *seq = aclient->seq_cache[sequence_id];
+    gint len, checksum;
+    gchar **seqinfo_word;
     if(seq){
         if(revcomp_target)
             return Sequence_revcomp(seq);
@@ -822,7 +822,7 @@ typedef enum {
 
 static Analysis_Client_HSP_TOKEN Analysis_Client_get_hsp_token(gchar *str,
                                                    gint *pos, gint *intval){
-    register gint ch;
+    gint ch;
     gchar *endptr;
     g_assert(str);
     while((ch = str[(*pos)])){
@@ -861,19 +861,19 @@ static void Analysis_Client_get_hsp_sets(Analysis_Client *aclient,
                                          Analysis *analysis,
                                          gboolean swap_chains,
                                          gboolean revcomp_target){
-    register gchar *reply = Analysis_Client_send(aclient,
+    gchar *reply = Analysis_Client_send(aclient,
                                                 "get hsps", "hspset:", TRUE);
     gint pos = 0, intval = 0;
-    register gboolean ok = TRUE;
-    register Analysis_Client_HSP_TOKEN token;
-    register gint target_id = -1, query_pos = -1, target_pos = -1, length;
-    register Comparison *comparison = NULL;
-    register Sequence *target = NULL;
-    register Match_Type match_type
+    gboolean ok = TRUE;
+    Analysis_Client_HSP_TOKEN token;
+    gint target_id = -1, query_pos = -1, target_pos = -1, length;
+    Comparison *comparison = NULL;
+    Sequence *target = NULL;
+    Match_Type match_type
            = Match_Type_find(aclient->curr_query->alphabet->type,
                              aclient->server_alphabet->type, FALSE);
     /* FIXME: use Match_Type_find with translate_both for codon alignments */
-    register HSPset *hsp_set = NULL;
+    HSPset *hsp_set = NULL;
     do {
         token = Analysis_Client_get_hsp_token(reply, &pos, &intval);
         switch(token){
@@ -981,7 +981,7 @@ static void Analysis_Client_process_query(Analysis_Client *aclient,
 
 static void Analysis_Client_process(Analysis_Client *aclient, Analysis *analysis,
                                     gboolean swap_chains, gint priority){
-    register FastaDB_Seq *fdbs;
+    FastaDB_Seq *fdbs;
     /* FIXME: need to check for appropriate database type */
     while((fdbs = FastaDB_next(aclient->probe_fdb, FastaDB_Mask_ALL))){
         Analysis_Client_process_query(aclient, analysis, fdbs->seq,
@@ -1005,7 +1005,7 @@ static void Analysis_Client_process(Analysis_Client *aclient, Analysis *analysis
 
 static Analysis_Server *Analysis_Server_create(Analysis_Builder *ab,
                                                gchar *name, gint priority){
-    register Analysis_Server *as = g_new(Analysis_Server, 1);
+    Analysis_Server *as = g_new(Analysis_Server, 1);
     as->name = g_strdup(name);
     as->ab = ab;
     as->priority = priority;
@@ -1023,10 +1023,10 @@ static void Analysis_Server_destroy(Analysis_Server *as){
 static Analysis_Builder *Analysis_Builder_create(GPtrArray *path_list,
                                                  Analysis *analysis,
                                                  gint verbosity){
-    register Analysis_Builder *ab;
-    register gint i;
-    register Analysis_Client *ac;
-    register Analysis_Server *as;
+    Analysis_Builder *ab;
+    gint i;
+    Analysis_Client *ac;
+    Analysis_Server *as;
     g_assert(path_list->len);
     ac = Analysis_Client_create(path_list->pdata[0], analysis->verbosity);
     if(!ac)
@@ -1047,8 +1047,8 @@ static Analysis_Builder *Analysis_Builder_create(GPtrArray *path_list,
     }
 
 static void Analysis_Builder_destroy(Analysis_Builder *ab){
-    register gint i;
-    register Analysis_Server *as;
+    gint i;
+    Analysis_Server *as;
     for(i = 0; i < ab->server_list->len; i++){
         as = ab->server_list->pdata[i];
         Analysis_Server_destroy(as);
@@ -1061,8 +1061,8 @@ static void Analysis_Builder_destroy(Analysis_Builder *ab){
     }
 
 static void Analysis_Server_run(gpointer data){
-    register Analysis_Server *server = data;
-    register Analysis_Client *client
+    Analysis_Server *server = data;
+    Analysis_Client *client
                 = Analysis_Client_create(server->name,
                                          server->ab->analysis->verbosity);
     if(!client)
@@ -1078,8 +1078,8 @@ static void Analysis_Server_run(gpointer data){
 
 static void Analysis_Builder_process(Analysis_Builder *ab,
                                      Analysis *analysis, gboolean swap_chains){
-    register gint i;
-    register Analysis_Server *as;
+    gint i;
+    Analysis_Server *as;
     ab->swap_chains = swap_chains;
     for(i = 0; i < ab->server_list->len; i++){
         as = ab->server_list->pdata[i];
@@ -1103,8 +1103,8 @@ static void Analysis_Builder_set_probe_fdb(Analysis_Builder *ab,
 /**/
 
 static void Analysis_path_list_destroy(GPtrArray *path_list){
-    register gint i;
-    register gchar *path;
+    gint i;
+    gchar *path;
     for(i = 0; i < path_list->len; i++){
         path = path_list->pdata[i];
         g_free(path);
@@ -1114,13 +1114,13 @@ static void Analysis_path_list_destroy(GPtrArray *path_list){
     }
 
 static GPtrArray *Analysis_FOSN_expand_path_list(GPtrArray *path_list){
-    register gint i;
-    register gchar *path, *npath;
+    gint i;
+    gchar *path, *npath;
     struct stat buf;
-    register gboolean expanded_list = FALSE;
-    register GPtrArray *npath_list = g_ptr_array_new();
-    register FILE *fp;
-    register LineParse *lp;
+    gboolean expanded_list = FALSE;
+    GPtrArray *npath_list = g_ptr_array_new();
+    FILE *fp;
+    LineParse *lp;
     for(i = 0; i < path_list->len; i++){
         path = path_list->pdata[i];
         if((stat(path, &buf))              /* Cannot read file (ie. servername) */
@@ -1166,17 +1166,17 @@ Analysis *Analysis_create(
               GPtrArray *target_path_list, Alphabet_Type target_type,
               gint target_chunk_id, gint target_chunk_total,
               gint verbosity){
-    register Analysis *analysis = g_new0(Analysis, 1);
-    register FastaDB *query_fdb = NULL, *target_fdb = NULL,
+    Analysis *analysis = g_new0(Analysis, 1);
+    FastaDB *query_fdb = NULL, *target_fdb = NULL,
                      *seeder_query_fdb, *seeder_target_fdb;
-    register Match *match;
+    Match *match;
     Match *dna_match = NULL, *protein_match = NULL,
           *codon_match = NULL;
-    register HSP_Param *dna_hsp_param, *protein_hsp_param,
+    HSP_Param *dna_hsp_param, *protein_hsp_param,
                        *codon_hsp_param;
-    register Match_ArgumentSet *mas = Match_ArgumentSet_create(NULL);
-    register gboolean use_horizon;
-    register GPtrArray *expanded_query_path_list = NULL,
+    Match_ArgumentSet *mas = Match_ArgumentSet_create(NULL);
+    gboolean use_horizon;
+    GPtrArray *expanded_query_path_list = NULL,
                        *expanded_target_path_list = NULL;
     g_assert(query_path_list);
     g_assert(target_path_list);

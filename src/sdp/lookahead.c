@@ -27,7 +27,7 @@
 Lookahead *Lookahead_create(gint reset_pos, gint max_advance,
                             Lookahead_FreeFunc free_func,
                             gpointer user_data){
-    register Lookahead *lookahead = g_new0(Lookahead, 1);
+    Lookahead *lookahead = g_new0(Lookahead, 1);
     g_assert(max_advance > 0);
     g_assert(max_advance <= Lookahead_Mask_WIDTH);
     lookahead->reset_pos = reset_pos;
@@ -39,7 +39,7 @@ Lookahead *Lookahead_create(gint reset_pos, gint max_advance,
     }
 
 static Lookahead_Mask Lookahead_orientate_mask(Lookahead *lookahead){
-    register gint index_pos = Lookahead_index_pos(lookahead, 0);
+    gint index_pos = Lookahead_index_pos(lookahead, 0);
     return (lookahead->mask >> index_pos)
          | (lookahead->mask << (Lookahead_Mask_WIDTH-index_pos));
     }
@@ -77,7 +77,7 @@ gpointer Lookahead_get(Lookahead *lookahead, gint advance){
     }
 
 void Lookahead_set(Lookahead *lookahead, gint advance, gpointer data){
-    register gint index_pos = Lookahead_index_pos(lookahead, advance);
+    gint index_pos = Lookahead_index_pos(lookahead, advance);
     g_assert(advance >= 0);
     g_assert(advance <= lookahead->max_advance);
     g_assert(!Lookahead_get(lookahead, advance));
@@ -87,7 +87,7 @@ void Lookahead_set(Lookahead *lookahead, gint advance, gpointer data){
     }
 
 static void Lookahead_clear(Lookahead *lookahead, gint advance){
-    register gint index_pos = Lookahead_index_pos(lookahead, advance);
+    gint index_pos = Lookahead_index_pos(lookahead, advance);
     g_assert(advance >= 0);
     g_assert(advance <= lookahead->max_advance);
     g_assert(lookahead->index[index_pos]);
@@ -109,7 +109,7 @@ gint Lookahead_next(Lookahead *lookahead){
     }
 
 void Lookahead_move(Lookahead *lookahead, gint pos){
-    register gint next_advance, max_advance = pos - lookahead->pos;
+    gint next_advance, max_advance = pos - lookahead->pos;
     g_assert(pos >= lookahead->pos);
     g_assert(max_advance >= 0);
     while(lookahead->mask){

@@ -18,7 +18,7 @@
 /**/
 
 SAR_ArgumentSet *SAR_ArgumentSet_create(Argument *arg){
-    register ArgumentSet *as;
+    ArgumentSet *as;
     static SAR_ArgumentSet sas;
     if(arg){
         as = ArgumentSet_create("SAR Options");
@@ -36,11 +36,11 @@ SAR_ArgumentSet *SAR_ArgumentSet_create(Argument *arg){
 
 static gboolean SAR_region_valid_hsp_exit(Region *region, HSP *hsp){
 #ifndef G_DISABLE_ASSERT
-    register gint query_width = Region_query_end(region)
+    gint query_width = Region_query_end(region)
                               - hsp->query_start;
-    register gint target_width = Region_target_end(region)
+    gint target_width = Region_target_end(region)
                                - hsp->target_start;
-    register gint query_prefix = Region_query_end(region)
+    gint query_prefix = Region_query_end(region)
                                - hsp->query_start;
 #endif /* G_DISABLE_ASSERT */
     /* Check region corner meets the HSP */
@@ -58,11 +58,11 @@ static gboolean SAR_region_valid_hsp_exit(Region *region, HSP *hsp){
 
 static gboolean SAR_region_valid_hsp_entry(Region *region, HSP *hsp){
 #ifndef G_DISABLE_ASSERT
-    register gint query_width = HSP_query_end(hsp)
+    gint query_width = HSP_query_end(hsp)
                               - region->query_start;
-    register gint target_width = HSP_target_end(hsp)
+    gint target_width = HSP_target_end(hsp)
                                - region->target_start;
-    register gint query_suffix = HSP_query_end(hsp)
+    gint query_suffix = HSP_query_end(hsp)
                                - region->query_start;
 #endif /* G_DISABLE_ASSERT */
     g_assert(Region_is_valid(region));
@@ -83,8 +83,8 @@ static gboolean SAR_region_valid_hsp_entry(Region *region, HSP *hsp){
 static gboolean SAR_Terminal_calculate_start_region(HSP *hsp,
             HPair *hpair, Heuristic_Range *range, C4_Scope scope,
             Region *region){
-    register gint to_shrink;
-    register gboolean at_query_edge = FALSE, at_target_edge = FALSE;
+    gint to_shrink;
+    gboolean at_query_edge = FALSE, at_target_edge = FALSE;
     Region outer_box;
     /* Find outer box (cobs -> corner) */
     outer_box.query_start = 0;
@@ -160,8 +160,8 @@ static gboolean SAR_Terminal_calculate_start_region(HSP *hsp,
 static gboolean SAR_Terminal_calculate_end_region(HSP *hsp,
             HPair *hpair, Heuristic_Range *range, C4_Scope scope,
             Region *region){
-    register gint to_shrink;
-    register gboolean at_query_edge = FALSE, at_target_edge = FALSE;
+    gint to_shrink;
+    gboolean at_query_edge = FALSE, at_target_edge = FALSE;
     Region outer_box;
     /* Find outer box (cobs -> corner) */
     outer_box.query_start = HSP_query_cobs(hsp);
@@ -245,10 +245,10 @@ static gboolean SAR_Terminal_calculate_end_region(HSP *hsp,
 
 static C4_Score SAR_find_start_component(HPair *hpair,
                 Region *region, HSP *hsp, C4_Calc *calc, gint *prefix){
-    register C4_Score component = 0;
-    register gint i, query_pos = hsp->query_start,
+    C4_Score component = 0;
+    gint i, query_pos = hsp->query_start,
                      target_pos = hsp->target_start;
-    register Region *calc_region;
+    Region *calc_region;
     g_assert(prefix);
     (*prefix) = (Region_query_end(region) - hsp->query_start)
               / HSP_query_advance(hsp);
@@ -271,9 +271,9 @@ static C4_Score SAR_find_start_component(HPair *hpair,
 
 static C4_Score SAR_find_end_component(HPair *hpair,
                 Region *region, HSP *hsp, C4_Calc *calc, gint *suffix){
-    register C4_Score component = 0;
-    register gint i, query_pos, target_pos;
-    register Region *calc_region;
+    C4_Score component = 0;
+    gint i, query_pos, target_pos;
+    Region *calc_region;
     g_assert(suffix >= 0);
     g_assert(suffix);
     (*suffix) = (HSP_query_end(hsp) - region->query_start)
@@ -303,7 +303,7 @@ static void SAR_HSP_quality(HPair *hpair, C4_Calc *calc,
                             HSP *hsp, C4_Score component,
                             gint start, gint length,
                             gint *half_score, gint *max_score){
-    register gint i, query_pos, target_pos;
+    gint i, query_pos, target_pos;
     g_assert(half_score);
     g_assert(max_score);
     query_pos = hsp->query_start + (start * HSP_query_advance(hsp));
@@ -321,14 +321,14 @@ static void SAR_HSP_quality(HPair *hpair, C4_Calc *calc,
 SAR_Terminal *SAR_Terminal_create(HSP *hsp, HPair *hpair,
                                   Heuristic_Match *match,
                                   gboolean is_start){
-    register SAR_Terminal *sar_terminal;
+    SAR_Terminal *sar_terminal;
     Region region;
-    register C4_Score component;
+    C4_Score component;
     gint prefix, suffix;
-    register SAR_ArgumentSet *sas = SAR_ArgumentSet_create(NULL);
-    register gboolean is_valid = FALSE;
+    SAR_ArgumentSet *sas = SAR_ArgumentSet_create(NULL);
+    gboolean is_valid = FALSE;
     gint half_score, max_score;
-    register gint start, length;
+    gint start, length;
     prefix = suffix = 0;
     if(is_start){
         is_valid = SAR_Terminal_calculate_start_region(hsp, hpair,
@@ -401,10 +401,10 @@ C4_Score SAR_Terminal_find_score(SAR_Terminal *sar_terminal,
 
 static void SAR_reduce_mid_overlap(HPair *hpair, HSP *src, HSP *dst,
             Region *region, C4_Calc *src_calc, C4_Calc *dst_calc){
-    register C4_Score src_total, dst_total, max_total;
-    register gint src_query_pos, src_target_pos,
+    C4_Score src_total, dst_total, max_total;
+    gint src_query_pos, src_target_pos,
                   dst_query_pos, dst_target_pos;
-    register gint max_src_query_pos, max_src_target_pos,
+    gint max_src_query_pos, max_src_target_pos,
                   max_dst_query_pos, max_dst_target_pos,
                   max_dist_from_centre;
     /* Reverse up dst region, counting dst_total */
@@ -485,10 +485,10 @@ static void SAR_reduce_mid_overlap(HPair *hpair, HSP *src, HSP *dst,
 static void SAR_find_end_box(HPair *hpair, HSP *src, HSP *dst,
                              Region *region, Region *cobs_box,
                              C4_Calc *src_calc, C4_Calc *dst_calc){
-    register gint
+    gint
         query_overlap = (HSP_query_end(src) - dst->query_start),
         target_overlap = (HSP_target_end(src) - dst->target_start);
-    register gint src_query_move = 0, src_target_move = 0,
+    gint src_query_move = 0, src_target_move = 0,
                   dst_query_move = 0, dst_target_move = 0;
     region->query_start = MIN(HSP_query_end(src), dst->query_start);
     region->target_start = MIN(HSP_target_end(src), dst->target_start);
@@ -580,7 +580,7 @@ static gboolean SAR_Join_calculate_region(HPair *hpair,
                                           HSP *src, HSP *dst,
                                           Region *region,
                                           Heuristic_Pair *pair){
-    register gint to_shrink;
+    gint to_shrink;
     Region outer_box;
     /* Find outer_box (cobs box) */
     if(!SAR_find_cobs_box(src, dst, &outer_box))
@@ -636,13 +636,13 @@ static gboolean SAR_Join_calculate_region(HPair *hpair,
 
 SAR_Join *SAR_Join_create(HSP *src_hsp, HSP *dst_hsp, HPair *hpair,
                           Heuristic_Pair *pair){
-    register SAR_Join *sar_join;
-    register C4_Score src_component, dst_component;
-    register gint src_length, dst_length;
+    SAR_Join *sar_join;
+    C4_Score src_component, dst_component;
+    gint src_length, dst_length;
     gint prefix, suffix, src_half_score, dst_half_score,
                          src_max_score, dst_max_score;
     Region region;
-    register SAR_ArgumentSet *sas = SAR_ArgumentSet_create(NULL);
+    SAR_ArgumentSet *sas = SAR_ArgumentSet_create(NULL);
     if(!SAR_Join_calculate_region(hpair, src_hsp, dst_hsp, &region,
                                   pair))
         return NULL;
@@ -710,7 +710,7 @@ static gboolean SAR_Span_calculate_regions(HPair *hpair,
                                            Region *dst_region,
                                            C4_Calc *src_calc,
                                            C4_Calc *dst_calc){
-    register gint to_shrink;
+    gint to_shrink;
     Region outer_box, end_box;
     /* Find outer_box (cobs box) */
     if(!SAR_find_cobs_box(src, dst, &outer_box))
@@ -811,10 +811,10 @@ static gboolean SAR_Span_calculate_regions(HPair *hpair,
 SAR_Span *SAR_Span_create(HSP *src_hsp, HSP *dst_hsp, HPair *hpair,
                           Heuristic_Span *span,
                           C4_Portal *src_portal, C4_Portal *dst_portal){
-    register SAR_Span *sar_span;
-    register SAR_ArgumentSet *sas = SAR_ArgumentSet_create(NULL);
-    register C4_Score src_component, dst_component;
-    register gint src_length, dst_length;
+    SAR_Span *sar_span;
+    SAR_ArgumentSet *sas = SAR_ArgumentSet_create(NULL);
+    C4_Score src_component, dst_component;
+    gint src_length, dst_length;
     gint suffix, prefix, src_half_score, dst_half_score,
                          src_max_score, dst_max_score;
     Region src_region, dst_region;
@@ -862,8 +862,8 @@ void SAR_Span_destroy(SAR_Span *sar_span){
     }
 
 C4_Score SAR_Span_find_bound(SAR_Span *sar_span){
-    register C4_Score src_raw_score, dst_raw_score;
-    register gint query_overlap, target_overlap;
+    C4_Score src_raw_score, dst_raw_score;
+    gint query_overlap, target_overlap;
     g_assert(sar_span->src_region->query_length
             <= sar_span->span->src_bound->query_range);
     g_assert(sar_span->src_region->target_length
@@ -896,8 +896,8 @@ C4_Score SAR_Span_find_bound(SAR_Span *sar_span){
     }
 
 C4_Score SAR_Span_find_score(SAR_Span *sar_span, HPair *hpair){
-    register C4_Score score;
-    register Heuristic_Data *heuristic_data;
+    C4_Score score;
+    Heuristic_Data *heuristic_data;
     Heuristic_Span_register(sar_span->span, sar_span->src_region,
                                             sar_span->dst_region);
     /* Calculate src optimal, reporting to the integration matrix */
@@ -923,9 +923,9 @@ SAR_Alignment *SAR_Alignment_create(SAR_Terminal *sar_start,
                                     Heuristic_Match *start_match,
                                     Heuristic_Match *end_match,
                                     HPair *hpair, C4_Score score){
-    register SAR_Alignment *sar_alignment = g_new(SAR_Alignment, 1);
-    register Region *align_region;
-    register Alignment *start_alignment
+    SAR_Alignment *sar_alignment = g_new(SAR_Alignment, 1);
+    Region *align_region;
+    Alignment *start_alignment
       = Optimal_find_path(start_match->start_terminal->optimal,
                           sar_start->region, hpair->user_data,
                           C4_IMPOSSIBLY_LOW_SCORE, hpair->subopt);
@@ -972,7 +972,7 @@ void SAR_Alignment_destroy(SAR_Alignment *sar_alignment){
 
 static void SAR_Alignment_add_region(SAR_Alignment *sar_alignment,
                             Region *src_region, Region *dst_region){
-    register gint suffix;
+    gint suffix;
     g_assert(sar_alignment->last_hsp);
     g_assert(sar_alignment->last_match);
     g_assert(!sar_alignment->last_region);
@@ -1010,7 +1010,7 @@ void SAR_Alignment_finalise(SAR_Alignment *sar_alignment){
 
 void SAR_Alignment_add_SAR_Join(SAR_Alignment *sar_alignment,
                                 SAR_Join *sar_join){
-    register Alignment *edge_alignment;
+    Alignment *edge_alignment;
     edge_alignment = Optimal_find_path(
             sar_join->pair->join->optimal,
             sar_join->region, sar_alignment->hpair->user_data,
@@ -1025,11 +1025,11 @@ void SAR_Alignment_add_SAR_Join(SAR_Alignment *sar_alignment,
 
 void SAR_Alignment_add_SAR_Span(SAR_Alignment *sar_alignment,
                                 SAR_Span *sar_span){
-    register Alignment *src_alignment, *dst_alignment;
-    register gint query_span_start, target_span_start,
+    Alignment *src_alignment, *dst_alignment;
+    gint query_span_start, target_span_start,
                   query_span_end, target_span_end;
-    register Region *src_align_region;
-    register Heuristic_Data *heuristic_data
+    Region *src_align_region;
+    Heuristic_Data *heuristic_data
                            = sar_alignment->hpair->user_data;
     heuristic_data->heuristic_span = sar_span->span;
     Heuristic_Span_register(sar_span->span, sar_span->src_region,
@@ -1085,7 +1085,7 @@ void SAR_Alignment_add_SAR_Span(SAR_Alignment *sar_alignment,
 
 void SAR_Alignment_add_HSP(SAR_Alignment *sar_alignment, HSP *hsp,
                            Heuristic_Match *match){
-    register gint prefix;
+    gint prefix;
     g_assert(sar_alignment->last_region);
     g_assert(!sar_alignment->last_hsp);
     g_assert(!sar_alignment->last_match);

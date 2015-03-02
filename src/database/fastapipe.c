@@ -23,7 +23,7 @@ FastaPipe *FastaPipe_create(FastaDB *query_fdb, FastaDB *target_fdb,
                FastaPipe_NextSeq_Func target_func,
                FastaDB_Mask mask, gboolean translate_both,
                gboolean use_revcomp){
-    register FastaPipe *fasta_pipe = g_new(FastaPipe, 1);
+    FastaPipe *fasta_pipe = g_new(FastaPipe, 1);
     g_assert(init_func);
     g_assert(prep_func);
     g_assert(term_func);
@@ -63,7 +63,7 @@ void FastaPipe_destroy(FastaPipe *fasta_pipe){
 
 static FastaDB_Seq *FastaPipe_next_seq(FastaDB *fdb, FastaDB_Mask mask,
                     gboolean use_revcomp, FastaDB_Seq **prev_seq){
-    register FastaDB_Seq *fdbs, *revcomp_fdbs;
+    FastaDB_Seq *fdbs, *revcomp_fdbs;
     if(*prev_seq){
         fdbs = FastaDB_Seq_revcomp(*prev_seq);
         FastaDB_Seq_destroy(*prev_seq);
@@ -89,8 +89,8 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
                           FastaPipe_NextSeq_Func next_seq_func,
                           FastaDB_Mask mask, gboolean use_revcomp,
                           FastaDB_Seq **prev_seq, gpointer user_data){
-    register FastaDB_Seq *fdbs;
-    register gboolean stop_requested = FALSE;
+    FastaDB_Seq *fdbs;
+    gboolean stop_requested = FALSE;
     while((fdbs = FastaPipe_next_seq(fdb, mask,
                                      use_revcomp, prev_seq))){
         stop_requested = next_seq_func(fdbs, user_data);
@@ -104,7 +104,7 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
  */
 
 gboolean FastaPipe_process(FastaPipe *fasta_pipe, gpointer user_data){
-    register gboolean target_stop = FALSE;
+    gboolean target_stop = FALSE;
     do {
         if(!fasta_pipe->is_full){
             if(FastaDB_is_finished(fasta_pipe->query_db)

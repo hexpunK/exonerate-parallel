@@ -31,7 +31,7 @@ void EST2Genome_Data_init(EST2Genome_Data *e2gd,
 
 EST2Genome_Data *EST2Genome_Data_create(Sequence *query,
                                         Sequence *target){
-    register EST2Genome_Data *e2gd = g_new0(EST2Genome_Data, 1);
+    EST2Genome_Data *e2gd = g_new0(EST2Genome_Data, 1);
     EST2Genome_Data_init(e2gd, query, target);
     return e2gd;
     }
@@ -56,15 +56,15 @@ void EST2Genome_Data_destroy(EST2Genome_Data *e2gd){
 /**/
 
 C4_Model *EST2Genome_create(void){
-    register C4_Model *est2genome = Affine_create(
+    C4_Model *est2genome = Affine_create(
                                     Affine_Model_Type_LOCAL,
                                     Alphabet_Type_DNA,
                                     Alphabet_Type_DNA, FALSE);
-    register C4_Model *intron_forward_model,
+    C4_Model *intron_forward_model,
                       *intron_reverse_model;
-    register C4_Transition *match_forward_transition,
+    C4_Transition *match_forward_transition,
                            *match_reverse_transition;
-    register GPtrArray *match_transition_list;
+    GPtrArray *match_transition_list;
     C4_Model_rename(est2genome, "est2genome");
     C4_Model_open(est2genome);
     C4_Model_make_stereo(est2genome, "forward", "reverse");

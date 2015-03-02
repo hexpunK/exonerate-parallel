@@ -18,7 +18,7 @@
 #include "submat.h"
 
 int main(int argc, char **argv){
-    register Submat *s = Submat_create(NULL);
+    Submat *s = Submat_create(NULL);
     g_message("test AA [%d], AT [%d], AN [%d] NN [%d]",
             Submat_lookup(s, 'A', 'A'),
             Submat_lookup(s, 'A', 'T'),
