@@ -295,6 +295,21 @@ void FastaDB_traverse(FastaDB *fdb, FastaDB_Mask mask,
     return;
     }
 
+gulong FastaDB_size(FastaDB *fdb, FastaDB_Mask mask) {
+    gulong size = 0;
+    FastaDB_Seq *fdbs;
+    g_assert(fdb);
+    FastaDB_rewind(fdb);
+
+    while((fdbs = FastaDB_next(fdb, mask))){
+        size ++;
+        FastaDB_Seq_destroy(fdbs);
+    }
+
+    FastaDB_rewind(fdb);
+    return size;
+}
+
 gsize FastaDB_memory_usage(FastaDB *fdb){
     return sizeof(FastaDB)
          + sizeof(Alphabet)
@@ -1056,6 +1071,7 @@ FastaDB_Seq **FastaDB_all(gchar *path, Alphabet *alphabet,
         g_ptr_array_add(ptra, fdbs);
         numseqs++;
         }
+    printf("Number of sequences: %d", numseqs);
     g_ptr_array_add(ptra, NULL); /* NULL delimit */
     if(total)
         *total = numseqs; /* Record number of sequences */

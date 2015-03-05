@@ -94,21 +94,21 @@ static gboolean FastaPipe_process_database(FastaDB *fdb,
     FastaDB_Seq *fdbs, *init_seq = *prev_seq;
     gboolean stop_requested = FALSE;
     int i = 0, j = 0;
-
+    
     while((fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq))){
       i++;
     }
-
+        
     FastaDB_rewind(fdb);
     
-    #pragma omp parallel for shared(fdbs)
+    #pragma omp parallel for
     for (; j < i; j++) {
         FastaDB_Seq *tmpSeq;
-      	#pragma omp critical
+        #pragma omp critical
         {
-            #pragma omp flush(fdbs)
-            fdbs = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
-            tmpSeq = fdbs;
+            //#pragma omp flush(fdbs)
+            tmpSeq = FastaPipe_next_seq(fdb, mask, use_revcomp, prev_seq);
+            //tmpSeq = fdbs;
 	}
         next_seq_func(tmpSeq, user_data);
     }

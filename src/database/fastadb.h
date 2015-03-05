@@ -50,6 +50,7 @@ typedef struct FastaDB {
             guint  out_buffer_pos;
             guint  out_buffer_alloc;
              gint  line_length;
+           gulong  db_size;
 } FastaDB;
 /* line_length is used for fasta file random-access
  * it is set to zero for irregular line lengths

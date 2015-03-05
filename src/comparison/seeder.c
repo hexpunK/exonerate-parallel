@@ -135,7 +135,7 @@ static Seeder_QueryInfo *Seeder_QueryInfo_create(Sequence *query){
     }
 
 static void Seeder_QueryInfo_destroy(Seeder_QueryInfo *query_info){
-    Sequence_destroy(query_info->query);
+    //Sequence_destroy(query_info->query);
     if(query_info->curr_comparison)
         Comparison_destroy(query_info->curr_comparison);
     g_free(query_info);
@@ -585,7 +585,7 @@ static void Seeder_load_query(Seeder *seeder,
             aa_seq = Sequence_translate(query_info->query,
                                         match->mas->translate, i+1);
             Seeder_insert_query(seeder, context, aa_seq, i+1);
-            Sequence_destroy(aa_seq);
+            //Sequence_destroy(aa_seq);
             }
     } else {
         Seeder_insert_query(seeder, context, query_info->query, 0);
@@ -601,7 +601,12 @@ gboolean Seeder_add_query(Seeder *seeder, Sequence *query){
     if(seeder->verbosity > 2)
         g_message("Seeder Loading query [%s]", query->id);
     query_info = Seeder_QueryInfo_create(query);
+    
+    #pragma omp critical
+    {
     g_ptr_array_add(seeder->query_info_list, query_info);
+    }
+
     if(seeder->dna_loader)
         Seeder_load_query(seeder, query_info, seeder->dna_loader);
     if(seeder->protein_loader)
@@ -672,14 +677,14 @@ static void Seeder_FSM_traverse_func(guint seq_pos,
             }
         }
     g_assert(word_info->seed_list || word_info->neighbour_list);
-    for(seed = word_info->seed_list; seed; seed = seed->next){
+    for(seed = word_info->seed_list; seed != NULL; seed = seed->next){
         target_pos = tpos - seed->context->loader->tpos_modifier;
         g_assert(target_pos >= 0);
         Seeder_WordInfo_seed(seed->context->query_info, target_info,
                              seed->query_pos, target_pos,
                              seed->context->loader);
         }
-    for(neighbour = word_info->neighbour_list; neighbour;
+    for(neighbour = word_info->neighbour_list; neighbour != NULL;
         neighbour = neighbour->next){
         for(seed = neighbour->word_info->seed_list; seed;
             seed = seed->next){
@@ -700,7 +705,11 @@ static void Seeder_VFSM_traverse_single(Seeder *seeder, gchar *seq,
     VFSM *vfsm = seeder->seeder_vfsm->vfsm;
     Seeder_WordInfo *word_info;
     g_assert(vfsm);
-    for(i = 0; seq[i]; i++){
+    gulong size = sizeof(seq)/sizeof(seq[0]);
+ printf("A");
+exit(-1);
+    #pragma omp parallel for
+    for(i = 0; i < size; i++){
         ch = toupper(seq[i]); /* FIXME: filter properly */
         if(!vfsm->index[ch]){
             state = 0;
@@ -732,7 +741,11 @@ static void Seeder_VFSM_traverse_ambig(Seeder *seeder, gchar *seq,
                                                 seeder->sas->word_ambiguity);
     gint curr_state_list_len = 1, next_state_list_len = 0;
     g_assert(vfsm);
-    for(i = 0; seq[i]; i++){
+    gulong size = sizeof(seq)/sizeof(seq[0]);
+   printf("B");
+   exit(-1);
+    #pragma omp parallel for
+    for(i = 0; i < size; i++){
         ch = toupper(seq[i]); /* FIXME: filter properly */
         if((!(ambig = Alphabet_nt2ambig(ch)))
         || ((strlen(ambig) * curr_state_list_len)
@@ -803,7 +816,11 @@ static void Seeder_FSM_traverse_ambig(Seeder *seeder, gchar *seq,
     gint curr_state_list_len = 1, next_state_list_len = 0;
     g_assert(f->is_compiled);
     curr_state_list[0] = f->root;
-    for(i = 0; seq[i]; i++){
+    gulong size = sizeof(seq)/sizeof(seq[0]);
+    printf("C");
+    exit(-1);
+    #pragma omp parallel for
+    for(i = 0; i < size; i++){
         if((!(ambig = Alphabet_nt2ambig(seq[i])))
         || ((strlen(ambig) * curr_state_list_len)
             > seeder->sas->word_ambiguity)){
