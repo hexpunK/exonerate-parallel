@@ -21,6 +21,7 @@
 #include <strings.h> /* For strcasecmp() */
 #include <ctype.h>  /* For isalnum() */
 #include <unistd.h> /* For gethostname() */
+#include "omp.h"
 
 static void *_twalk_data; /* data to pass to twalk() */
 
@@ -248,13 +249,15 @@ static void Argument_cleanup(Argument *arg){
 
 /**/
 
-static Argument *Argument_create(gint argc, gchar **argv){
+static Argument *Argument_create(gint argc, gchar **argv, gint query_chunk_id, gint query_chunk_total){
     register Argument *arg = g_new0(Argument, 1);
     arg->arg_set = g_ptr_array_new();
     arg->mandatory_set = g_ptr_array_new();
     arg->cleanup_list = g_ptr_array_new();
     arg->argc = argc;
     arg->argv = argv;
+    arg->query_chunk_id = query_chunk_id;
+    arg->query_chunk_total = query_chunk_total;
     Argument_add_standard_options(arg);
     return arg;
     }
@@ -317,27 +320,27 @@ static void Argument_error_handler(const gchar *log_domain,
  */
 
 int main(int argc, char **argv){
-    register Argument *arg;
+    //register Argument *arg;
     register gint retval;
+    register gint i;
+    register gint num_of_threads = omp_get_max_threads();
 #ifdef USE_PTHREADS
     if(!g_thread_supported())
         g_thread_init(NULL);
 #endif /* USE_PTHREADS */
-    arg = Argument_create(argc, argv);
-    g_log_set_handler(NULL, G_LOG_LEVEL_ERROR|G_LOG_FLAG_FATAL,
+    
+    /*g_log_set_handler(NULL, G_LOG_LEVEL_ERROR|G_LOG_FLAG_FATAL,
                       Argument_error_handler, arg);
-    g_assert(Argument_assertion_warning());
+    g_assert(Argument_assertion_warning());*/
     
-    //#pragma omp parallel for
-    for (int i=0; i<4; i++) {
-        arg = Argument_create(argc, argv);
-        retval = Argument_main(arg, i+1, 4);
+    #pragma omp parallel for
+    for (i=0; i<num_of_threads; i++) {
+        Argument *arg = Argument_create(argc, argv, i+1, num_of_threads);
+        retval = Argument_main(arg);
+        //Argument_destroy(arg);
     }
     
-    //#pragma omp critical
-    {
-    Argument_destroy(arg);
-    }
+    g_print("-- completed exonerate analysis\n");
     
     return retval;
 }

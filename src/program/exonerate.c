@@ -38,16 +38,20 @@
 
 FILE *file; // An output file, can be a file or stdout/err. Awful global hack.
 
-int Argument_main(Argument *arg, gint query_chunk_id, gint query_chunk_total){
+int Argument_main(Argument *arg){
     register Analysis *analysis;
     register ArgumentSet *as_input =
         ArgumentSet_create("Sequence Input Options");
     GPtrArray *query_path_list, *target_path_list;
     Alphabet_Type query_type, target_type;
-    gint target_chunk_id,
-         target_chunk_total,
+    gint query_chunk_id, target_chunk_id,
+         query_chunk_total, target_chunk_total,
          verbosity;
     gchar *outputFile;
+    
+    query_chunk_id = arg->query_chunk_id;
+    query_chunk_total = arg->query_chunk_total;
+    
     /**/
     ArgumentSet_add_option(as_input, 'q', "query", "path",
     "Specify query sequences as a fasta format file", NULL,
@@ -144,8 +148,8 @@ int Argument_main(Argument *arg, gint query_chunk_id, gint query_chunk_total){
     Analysis_destroy(analysis);
     /**/
     if(verbosity > 0)
-        g_print("-- completed exonerate analysis\n");
-    fclose(file);
+        g_print("CHUNK COMPLETE");
+    //fclose(file);
     return 0;
     }
 

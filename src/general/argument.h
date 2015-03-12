@@ -73,9 +73,11 @@ typedef struct {
           gboolean   show_short_help;
           gboolean   show_long_help;
          GPtrArray  *cleanup_list;
+    gint  query_chunk_id;
+    gint query_chunk_total;
 } Argument;
 
-gint Argument_main(Argument *arg, gint query_chunk_id, gint query_chunk_total);
+gint Argument_main(Argument *arg);
 void Argument_process(Argument *arg, gchar *name, gchar *desc,
                       gchar *synopsis);
 void Argument_info(Argument *arg);
