@@ -38,7 +38,7 @@
 
 FILE *file; // An output file, can be a file or stdout/err. Awful global hack.
 
-int start(Argument *arg, gint query_chunk_id, gint query_chunk_total){
+int Argument_main(Argument *arg, gint query_chunk_id, gint query_chunk_total){
     register Analysis *analysis;
     register ArgumentSet *as_input =
         ArgumentSet_create("Sequence Input Options");
