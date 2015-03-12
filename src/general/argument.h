@@ -75,7 +75,7 @@ typedef struct {
          GPtrArray  *cleanup_list;
 } Argument;
 
-gint Argument_main(Argument *arg);
+gint Argument_main(Argument *arg, gint query_chunk_id, gint query_chunk_total);
 void Argument_process(Argument *arg, gchar *name, gchar *desc,
                       gchar *synopsis);
 void Argument_info(Argument *arg);
