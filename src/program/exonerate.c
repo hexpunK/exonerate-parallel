@@ -38,14 +38,14 @@
 
 FILE *file; // An output file, can be a file or stdout/err. Awful global hack.
 
-int Argument_main(Argument *arg){
+int start(Argument *arg, gint query_chunk_id, gint query_chunk_total){
     register Analysis *analysis;
     register ArgumentSet *as_input =
         ArgumentSet_create("Sequence Input Options");
     GPtrArray *query_path_list, *target_path_list;
     Alphabet_Type query_type, target_type;
-    gint query_chunk_id, target_chunk_id,
-         query_chunk_total, target_chunk_total,
+    gint target_chunk_id,
+         target_chunk_total,
          verbosity;
     gchar *outputFile;
     /**/
@@ -63,15 +63,9 @@ int Argument_main(Argument *arg){
     "alphabet type", "Specify target alphabet type", "unknown",
     Alphabet_Argument_parse_alphabet_type, &target_type);
     /**/
-    ArgumentSet_add_option(as_input, '\0', "querychunkid", NULL,
-    "Specify query job number", "0",
-    Argument_parse_int, &query_chunk_id);
     ArgumentSet_add_option(as_input, '\0', "targetchunkid", NULL,
     "Specify target job number", "0",
     Argument_parse_int, &target_chunk_id);
-    ArgumentSet_add_option(as_input, '\0', "querychunktotal", NULL,
-    "Specify total number of query jobs", "0",
-    Argument_parse_int, &query_chunk_total);
     ArgumentSet_add_option(as_input, '\0', "targetchunktotal", NULL,
     "Specify total number of target jobs", "0",
     Argument_parse_int, &target_chunk_total);

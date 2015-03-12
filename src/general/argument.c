@@ -327,10 +327,20 @@ int main(int argc, char **argv){
     g_log_set_handler(NULL, G_LOG_LEVEL_ERROR|G_LOG_FLAG_FATAL,
                       Argument_error_handler, arg);
     g_assert(Argument_assertion_warning());
-    retval = Argument_main(arg);
-    Argument_destroy(arg);
-    return retval;
+    
+    //#pragma omp parallel for
+    for (int i=0; i<4; i++) {
+        arg = Argument_create(argc, argv);
+        retval = Argument_main(arg, i+1, 4);
     }
+    
+    //#pragma omp critical
+    {
+    Argument_destroy(arg);
+    }
+    
+    return retval;
+}
 
 static void Argument_usage(Argument *arg, gchar *synopsis){
     register ArgumentOption *ao;
